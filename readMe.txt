@@ -1,1 +1,1 @@
-Timbre App for a pshychology research project 2015
+Timbre App for a research project 2015
