@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofPage.h"
 #include "ofxMaxim.h"
+#include "Poco/Stopwatch.h"
 
 class ofSounds : public ofPage{//
     

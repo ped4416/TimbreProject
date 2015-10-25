@@ -12,17 +12,15 @@ void ofSounds::setup(){
     //load sounds in constructor
     //sound1.loadOgg(ofToDataPath("sounds/Theme1_Stem1.ogg"));
     
-    origional2Trumpet.load(ofToDataPath("sounds/practice/3-56-4-x-piano-120.wav"));
+    //Single notes practice
+    pianoSingle.loadOgg(ofToDataPath("sounds/PianoSingle.ogg"));
+    trumpetSingle.loadOgg(ofToDataPath("sounds/TrumpetSingle.ogg"));
+    
+    //Preliminary Session 1 - 4 practice trials only (SAVE DATA?)
+    trial1_x_piano.load(ofToDataPath("sounds/practice/3-56-4-x-piano-120.wav"));
     trial2_trumpet.load(ofToDataPath("sounds/practice/3-79-10-original-trumpet-120.wav"));
     trial3_piano.load(ofToDataPath("sounds/practice/8-1127-0-original-piano-120.wav"));
     trial4_x_trumpet.load(ofToDataPath("sounds/practice/9-622-1-x-trumpet-120.wav"));
-
-    
-    //Preliminary Session 1 - 4 practice trials only (SAVE DATA?)
-    pianoSingle.loadOgg(ofToDataPath("sounds/PianoSingle.ogg"));
-    trumpetSingle.loadOgg(ofToDataPath("sounds/TrumpetSingle.ogg"));
-    pianoMelody.loadOgg(ofToDataPath("sounds/PianoMelody.ogg"));
-    trumpetMelody.loadOgg(ofToDataPath("sounds/TrumpetMelody.ogg"));
     
     //Session 2 melodies 1 - 20
     origional2Trumpet.loadOgg(ofToDataPath("sounds/14-408-4-original-TrumpetEnd.ogg"));

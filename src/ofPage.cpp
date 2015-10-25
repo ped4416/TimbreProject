@@ -1,7 +1,7 @@
 #include "ofPage.h"
-#include "maximilian.h"
-#include <iostream>
-#include <time.h>
+//#include "maximilian.h"
+//#include <iostream>
+//#include <time.h>
 
 ofPage::ofPage(){
     
@@ -139,13 +139,13 @@ void ofPage::update(){
     //update timers
     if (bMelodyStart == true) {
         melodyCounter.start();
-        printf("MELODY START\n");
+        //printf("MELODY START\n");
         //bMelodyFinished = false;
     }
     
     if(melodyCounter.elapsed() > 2200000){//set to 200ms after last note onset?
-        printf("MELODY FINISHED\n");
-        cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
+        //printf("MELODY FINISHED\n");
+        //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
         bMelodyFinished = true;
         //bMelodyStart = false;
         //melodyCounter.reset();//bug?
@@ -187,8 +187,8 @@ void ofPage::draw(){
     
     if(melodyCounter.elapsed() > 2200000){//set to 200ms after last note onset?
         //printf("MELODY FINISHED\n");
-        cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
-        cout << "\nMELODY TIME = " << melodyCounter.elapsed() << endl;//debug?
+        //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
+        //cout << "\nMELODY TIME = " << melodyCounter.elapsed() << endl;//debug?
         bMelodyFinished = true;
         //bMelodyStart = false;
         //melodyCounter.reset();//bug?
@@ -967,6 +967,7 @@ void ofPage::showPage(int x, int y){
             if (x > 55 && x < 360
                 && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false){//&&bMelodyFinished
                 //greyStarCounter.start();
+                //bMelodyFinished = true;//bug stopping bool getting to trigger sounds..
                 bGuessedPiano = true;
                 hasPressed = true;
                 printf("\nGUESS PIANO");
