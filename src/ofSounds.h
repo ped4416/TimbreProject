@@ -8,7 +8,7 @@ class ofSounds : public ofPage{//
     
     //get the ofPage as the route class all other pages will inherit from this.
     //set up for the sounds
-    ofxMaxiSample sound1;//theme song
+    //ofxMaxiSample sound1;//theme song
     
     ofxMaxiSample pianoSingle;
     ofxMaxiSample trumpetSingle;
@@ -16,8 +16,10 @@ class ofSounds : public ofPage{//
     ofxMaxiSample trumpetMelody;
     
     //Tests for first 2 then real trial starts
-    ofxMaxiSample origional1;
-    ofxMaxiSample x1;
+    ofxMaxiSample trial1_x_piano;//3-56-4-x-piano-120
+    ofxMaxiSample trial2_trumpet;//3-79-10-original-trumpet-120
+    ofxMaxiSample trial3_piano;//8-1127-0-original-piano-120
+    ofxMaxiSample trial4_x_trumpet;//9-622-1-x-trumpet-120
     
     //real trial starts from here
     ofxMaxiSample origional2Trumpet;
