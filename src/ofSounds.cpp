@@ -27,12 +27,11 @@ void ofSounds::setup(){
     //Session 3 melodies 21 - 40
     
     
-    
     //fx
-    cheer.loadOgg(ofToDataPath("sounds/FX/CrowdCheer.ogg"));
-    badLuck.loadOgg(ofToDataPath("sounds/FX/PartyblowerSad.ogg"));
-    tom1.loadOgg(ofToDataPath("sounds/FX/tom1.ogg"));
-    tom2.loadOgg(ofToDataPath("sounds/FX/tom2.ogg"));
+    cheer.load(ofToDataPath("sounds/FX/PositiveFeedback.wav"));
+    badLuck.load(ofToDataPath("sounds/FX/NegativeFeedback.wav"));
+//    tom1.loadOgg(ofToDataPath("sounds/FX/tom1.ogg"));
+//    tom2.loadOgg(ofToDataPath("sounds/FX/tom2.ogg"));
     
 }
 
