@@ -23,4 +23,5 @@ DerivedData
 *.xcodeproj
 ofxiOS-Info.plist
 ofxiOS_Prefix.pch
+TimbreApp.xcodeproj/project.xcworkspace/xcuserdata/mu101pk.xcuserdatad/UserInterfaceState.xcuserstate
 
