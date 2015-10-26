@@ -4,7 +4,7 @@
 #include "ofMain.h"
 #include <math.h>
 #include "Poco/Stopwatch.h"
-#include "maximilian.h"
+#include "ofxMaxim.h"
 #include <time.h>
 
 //#include "ofxMaxim.h"

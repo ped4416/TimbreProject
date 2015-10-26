@@ -41,7 +41,8 @@ public: // place public functions or variables declarations here
     
     // methods, equivalent to specific functions of your class objects
     void setup();
-    void update();
+//    void draw();
+//    void update();
     float playSounds(float x);//left channel
     float playSounds1(float y);//right channel
 

@@ -1,5 +1,3 @@
-
-#include "ofPage.h"
 #include "ofSounds.h"
 
 
@@ -37,20 +35,16 @@ void ofSounds::setup(){
     
 }
 
-void ofSounds::update(){
-}
+//void ofSounds::update(){
+//}
 
 float ofSounds::playSounds(float x){//left channel of music
     
     //setup floats to hold all sounds
-    float tom1_x;
-    float tom2_x;
     float cheer_x;
     float badLuck_x;
     float pianoSingle_x;
     float trumpetSingle_x;
-    float pianoMelody_x;
-    float trumpetMelody_x;
     
     //Tests for first 2 / 4 then real trial starts
     float  trial1_x_piano_f;//3-56-4-x-piano-120
@@ -70,7 +64,7 @@ float ofSounds::playSounds(float x){//left channel of music
     //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
 
     //sounds to play for guesses
-    if (bGuessedWrong == true){// && bMelodyFinished) {
+    if (bGuessedWrong && bMelodyFinished) {
         //printf("BAD_LUCK SAMPLE");
         badLuck_x = badLuck.playOnce();
     } else badLuck.reset();
@@ -81,7 +75,7 @@ float ofSounds::playSounds(float x){//left channel of music
 //        badLuck.reset();
 //    }
     
-    if (showStars == true){//&& bMelodyFinished) {
+    if (showStars && bMelodyFinished) {
         //printf("CHEER SAMPLE");
         cheer_x = cheer.playOnce();
     } else cheer.reset();
@@ -100,17 +94,17 @@ float ofSounds::playSounds(float x){//left channel of music
 //        cheer.reset();
 //    }
     
-    tom1.getLength();//get the length to set playback to false
-    if (tom1.position == 3000){
-         tom1play = false;
-         tom1.reset();
-    }
-    
-    tom2.getLength();//get the length to set playback to false
-    if (tom2.position == 3000){
-        tom2play = false;
-        tom2.reset();
-    }
+//    tom1.getLength();//get the length to set playback to false
+//    if (tom1.position == 3000){
+//         tom1play = false;
+//         tom1.reset();
+//    }
+//    
+//    tom2.getLength();//get the length to set playback to false
+//    if (tom2.position == 3000){
+//        tom2play = false;
+//        tom2.reset();
+//    }
 
     if (currentPage == 0 || currentPage == 1){
         //test
@@ -163,16 +157,16 @@ float ofSounds::playSounds(float x){//left channel of music
             playTrumpetSingle = false;
             trumpetSingle.reset();
         }
-        x = trumpetSingle_x + pianoSingle_x + cheer_x + badLuck_x + tom1_x + tom2_x;
+        x = trumpetSingle_x + pianoSingle_x + cheer_x + badLuck_x;
     }
     else if (currentPage == 3){//help bear to hear
+        
         //sound1.reset();
         pianoSingle.reset();
         trumpetSingle.reset();
         origional2Trumpet.reset();
         origional2Piano.reset();
       
-        
         if (playPianoMelody == true) {
              trial1_x_piano_f = trial1_x_piano.playOnce();
         } else trial1_x_piano.reset();
@@ -193,8 +187,8 @@ float ofSounds::playSounds(float x){//left channel of music
             trial2_trumpet.reset();
         }
         
-        x = trial2_trumpet_f + trial1_x_piano_f + cheer_x + badLuck_x + tom1_x +tom2_x;
-      
+        x = trial1_x_piano_f + trial2_trumpet_f + cheer_x + badLuck_x;
+
     }
     
     else if (currentPage == 4){//trial 1 play a trumpet at end
@@ -210,16 +204,16 @@ float ofSounds::playSounds(float x){//left channel of music
         if (playTest_o1 == true) {
             origional2Trumpet_x = origional2Trumpet.playOnce();
         }
-        x = origional2Trumpet_x + cheer_x + badLuck_x + tom1_x + tom2_x;
+        x = origional2Trumpet_x + cheer_x + badLuck_x;
     }
     else if (currentPage == 5){//trial 2 play a piano
         //sound1.reset();
         origional2Trumpet.reset();
         if (playTest_o2 == true) {
-            origional2Piano_x = origional2Piano.playOnce();;
+            origional2Piano_x = trial1_x_piano.playOnce();//origional2Piano.playOnce();;
         }
         
-        x = origional2Piano_x + cheer_x + badLuck_x + tom1_x + tom2_x;
+        x = origional2Piano_x + cheer_x + badLuck_x;
     }
     
    

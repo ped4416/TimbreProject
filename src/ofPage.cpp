@@ -133,22 +133,23 @@ void ofPage::setup(){//implementation of the update() function of our object
 }
 
 void ofPage::update(){
-    
+
     //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
     
     //update timers
     if (bMelodyStart == true) {
         melodyCounter.start();
+//        showStars = false;
+//        bGuessedWrong = false;
         //printf("MELODY START\n");
         //bMelodyFinished = false;
     }
     
-    if(melodyCounter.elapsed() > 2200000){//set to 200ms after last note onset?
+    if(melodyCounter.elapsed() > 200500){//set to 100ms after last note onset?
         //printf("MELODY FINISHED\n");
         //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
         bMelodyFinished = true;
-        //bMelodyStart = false;
-        //melodyCounter.reset();//bug?
+        bMelodyStart = false;
     }
     
     if (greyStarCounter.elapsedSeconds() > 2000000) {
@@ -157,8 +158,9 @@ void ofPage::update(){
         melodyCounter.reset();
     }
     
-    if(greyStarCounter.elapsed() >= 2999000){
-        //printf("STOP STOP STOP STOP STOP");
+    if(greyStarCounter.elapsed() >= 2999000){//allow 3 seconds before reset
+        printf("STOP STOP STOP STOP STOP");
+        bMelodyFinished = false;
         bGuessedWrong = false;
         bGuessedPiano = false;
         bGuessedTrumpet = false;
@@ -171,6 +173,7 @@ void ofPage::update(){
         greyCounter = 0;
         greyCounter2 = 0;
         greyStarCounter.reset();//reset timer
+        melodyCounter.reset();
     }
 }
 
@@ -184,15 +187,6 @@ bool ofPage::showAccelPage(int x) {//a method to allow accelarometer to display 
 }
 
 void ofPage::draw(){
-    
-    if(melodyCounter.elapsed() > 2200000){//set to 200ms after last note onset?
-        //printf("MELODY FINISHED\n");
-        //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
-        //cout << "\nMELODY TIME = " << melodyCounter.elapsed() << endl;//debug?
-        bMelodyFinished = true;
-        //bMelodyStart = false;
-        //melodyCounter.reset();//bug?
-    }
     
     if(currentPage == 0){
         showStars = false;
@@ -228,10 +222,9 @@ void ofPage::draw(){
            bGuessedWrong = false;
            greyStarCounter.start();
            //printf("greyStarCounter is : ""%lld\n",greyStarCounter.elapsed());
-       } else tom1play = false, tom2play = false;
-       
+       }
         
-        if (bGuessedWrong == true && bMelodyFinished) {
+       if (bGuessedWrong == true && bMelodyFinished) {
             showStars = false;
             greyStarCounter.start();//start timer
             ofSetColor(255);
@@ -292,7 +285,7 @@ void ofPage::draw(){
             }
             
             //printf("fade counter is: ""%d\n",greyCounter);
-            //printf("greyStarCounter is : ""%lld\n",greyStarCounter.elapsed());
+            printf("greyStarCounter is : ""%lld\n",greyStarCounter.elapsed());
             
             
             ofSetColor(0);
@@ -936,8 +929,9 @@ void ofPage::showPage(int x, int y){
         playTest_x1 = false;
         
         if (x > 780 && y < 290 && y > 0){//press bear to start melody
+            greyStarCounter.reset();//reset timers
+            melodyCounter.reset();
             bMelodyStart = true;
-            //melodyCounter.start();
             showStars = false;
             hasPressed = false;
             bGuessedWrong = false;
@@ -961,13 +955,9 @@ void ofPage::showPage(int x, int y){
             }
         }
         //cout << "\nMelodyCounter  " << countMelody;
-        //if (bMelodyFinished) {
-            //printf("\nMELODY HAS FINISHED MELODY HAS FINSHED MELODY HAS FINISHED");
-            //pressing for stars!
+        if (bMelodyFinished && bMelodyStart == false) {
             if (x > 55 && x < 360
-                && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false){//&&bMelodyFinished
-                //greyStarCounter.start();
-                //bMelodyFinished = true;//bug stopping bool getting to trigger sounds..
+                && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false){
                 bGuessedPiano = true;
                 hasPressed = true;
                 printf("\nGUESS PIANO");
@@ -1003,7 +993,7 @@ void ofPage::showPage(int x, int y){
                 printf("\nWRONG IT WAS PIANO");
 
             }
-        //}
+        }
     }
     
     if (currentPage == 4) {//trial 1
@@ -1012,7 +1002,8 @@ void ofPage::showPage(int x, int y){
         //press bear head to sound.. or trial number to sound
         if (x > 780 && y < 290 && y > 0 && hasPressed == false){
             bMelodyStart = true;
-            //melodyCounter.start();
+            greyStarCounter.reset();//reset timers
+            melodyCounter.reset();
             bGuessedWrong = false;
             showStars = false;
             showDots = true;
@@ -1048,6 +1039,8 @@ void ofPage::showPage(int x, int y){
         playTest_x1 = false;
         //press bear head to sound.. or trial number to sound
         if (x > 780 && y < 290 && y > 0 && hasPressed == false){
+            greyStarCounter.reset();//reset timers
+            melodyCounter.reset();
             bMelodyStart = true;
             bGuessedWrong = false;
             showStars = false;
@@ -1081,17 +1074,6 @@ void ofPage::showPage(int x, int y){
         playTest_o2 = false;//reset bool
         playTest_x2 = false;//reset bool
     }
-    
-    if(showStars == true && x > ofGetScreenWidth()/2){
-        tom1play = true;
-        bGuessedWrong = false;
-    } else tom1play = false;
-    
-    if(showStars == true && x < ofGetScreenWidth()/2){
-        tom2play = true;
-        bGuessedWrong = false;
-    } else tom2play = false;
-    
     //printf("%d\n",currentPage);
 }
 
