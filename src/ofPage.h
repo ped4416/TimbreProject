@@ -6,6 +6,8 @@
 #include "Poco/Stopwatch.h"
 #include "ofxMaxim.h"
 #include <time.h>
+#include <vector>
+//#include <algorithms> // may need?
 
 //#include "ofxMaxim.h"
 
@@ -21,6 +23,7 @@ public: // place public functions or variables declarations here
         state_read_toMyself,
         
     };
+    
     state_t state;
     
     ofPage();//constructor
@@ -70,13 +73,11 @@ public: // place public functions or variables declarations here
     
     //animation booleans
     bool showStars;
-    bool dogMove;
     
     //sound booleans
-    bool tom1play;
-    bool tom2play;
     bool playPianoSingle;
     bool playTrumpetSingle;
+    
     bool playPianoMelody;
     bool playTrumpetMelody;
     
@@ -122,11 +123,11 @@ public: // place public functions or variables declarations here
     
     //animated dots
     bool showDots;
-    bool displayDot1;
-    bool displayDot2;
-    bool displayDot3;
-    bool displayDot4;
-    bool displayQM;
+//    bool displayDot1;
+//    bool displayDot2;
+//    bool displayDot3;
+//    bool displayDot4;
+//    bool displayQM;
     
     //piano left or right?
     bool bPianoLeft;
@@ -144,6 +145,12 @@ public: // place public functions or variables declarations here
     Poco::Stopwatch melodyCounter;//only allow an answer after this timer
     int greyCounter;
     int greyCounter2;
+    
+    //random numbers
+    vector<int> testMelodyNumber;
+    
+    //test melody setup
+    bool bPlayTestMelody;
 
 private: // place private functions or variables declarations here
     

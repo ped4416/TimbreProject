@@ -6,12 +6,13 @@
 ofPage::ofPage(){
     
     //variables for all pages of Timbre App
-    countMelody = 0;
+    countMelody = 0;//allow for 0 index
     currentFrame = 0;
     fadeFrame = 0;
     currentPage = 0;
     secondTime = 30;//20
     fadeUpTime = 0.05;
+   
     
     //bools for page naviagation
     fadePage = false;
@@ -24,25 +25,18 @@ ofPage::ofPage(){
     pageBack = false;//allows correct files to load or unload
     pageForward = false;
 
-    
-    
     showStars = false;
     playPianoSingle = false;
     playTrumpetSingle = false;
     playPianoMelody = false;
     playTrumpetMelody = false;
     
+    bPlayTestMelody = false;
     
-    //set sounds
-    tom1play = false;
-    tom2play = false;
-    playMusic = true; //default load mode is music on
-    playMusicTemp = true;// to stop music when settings menu is on
-    
-    playTest_o1 = false;
-    playTest_x1 = false;
-    playTest_o2 = false;
-    playTest_x2 = false;
+//    playTest_o1 = false;
+//    playTest_x1 = false;
+//    playTest_o2 = false;
+//    playTest_x2 = false;
     
     bGuessedPiano = false;
     bGuessedTrumpet = false;
@@ -61,11 +55,11 @@ ofPage::ofPage(){
     
     //animatied dots
     showDots = false;
-    displayDot1 = false;
-    displayDot2 = false;
-    displayDot3 = false;
-    displayDot4 = false;
-    displayQM = false;
+//    displayDot1 = false;
+//    displayDot2 = false;
+//    displayDot3 = false;
+//    displayDot4 = false;
+//    displayQM = false;
     
     //bools for text
     texthide = false;
@@ -80,10 +74,13 @@ ofPage::ofPage(){
     endTime = (int)ofRandom(1000, 5000); // in milliseconds
     greyCounter = 0;
     greyCounter2 = 0;
+    
+    
+
+
 }
 
 void ofPage::setup(){//implementation of the update() function of our object
-    
     
     leftArrow.loadImage("buttons/LEFTARROW.png");
     rightArrow.loadImage("buttons/RIGHTARROW.png");
@@ -130,22 +127,45 @@ void ofPage::setup(){//implementation of the update() function of our object
     dotsText.setLineHeight(18.0f);
     dotsText.setLetterSpacing(1.037);
     
+    //setup random test melodies
+    testMelodyNumber.resize(20);
+    for(int i = 0; i < testMelodyNumber.size(); i++){
+        testMelodyNumber[i] = i;//0,1,2,3
+        //cout << "Test Number Is Now: "  << testMelodyNumber[i] <<endl;
+    }
+    
+    std::random_shuffle (testMelodyNumber.begin(), testMelodyNumber.end());
+    
+    for(int i = 0; i < testMelodyNumber.size(); i++){
+        cout << testMelodyNumber[i] << endl;
+    }
+    
+    cout << "my array is size: " << testMelodyNumber.size() << endl;
+
 }
 
 void ofPage::update(){
+    
+    //cout << "my array is size: " << testMelodyNumber.size() << endl;
 
     //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
     
     //update timers
     if (bMelodyStart == true) {
         melodyCounter.start();
-//        showStars = false;
-//        bGuessedWrong = false;
-        //printf("MELODY START\n");
-        //bMelodyFinished = false;
     }
     
-    if(melodyCounter.elapsed() > 200500){//set to 100ms after last note onset?
+    if(melodyCounter.elapsed() > 10 && melodyCounter.elapsed() < 2050000){//50ms(50,000 macros)
+        showStars = false;
+        hasPressed = false;
+        bGuessedWrong = false;
+        showStars = false;
+        //printf("MELODY PLAYING NOW\n");
+        //cout << "SHOW STARS IS " << showStars << endl;
+        //cout << "TIMER IS NOW " << melodyCounter.elapsed() << endl;
+    }
+    
+    if(melodyCounter.elapsed() > 2050000){//set to 50ms after last note onset?
         //printf("MELODY FINISHED\n");
         //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
         bMelodyFinished = true;
@@ -285,7 +305,7 @@ void ofPage::draw(){
             }
             
             //printf("fade counter is: ""%d\n",greyCounter);
-            printf("greyStarCounter is : ""%lld\n",greyStarCounter.elapsed());
+            //printf("greyStarCounter is : ""%lld\n",greyStarCounter.elapsed());
             
             
             ofSetColor(0);
@@ -907,7 +927,7 @@ void ofPage::showPage(int x, int y){
     
     //press functions for Starting Melodies
     if (currentPage == 2) {
-        
+        countMelody = 0;//reset counter
         playTrumpetMelody = false;
         playPianoMelody = false;
         
@@ -937,24 +957,34 @@ void ofPage::showPage(int x, int y){
             bGuessedWrong = false;
             showStars = false;
             showDots = false;
+            bPlayTestMelody = true;//start the test melody 
+            
+            
             playTrumpetMelody = true;
             playPianoMelody = false;
-
-            countMelody ++;//make random??
-            if (countMelody > 4) {
-                countMelody = 1;
+            
+            countMelody ++;
+            cout << "\nMelodyCounter = " << testMelodyNumber.size();
+            //cout << testMelodyNumber[0] << endl;
+            
+            //testMelodyNumber[countMelody];//make random??
+            
+            if (countMelody > 3) {
+                countMelody = 0;
             }
-            if(countMelody == 1 || countMelody == 3 ){
-                playPianoMelody = true;//play first piano melody
-                playTrumpetMelody = false;
-                printf("\nPianoMelody\n");
-            }else if(countMelody == 2 || countMelody == 4){
-                playTrumpetMelody = true;
-                playPianoMelody = false;
-                printf("\nTrumpetMelody\n");
-            }
+            
+//            if(testMelodyNumber[countMelody] == 0 || testMelodyNumber[countMelody] == 2 ){
+//                playPianoMelody = true;//play first piano melody
+//                playTrumpetMelody = false;
+//                printf("\nPianoMelody\n");
+//            } else if(testMelodyNumber[countMelody] == 1 || testMelodyNumber[countMelody] == 3){
+//                playTrumpetMelody = true;
+//                playPianoMelody = false;
+//                printf("\nTrumpetMelody\n");
+//            }
         }
-        //cout << "\nMelodyCounter  " << countMelody;
+       
+        
         if (bMelodyFinished && bMelodyStart == false) {
             if (x > 55 && x < 360
                 && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false){

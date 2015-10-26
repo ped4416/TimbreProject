@@ -15,10 +15,10 @@ void ofSounds::setup(){
     trumpetSingle.loadOgg(ofToDataPath("sounds/TrumpetSingle.ogg"));
     
     //Preliminary Session 1 - 4 practice trials only (SAVE DATA?)
-    trial1_x_piano.load(ofToDataPath("sounds/practice/3-56-4-x-piano-120.wav"));
-    trial2_trumpet.load(ofToDataPath("sounds/practice/3-79-10-original-trumpet-120.wav"));
-    trial3_piano.load(ofToDataPath("sounds/practice/8-1127-0-original-piano-120.wav"));
-    trial4_x_trumpet.load(ofToDataPath("sounds/practice/9-622-1-x-trumpet-120.wav"));
+//    trial1_x_piano.load(ofToDataPath("sounds/practice/3-56-4-x-piano-120.wav"));
+//    trial2_trumpet.load(ofToDataPath("sounds/practice/3-79-10-original-trumpet-120.wav"));
+//    trial3_piano.load(ofToDataPath("sounds/practice/8-1127-0-original-piano-120.wav"));
+//    trial4_x_trumpet.load(ofToDataPath("sounds/practice/9-622-1-x-trumpet-120.wav"));
     
     //Session 2 melodies 1 - 20
     origional2Trumpet.loadOgg(ofToDataPath("sounds/14-408-4-original-TrumpetEnd.ogg"));
@@ -32,6 +32,23 @@ void ofSounds::setup(){
     badLuck.load(ofToDataPath("sounds/FX/NegativeFeedback.wav"));
 //    tom1.loadOgg(ofToDataPath("sounds/FX/tom1.ogg"));
 //    tom2.loadOgg(ofToDataPath("sounds/FX/tom2.ogg"));
+    
+    //load all test melodies
+    testMelodysLength = 4;
+    
+    ofDirectory dir;
+    int nFiles = dir.listDir("sounds/practice");
+    testMelodysLength = dir.numFiles();
+    if(nFiles)
+    {
+        testMelodys.assign(testMelodysLength,maxiSample());//needs the number of files here 9!
+        for (int i = 0; i < dir.numFiles(); i++)
+        {
+            // add the song to the vector songs
+            string filePath = dir.getPath(i);
+            testMelodys[i].load(ofToDataPath(ofToString(filePath)));
+        }
+    } else printf("Could not find folder\n");
     
 }
 
@@ -47,6 +64,7 @@ float ofSounds::playSounds(float x){//left channel of music
     float trumpetSingle_x;
     
     //Tests for first 2 / 4 then real trial starts
+    float  testMelody_temp;
     float  trial1_x_piano_f;//3-56-4-x-piano-120
     float  trial2_trumpet_f;//3-79-10-original-trumpet-120
     float  trial3_piano_f;//8-1127-0-original-piano-120
@@ -79,32 +97,6 @@ float ofSounds::playSounds(float x){//left channel of music
         //printf("CHEER SAMPLE");
         cheer_x = cheer.playOnce();
     } else cheer.reset();
-    
-//    if (tom1play == true) {
-//        tom1_x = tom1.playOnce();
-//    } else tom1.reset();
-//    
-//    if (tom2play == true) {
-//        tom2_x = tom2.playOnce();
-//    } else tom2.reset();
-    
-//    cheer.getLength();//get the length to set playback to false
-//    if (cheer.position == cheer.length){
-//        //showStars = false;
-//        cheer.reset();
-//    }
-    
-//    tom1.getLength();//get the length to set playback to false
-//    if (tom1.position == 3000){
-//         tom1play = false;
-//         tom1.reset();
-//    }
-//    
-//    tom2.getLength();//get the length to set playback to false
-//    if (tom2.position == 3000){
-//        tom2play = false;
-//        tom2.reset();
-//    }
 
     if (currentPage == 0 || currentPage == 1){
         //test
@@ -167,27 +159,33 @@ float ofSounds::playSounds(float x){//left channel of music
         origional2Trumpet.reset();
         origional2Piano.reset();
       
-        if (playPianoMelody == true) {
-             trial1_x_piano_f = trial1_x_piano.playOnce();
-        } else trial1_x_piano.reset();
+//        if (playPianoMelody == true) {
+//             trial1_x_piano_f = trial1_x_piano.playOnce();
+//        } else trial1_x_piano.reset();
+//        
+//        pianoMelody.getLength();//get the length to set playback to false
+//        if (trial1_x_piano.position == trial1_x_piano.length){
+//            playPianoMelody = false;
+//            pianoMelody.reset();
+//        }
+//        
+//        if (playTrumpetMelody == true) {
+//            trial2_trumpet_f = trial2_trumpet.playOnce();
+//        } else trial2_trumpet.reset();
+//        
+//        trumpetMelody.getLength();//get the length to set playback to false
+//        if (trial2_trumpet.position == trial2_trumpet.length){
+//            playTrumpetMelody = false;
+//            trial2_trumpet.reset();
+//        }
         
-        pianoMelody.getLength();//get the length to set playback to false
-        if (trial1_x_piano.position == trial1_x_piano.length){
-            playPianoMelody = false;
-            pianoMelody.reset();
-        }
+        //for (int i=0; i<4; i++) {
+            if(bPlayTestMelody){
+                testMelody_temp = testMelodys[countMelody].playOnce();
+            } //else testMelodys[countMelody].reset();
+        //}
         
-        if (playTrumpetMelody == true) {
-            trial2_trumpet_f = trial2_trumpet.playOnce();
-        } else trial2_trumpet.reset();
-        
-        trumpetMelody.getLength();//get the length to set playback to false
-        if (trial2_trumpet.position == trial2_trumpet.length){
-            playTrumpetMelody = false;
-            trial2_trumpet.reset();
-        }
-        
-        x = trial1_x_piano_f + trial2_trumpet_f + cheer_x + badLuck_x;
+        x = testMelody_temp + trial1_x_piano_f + trial2_trumpet_f + cheer_x + badLuck_x;
 
     }
     

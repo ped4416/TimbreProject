@@ -9,6 +9,11 @@ class ofSounds : public ofPage{//
     
     //get the ofPage as the route class all other pages will inherit from this.
     //set up for the sounds
+    
+    //load in songs for playback
+    int testMelodysLength;
+    vector <maxiSample> testMelodys;
+    
     //ofxMaxiSample sound1;//theme song
     
     ofxMaxiSample pianoSingle;

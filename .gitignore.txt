@@ -26,5 +26,3 @@ ofxiOS_Prefix.pch
 TimbreApp.xcodeproj/project.xcworkspace/xcuserdata/mu101pk.xcuserdatad/UserInterfaceState.xcuserstate
 TimbreApp.xcodeproj/project.xcworkspace/xcuserdata/mu101pk.xcuserdatad/UserInterfaceState.xcuserstate 
 bin/data/sounds/practice/
-
-bin/data/sounds/practice/
