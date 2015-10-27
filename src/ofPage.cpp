@@ -6,7 +6,8 @@
 ofPage::ofPage(){
     
     //variables for all pages of Timbre App
-    countMelody = 0;//allow for 0 index
+    practice_count = -1;//allow for 0 index
+    trial_melody_count = -1;//allow for 0 index
     currentFrame = 0;
     fadeFrame = 0;
     currentPage = 0;
@@ -30,17 +31,15 @@ ofPage::ofPage(){
     playTrumpetSingle = false;
     playPianoMelody = false;
     playTrumpetMelody = false;
-    
-    bPlayTestMelody = false;
-    
-//    playTest_o1 = false;
-//    playTest_x1 = false;
-//    playTest_o2 = false;
-//    playTest_x2 = false;
-    
     bGuessedPiano = false;
     bGuessedTrumpet = false;
     bGuessedWrong = false;
+    
+    //user setup
+    bSessionA1 = false;
+    bSessionA2 = false;
+    bSessionB1 = false;
+    bSessionB2 = false;
     
     //start button positions
     x1 = 100;
@@ -55,15 +54,6 @@ ofPage::ofPage(){
     
     //animatied dots
     showDots = false;
-//    displayDot1 = false;
-//    displayDot2 = false;
-//    displayDot3 = false;
-//    displayDot4 = false;
-//    displayQM = false;
-    
-    //bools for text
-    texthide = false;
-    textshow = true;
     
     bMelodyFinished = false;
     bPianoLeft = true;//start true!
@@ -75,6 +65,10 @@ ofPage::ofPage(){
     greyCounter = 0;
     greyCounter2 = 0;
     
+    //melodies setup
+    bPlayPracticeMelody = false;
+    bPlayGroupAMelody = false;
+    bPlayGroupBMelody = false;
 }
 
 void ofPage::setup(){
@@ -130,27 +124,47 @@ void ofPage::setup(){
     dotsText.setLetterSpacing(1.037);
     
     //setup random test melodies
-    testMelodyNumber.resize(4);
-    for(int i = 0; i < testMelodyNumber.size(); i++){
-        testMelodyNumber[i] = i;//0,1,2,3
-        cout << "Test Number Is Now: "  << testMelodyNumber[i] <<endl;
+    practice_melody_v.resize(4);
+    for(int i = 0; i < practice_melody_v.size(); i++){
+        practice_melody_v[i] = i;//0,1,2,3
+        cout << "Test Number Is Now: "  << practice_melody_v[i] <<endl;
     }
     
-    std::random_shuffle (testMelodyNumber.begin(), testMelodyNumber.end());
+    std::random_shuffle (practice_melody_v.begin(), practice_melody_v.end());
     
-    for(int i = 0; i < testMelodyNumber.size(); i++){
-        cout << testMelodyNumber[i] << endl;
+    for(int i = 0; i < practice_melody_v.size(); i++){
+        cout << practice_melody_v[i] << endl;
     }
-
+    
+    //setup session 1 (A1 - B1 test melodies)
+    trialMelody_1_v.resize(20);
+    for(int i = 0; i < trialMelody_1_v.size(); i++){
+        trialMelody_1_v[i] = i;//0,1,2,3
+        cout << "Session 1 Test Number Is Now: "  << trialMelody_1_v[i] <<endl;
+    }
+    
+    std::random_shuffle (trialMelody_1_v.begin(), trialMelody_1_v.end());
+    
+    for(int i = 0; i < trialMelody_1_v.size(); i++){
+        cout << "Session 1 Index Order: " << trialMelody_1_v[i] << endl;
+    }
+    
+    //setup session 2 (A2 - B2 test melodies)
+    trialMelody_2_v.resize(20);
+    for(int i = 0; i < trialMelody_2_v.size(); i++){
+        trialMelody_2_v[i] = i;//0,1,2,3
+        cout << "Session 2 Test Number Is Now: "  << trialMelody_2_v[i] <<endl;
+    }
+    
+    std::random_shuffle (trialMelody_2_v.begin(), trialMelody_2_v.end());
+    
+    for(int i = 0; i < trialMelody_2_v.size(); i++){
+        cout << "Session 2 Index Order: " << trialMelody_2_v[i] << endl;
+    }
 }
 
 void ofPage::update(){
-    
-    //cout << "my array is size again again!!!: " << testMelodyNumber.size() << endl;
-    //cout << testMelodyNumber[2] << endl;
 
-    //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
-    
     //update timers
     if (bMelodyStart == true) {
         melodyCounter.start();
@@ -195,6 +209,7 @@ void ofPage::update(){
         greyCounter2 = 0;
         greyStarCounter.reset();//reset timer
         melodyCounter.reset();
+        bPlayPracticeMelody = false;//reset
     }
 }
 
@@ -208,11 +223,7 @@ bool ofPage::showAccelPage(int x) {//a method to allow accelarometer to display 
 }
 
 void ofPage::draw(){
-    
-    //cout << "my array is size again again!!!: " << testMelodyNumber.size() << endl;
-    //cout << testMelodyNumber[2] << endl;
-    
-    //cout << "my array is size: " << testMelodyNumber.size() << endl;
+  
     ofBackground(255, 255, 255);
     
     if(currentPage == 0){
@@ -390,7 +401,7 @@ void ofPage::draw(){
             if(dotTimer >= 1470.00 && dotTimer < 3000){
                 dotsText.drawString(".", 350, 350);
             }
-            if(dotTimer >= 2004.00 && dotTimer < 4000){
+            if(dotTimer >= 2004.00 && dotTimer < 3000){
                 dotsText.drawString("?", 450, 350);
             }
             //printf("Fade Time is:  ""%f\n",dotTimer);
@@ -567,9 +578,14 @@ void ofPage::draw(){
         franklinBook14.drawString("Press the Piano! \n\nWhat do you hear?. \n\n\n\nNow press the trumpet.\n\nCan you hear it is different? ", 120, 150);
     }
     
-    if(currentPage == 3 && bGuessedWrong == false && bGuessedPiano == false && bGuessedTrumpet == false){
+    if(currentPage == 3 && bGuessedWrong == false && bGuessedPiano == false && bGuessedTrumpet == false && practice_count == -1){
         ofSetColor(0, 0, 0);
         franklinBook14.drawString("Can you tell Giles what \n\ninstrument is playing?\n\n\n\nIs it a piano?\n\n\n\nOr is it a trumpet? \n\n\n\nPress Giles's ear to hear the tune!", 100, 70);
+    } else if(currentPage == 3 && practice_count == 3){//edit to 2 for final APP TODO
+        if(bPlayPracticeMelody == false){
+            ofSetColor(0, 0, 0);
+            franklinBook14.drawString("Let's move on!", 100, 200);
+        }
     }
     
     if(currentPage == 4 && showDots == false){
@@ -751,7 +767,13 @@ void ofPage::showPage(int x, int y){
             int pageBackwardX = 60;
             int pageBackwardY = 708;
             
-            if (currentPage > 0 && currentPage < 27 && x >= pageForwardX && y > pageForwardY ){
+            if (currentPage > 3 && currentPage < 24 && x >= pageForwardX && y > pageForwardY )
+            {
+                trial_melody_count++;//increment up 1 every page
+            }
+            
+            if (currentPage > 0 && currentPage < 24 && x >= pageForwardX && y > pageForwardY )
+            {
                 pageForward = true;//allows correct files to load or unload
                 showStars = false;
                 bGuessedWrong = false;
@@ -765,11 +787,7 @@ void ofPage::showPage(int x, int y){
                 greyStarCounter.reset();//reset timer
                 greyCounter = 0;
                 greyCounter2 = 0;
-                
-                //narrate = false;//this is to stop narration coming in too soon.
-                //reset text on each page turn
-                textshow = true;
-                texthide = false;
+
 //                printf("%d\n",currentPage);
 //                printf("%d\n",pageForward);
 //                printf("%d\n",pageBack);
@@ -874,70 +892,9 @@ void ofPage::showPage(int x, int y){
                 showSettings = true;
             }
             
-            
         }
         
-        //all touch for settings of music on/off and narration on or off
-        if (showSettings == true) {
-            stopPress = true;
-            showOptionsTab = false;//must run first to stop interference of buttons.
-            howTo = false;
-            
-            //back to options tab
-            int resumeX1 = 580;
-            int resumeX2 = 640;
-            int resumeY1 = 130;
-            int resumeY2 = 200;
-            
-            //press top right to stop music
-            int musicOffX1 = 580;
-            int musicOffX2 = 640;
-            int musicOffY1 = 240;
-            int musicOffY2 = 295;
-            
-            int toMyselfX1 = 580;
-            int toMyselfX2 = 640;
-            int toMyselfY1 = 320;
-            int toMyselfY2 = 400;
-            
-            int toMeX1 = 580;
-            int toMeX2 = 640;
-            int toMeY1 = 420;
-            int toMeY2 = 496;
-            
-            if (x > resumeX1 && x < resumeX2
-                && y > resumeY1 && y < resumeY2 ){
-                showSettings = false;
-                stopPress = false;
-                
-                
-            } else if (x > musicOffX1 && x < musicOffX2
-                       && y > musicOffY1 && y < musicOffY2 ){
-                playMusic = !playMusic;
-                printf("sound on and off?");
-                
-            } else if (x > toMyselfX1 && x < toMyselfX2
-                       && y > toMyselfY1 && y < toMyselfY2 ){
-                narrate = false;
-                //readToMe = false;
-                printf("narrate off?");
-                
-            } else if (x > toMeX1 && x < toMeX2
-                       && y > toMeY1 && y < toMeY2 ){
-                narrate = true;
-                printf("narrate true?");
-                
-            }
-            
-        }
     }
-    
-    //make sure music is turned off when options tab is up
-    if(showOptionsTab == true || showSettings == true || howTo == true){
-        playMusicTemp = false;
-        narrateTemp = false;
-    } else playMusicTemp = true, narrateTemp = true;
-    
     //if howToPage is active allow sound to be switched off
     //see how to navigate the app
     if (howTo == true) {
@@ -981,17 +938,16 @@ void ofPage::showPage(int x, int y){
     
     //press functions for Starting Melodies
     if (currentPage == 2) {
-        countMelody = 0;//reset counter
+        practice_count = -1;//reset counter for 0 index
+        bPlayPracticeMelody = false;
         playTrumpetMelody = false;
         playPianoMelody = false;
         
-        if (x > 130 && x < 480
-            && y < 650 && y > 320){
+        if (x > 130 && x < 480 && y < 650 && y > 320){
             playPianoSingle = true;
         }
         
-        if (x > 570 && x < 890
-            && y < 650 && y > 320){
+        if (x > 570 && x < 890 && y < 650 && y > 320){
             playTrumpetSingle = true;
         }
     }
@@ -999,35 +955,27 @@ void ofPage::showPage(int x, int y){
     if (currentPage == 3) {
         playTrumpetSingle = false;
         playPianoSingle = false;
-        playTest_o1 = false;
-        playTest_x1 = false;
+        trial_melody_count = -1;//0 index ready for trials
         
         if (x > 780 && y < 290 && y > 0){//press bear to start melody
+            practice_count ++;
+            if (practice_count > 3) {
+                practice_count = 3;
+            }
             greyStarCounter.reset();//reset timers
             melodyCounter.reset();
             bMelodyStart = true;
             showStars = false;
             hasPressed = false;
             bGuessedWrong = false;
-            showStars = false;
             showDots = false;
-            bPlayTestMelody = true;//start the test melody 
-            
-            
-            playTrumpetMelody = true;
-            playPianoMelody = false;
-            
-            countMelody ++;
-            cout << "\nMelodyCounter = " << countMelody << endl;
+            bPlayPracticeMelody = true;//start the test melody
+          
+            cout << "\nMelodyCounter = " << practice_count << endl;
             //cout << testMelodyNumber[0] << endl;
-            
-            if (countMelody > 3) {
-                countMelody = 0;
-            }
-            
-            int tempMel = testMelodyNumber[countMelody];//make random??
-            
-            cout << "\nTEMP_MelodyCounter = " << tempMel << endl;
+            int tempMel = practice_melody_v[practice_count];
+        
+            cout << "\nPractice Melody = " << tempMel << endl;
             
             if(tempMel == 0 || tempMel == 2 ){
                 playPianoMelody = true;//play first piano melody
@@ -1038,8 +986,8 @@ void ofPage::showPage(int x, int y){
                 playPianoMelody = false;
                 printf("\nTrumpetMelody\n");
             }
+
         }
-       
         
         if (bMelodyFinished && bMelodyStart == false) {
             if (x > 55 && x < 360
@@ -1053,7 +1001,6 @@ void ofPage::showPage(int x, int y){
             
             if (x > ofGetScreenWidth()-380 && x < 711
                 && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false){
-                //greyStarCounter.start();
                 bGuessedTrumpet = true;
                 hasPressed = true;
                 printf("\nGUESS TRUMPET");
@@ -1082,85 +1029,119 @@ void ofPage::showPage(int x, int y){
         }
     }
     
-    if (currentPage == 4) {//trial 1
-        playTest_x1 = false;//reset bool
-        playTest_o2 = false;
+    if (currentPage >= 4) {//trial 1 - 20
+        bPlayPracticeMelody = false;
+        practice_count = -1;//reset counter for 0 index
+        //trial_melody_count ++;
+        if (trial_melody_count > 20) {
+            trial_melody_count = 20;
+        }
+
         //press bear head to sound.. or trial number to sound
-        if (x > 780 && y < 290 && y > 0 && hasPressed == false){
-            bMelodyStart = true;
+        if (x > 780 && y < 290 && y > 0 && hasPressed == false)
+        {
             greyStarCounter.reset();//reset timers
             melodyCounter.reset();
+            bMelodyStart = true;
+            hasPressed = false;
             bGuessedWrong = false;
             showStars = false;
             showDots = true;
             startDotTime = ofGetElapsedTimeMillis();  // get the start time
-            playTest_o1 = true; //play expected melody with trumpet
-            printf("\nTest1-PlayNOW");
-            playTrumpetMelody = false;
-            playPianoMelody = false;
-        }
-        
-        //pressing for stars!
-        if (x > 55 && x < 360 && y < 690 && y > 435 && playTest_o1 == true && hasPressed == false){// && bMelodyFinished == true){
-            bGuessedTrumpet = false;
-            bGuessedWrong = true;
-            showStars = false;
-            printf("\nGUESS Piano");
-            printf("\nSorry Better Luck Next Time");
-            hasPressed = true;
+            bPlayPracticeMelody = false;
             
-        }
-        
-        if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && playTest_o1 == true && hasPressed == false){// && bMelodyFinished == true){
-            bGuessedTrumpet = true;
-            printf("\nGUESS Trumpet");
-            showStars = true;//show stars!
-            printf("\nWELLDONE");
-            hasPressed = true;
-        }
-        
-    }
-    if (currentPage == 5){//trial 2
-        playTest_o1 = false;//reset bool
-        playTest_x1 = false;
-        //press bear head to sound.. or trial number to sound
-        if (x > 780 && y < 290 && y > 0 && hasPressed == false){
-            greyStarCounter.reset();//reset timers
-            melodyCounter.reset();
-            bMelodyStart = true;
-            bGuessedWrong = false;
-            showStars = false;
-            showDots = true;
-            startDotTime = ofGetElapsedTimeMillis();  // get the start time
-            playTest_o2 = true; //play expected melody with piano
-            printf("\nTest 2 PlayNOW");
-        }
-        
-        //pressing for stars!
-        if (x > 55 && x < 360 && y < 690 && y > 435 && playTest_o2 == true && hasPressed == false){
-            bGuessedPiano = true;
-            printf("\nGUESS Piano");
-            showStars = true;//show stars!
-            printf("\nWELLDONE");
-            hasPressed = true;
+            //check what session
+            if(bSessionA1 == true || bSessionA2 == true)
+            {
+                bPlayGroupAMelody = true;
+                bPlayGroupBMelody = false;
+            } else if(bSessionB1 == true || bSessionB2 == true)
+            {
+                bPlayGroupBMelody = true;
+                bPlayGroupAMelody = false;
+            }
             
+            cout << "\nTrial Melody Counter = " << trial_melody_count << endl;
+        
+            //melodies 1 - 20 for group A1 - A2
+            if(bPlayGroupAMelody)
+            {
+                int tempTrialMel = trialMelody_1_v[trial_melody_count];
+                cout << "\nTrial Melody index = " << tempTrialMel << endl;
+                if(tempTrialMel >= 0 && tempTrialMel < 10 )
+                {
+                    playPianoMelody = true;
+                    playTrumpetMelody = false;
+                    printf("\nPianoMelody");
+                } else if(tempTrialMel >= 10 && tempTrialMel < 20)                {
+                    playTrumpetMelody = true;
+                    playPianoMelody = false;
+                    printf("\nTrumpetMelody");
+                }
+            }
+            //melodies 1 - 20 for group B1 - B2
+            else if(bPlayGroupBMelody)
+            {
+                int tempTrialMel = trialMelody_2_v[trial_melody_count];
+                cout << "\nTrial Melody index = " << tempTrialMel << endl;
+                if(tempTrialMel >= 0 && tempTrialMel < 10 )
+                {
+                    playPianoMelody = true;
+                    playTrumpetMelody = false;
+                    printf("\nPianoMelody");
+                } else if(tempTrialMel >= 10 && tempTrialMel < 20)
+                {
+                    playTrumpetMelody = true;
+                    playPianoMelody = false;
+                    printf("\nTrumpetMelody");
+                }
+            }
         }
         
-        if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && playTest_o2 == true && hasPressed == false){
-            bGuessedPiano = false;
-            bGuessedWrong = true;
-            printf("\nGUESS Trumpet");
-            printf("\nSorry Better Luck Next Time");
-            hasPressed = true;
+        if (bMelodyFinished && bMelodyStart == false)
+        {
+            if (x > 55 && x < 360
+                && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false)
+            {
+                bGuessedPiano = true;
+                hasPressed = true;
+                printf("\nGUESS PIANO");
+                showStars = true;//show stars!
+                printf("\nWELLDONE");
+            }
+            
+            if (x > ofGetScreenWidth()-380 && x < 711
+                && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false)
+            {
+                bGuessedTrumpet = true;
+                hasPressed = true;
+                printf("\nGUESS TRUMPET");
+                showStars = true;//show stars!
+                printf("\nWELLDONE");
+            }
+            
+            //wrong guess
+            if (x > 55 && x < 360
+                && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false)
+            {
+                bGuessedWrong = true;
+                hasPressed = true;
+                showStars = false;
+                printf("\nWRONG IT WAS TRUMPET");
+                
+            }
+            
+            if (x > ofGetScreenWidth()-380 && x < 711
+                && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false)
+            {
+                bGuessedWrong = true;
+                hasPressed = true;
+                showStars = false;
+                printf("\nWRONG IT WAS PIANO");
+                
+            }
         }
     }
-    if (currentPage > 5 || currentPage == 0){//edit as we add more trials..
-        playTest_o1 = false;//reset bool
-        playTest_x1 = false;//reset bool
-        playTest_o2 = false;//reset bool
-        playTest_x2 = false;//reset bool
-    }
-    //printf("%d\n",currentPage);
 }
 
 

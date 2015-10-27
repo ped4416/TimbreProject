@@ -40,7 +40,6 @@ public: // place public functions or variables declarations here
     bool showAccelPage(int x);
     
     // variables
-    int countMelody;
     int currentPage;
     int currentFrame;//set up the timing device for the whole book!
     int fadeFrame;
@@ -81,13 +80,6 @@ public: // place public functions or variables declarations here
     bool playPianoMelody;
     bool playTrumpetMelody;
     
-    bool playMusic;
-    bool playMusicTemp;// to stop music when settings menu is on
-    bool playTest_o1;
-    bool playTest_x1;
-    bool playTest_o2;
-    bool playTest_x2;
-    
     //guessed correct
     bool bGuessedPiano;
     bool bGuessedTrumpet;
@@ -123,14 +115,13 @@ public: // place public functions or variables declarations here
     
     //animated dots
     bool showDots;
-//    bool displayDot1;
-//    bool displayDot2;
-//    bool displayDot3;
-//    bool displayDot4;
-//    bool displayQM;
     
-    //piano left or right?
+    //piano left or right
     bool bPianoLeft;
+    bool bSessionA1;
+    bool bSessionA2;
+    bool bSessionB1;
+    bool bSessionB2;
     
     //timer
     float startTime; // store when we start time timer
@@ -146,11 +137,17 @@ public: // place public functions or variables declarations here
     int greyCounter;
     int greyCounter2;
     
-    //random numbers
-    vector<int> testMelodyNumber;
+    //Practicemelody setup
+    bool bPlayPracticeMelody;
+    vector<int> practice_melody_v;
+    int practice_count;
     
-    //test melody setup
-    bool bPlayTestMelody;
+    //trial melody setup
+    bool bPlayGroupAMelody;
+    bool bPlayGroupBMelody;
+    vector<int> trialMelody_1_v;
+    vector<int> trialMelody_2_v;
+    int trial_melody_count;
 
 private: // place private functions or variables declarations here
     

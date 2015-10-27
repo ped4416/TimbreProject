@@ -40,7 +40,11 @@ class ofApp : public ofxiOSApp{
     
         //load in songs for playback
         int testMelodysLength;
-        vector <maxiSample> testMelodys;
+        int sessionA_MelodysLength;
+        int sessionB_MelodysLength;
+        vector <maxiSample> testMelodys_v;
+        vector <maxiSample> sessionA_Melodys_v;
+        vector <maxiSample> sessionB_Melodys_v;
         
         //ofxMaxiSample sound1;//theme song
         
@@ -68,7 +72,7 @@ class ofApp : public ofxiOSApp{
 
     
         ofPage myPage;//base class
-        ofSounds mySounds;
+        //ofSounds mySounds;
     
         //load in pages
         //HomePage myHomePage;
@@ -85,10 +89,6 @@ class ofApp : public ofxiOSApp{
         
         bool accel;
         vector<Ball> balls;
-    
-        //int testMelodysLength;
-        vector <int> testMelodyNumber1;
-
 };
 
 
