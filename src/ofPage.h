@@ -1,5 +1,7 @@
 #pragma once
 
+//#include "ofxiOS.h"
+//#include "ofxiOSExtras.h"
 #include <iostream>
 #include "ofMain.h"
 #include <math.h>
@@ -7,9 +9,7 @@
 #include "ofxMaxim.h"
 #include <time.h>
 #include <vector>
-//#include <algorithms> // may need?
 
-//#include "ofxMaxim.h"
 
 class ofPage { //this is the base class
     
@@ -180,6 +180,11 @@ private: // place private functions or variables declarations here
     ofImage star4b;
     ofImage star4c;
     
+    //load images for the Intro to Giles Page & The Piano + Trumpet
+    ofImage bearImg;
+    ofImage pianoImg;
+    ofImage trumpetImg;
+    ofImage cover;
 }; // don't forget the semicolon!!
 
 //#endif

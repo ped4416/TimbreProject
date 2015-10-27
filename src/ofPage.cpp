@@ -75,12 +75,9 @@ ofPage::ofPage(){
     greyCounter = 0;
     greyCounter2 = 0;
     
-    
-
-
 }
 
-void ofPage::setup(){//implementation of the update() function of our object
+void ofPage::setup(){
     
     leftArrow.loadImage("buttons/LEFTARROW.png");
     rightArrow.loadImage("buttons/RIGHTARROW.png");
@@ -107,6 +104,11 @@ void ofPage::setup(){//implementation of the update() function of our object
     star4b.loadImage("Images/4b.png");
     star4c.loadImage("Images/4c.png");
     
+    cover.loadImage("Images/homePage.png");
+    bearImg.loadImage("Images/bearfull.png");
+    pianoImg.loadImage("Images/PIANO.png");
+    trumpetImg.loadImage("Images/TRUMPET.png");
+    
     //set up fonts
     franklinBook14.loadFont("fonts/Georgia.ttf", 22);
     franklinBook14.setLineHeight(18.0f);
@@ -128,10 +130,10 @@ void ofPage::setup(){//implementation of the update() function of our object
     dotsText.setLetterSpacing(1.037);
     
     //setup random test melodies
-    testMelodyNumber.resize(20);
+    testMelodyNumber.resize(4);
     for(int i = 0; i < testMelodyNumber.size(); i++){
         testMelodyNumber[i] = i;//0,1,2,3
-        //cout << "Test Number Is Now: "  << testMelodyNumber[i] <<endl;
+        cout << "Test Number Is Now: "  << testMelodyNumber[i] <<endl;
     }
     
     std::random_shuffle (testMelodyNumber.begin(), testMelodyNumber.end());
@@ -139,14 +141,13 @@ void ofPage::setup(){//implementation of the update() function of our object
     for(int i = 0; i < testMelodyNumber.size(); i++){
         cout << testMelodyNumber[i] << endl;
     }
-    
-    cout << "my array is size: " << testMelodyNumber.size() << endl;
 
 }
 
 void ofPage::update(){
     
-    //cout << "my array is size: " << testMelodyNumber.size() << endl;
+    //cout << "my array is size again again!!!: " << testMelodyNumber.size() << endl;
+    //cout << testMelodyNumber[2] << endl;
 
     //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
     
@@ -208,6 +209,12 @@ bool ofPage::showAccelPage(int x) {//a method to allow accelarometer to display 
 
 void ofPage::draw(){
     
+    //cout << "my array is size again again!!!: " << testMelodyNumber.size() << endl;
+    //cout << testMelodyNumber[2] << endl;
+    
+    //cout << "my array is size: " << testMelodyNumber.size() << endl;
+    ofBackground(255, 255, 255);
+    
     if(currentPage == 0){
         showStars = false;
         ofEnableAlphaBlending();
@@ -216,14 +223,59 @@ void ofPage::draw(){
         buttonText.drawString("Credits",sin(ofGetElapsedTimeMillis()/102.0f) * 1 +716,500+sin(ofGetElapsedTimeMillis()/102.0f));
         buttonText.drawString("Practice",sin(ofGetElapsedTimeMillis()/102.0f) * 1 +79,500+sin(ofGetElapsedTimeMillis()/102.0f));
         buttonText.drawString("Options",sin(ofGetElapsedTimeMillis()/102.0f) * 1 +716,382+sin(ofGetElapsedTimeMillis()/102.0f));
-        
         ofDisableAlphaBlending();
-        
         playTrumpetSingle = false;
         playPianoSingle = false;
         playTrumpetMelody = false;
         playPianoMelody = false;
+        
+        ofEnableAlphaBlending();
+        if(showOptionsTab == true || showSettings == true){
+            ofSetColor(255, 255, 255, 100);
+        } else ofSetColor(255,255,255,255);
+        cover.draw(0,0,1024,768);//plus 10 pixlels to line up correctly
+        currentFrame++;
     
+    }
+    
+    if (currentPage == 1){
+        ofEnableAlphaBlending();
+        //dim page and stop interaction and music if options are on display
+        if(showOptionsTab == true || showSettings == true){
+            ofSetColor(255, 255, 255, 100);
+        } else ofSetColor(255,255,255,255);
+        bearImg.draw(0,0,1024,768);//plus 10 pixlels to line up correctly
+        
+        currentFrame++;
+        //printf("%d\n",currentFrame);//keep track of timer as each page is clicked.
+    }
+    
+    if (currentPage == 2){
+        ofEnableAlphaBlending();
+        //dim page and stop interaction and music if options are on display
+        if(showOptionsTab == true || showSettings == true){
+            ofSetColor(255, 255, 255, 100);
+        } else ofSetColor(255,255,255,255);
+        
+        pianoImg.draw(150,350);
+        trumpetImg.draw(ofGetScreenWidth()-200,350);
+        currentFrame++;
+        //printf("%d\n",currentFrame);//keep track of timer as each page is clicked.
+    }
+    
+    if (currentPage >= 3){// && guessedWrong == false && guessedPiano == false && guessedTrumpet == false){
+        ofEnableAlphaBlending();
+        //dim page and stop interaction and music if options are on display
+        if(showOptionsTab == true || showSettings == true){
+            ofSetColor(255, 255, 255, 100);
+        } else ofSetColor(255,255,255,255);
+        //pianoImg.draw(0,0,1024,768);
+        //trumpetImg.draw(0,0,1024,768);
+        bearImg.draw(10,0,1024,768);//plus 10 pixlels to line up correctly
+        pianoImg.draw(55,410);
+        trumpetImg.draw(ofGetScreenWidth()-380,410);
+        currentFrame++;
+        //printf("%d\n",currentFrame);//keep track of timer as each page is clicked.
     }
 
     if(howTo == true){
@@ -636,6 +688,8 @@ void ofPage::showPage(int x, int y){
         
         if (x > playtimeX1 && y > playtimeY1
             && x < playtimeX2 && y < playtimeY2){
+//            cout << "\nMelody Counter Array Length = " << testMelodyNumber.size();
+
             currentFrame = 0;
             currentPage = 1;//move to introduction page
             //showCredits = true;
@@ -964,24 +1018,26 @@ void ofPage::showPage(int x, int y){
             playPianoMelody = false;
             
             countMelody ++;
-            cout << "\nMelodyCounter = " << testMelodyNumber.size();
+            cout << "\nMelodyCounter = " << countMelody << endl;
             //cout << testMelodyNumber[0] << endl;
-            
-            //testMelodyNumber[countMelody];//make random??
             
             if (countMelody > 3) {
                 countMelody = 0;
             }
             
-//            if(testMelodyNumber[countMelody] == 0 || testMelodyNumber[countMelody] == 2 ){
-//                playPianoMelody = true;//play first piano melody
-//                playTrumpetMelody = false;
-//                printf("\nPianoMelody\n");
-//            } else if(testMelodyNumber[countMelody] == 1 || testMelodyNumber[countMelody] == 3){
-//                playTrumpetMelody = true;
-//                playPianoMelody = false;
-//                printf("\nTrumpetMelody\n");
-//            }
+            int tempMel = testMelodyNumber[countMelody];//make random??
+            
+            cout << "\nTEMP_MelodyCounter = " << tempMel << endl;
+            
+            if(tempMel == 0 || tempMel == 2 ){
+                playPianoMelody = true;//play first piano melody
+                playTrumpetMelody = false;
+                printf("\nPianoMelody\n");
+            } else if(tempMel == 1 || tempMel == 3){
+                playTrumpetMelody = true;
+                playPianoMelody = false;
+                printf("\nTrumpetMelody\n");
+            }
         }
        
         

@@ -6,8 +6,8 @@
 #include "ofxMaxim.h"
 #include "ofSounds.h"
 #include "ofPage.h"
-#include "HomePage.h"
-#include "Introduction.h"
+//#include "HomePage.h"
+//#include "Introduction.h"
 #include "Ball.h"
 
 
@@ -35,12 +35,44 @@ class ofApp : public ofxiOSApp{
         int		initialBufferSize;
         int		sampleRate;
     
+        //get the ofPage as the route class all other pages will inherit from this.
+        //set up for the sounds
+    
+        //load in songs for playback
+        int testMelodysLength;
+        vector <maxiSample> testMelodys;
+        
+        //ofxMaxiSample sound1;//theme song
+        
+        ofxMaxiSample pianoSingle;
+        ofxMaxiSample trumpetSingle;
+        ofxMaxiSample pianoMelody;
+        ofxMaxiSample trumpetMelody;
+        
+        //Tests for first 2 then real trial starts
+        ofxMaxiSample trial1_x_piano;//3-56-4-x-piano-120
+        ofxMaxiSample trial2_trumpet;//3-79-10-original-trumpet-120
+        ofxMaxiSample trial3_piano;//8-1127-0-original-piano-120
+        ofxMaxiSample trial4_x_trumpet;//9-622-1-x-trumpet-120
+        
+        //real trial starts from here
+        ofxMaxiSample origional2Trumpet;
+        ofxMaxiSample origional2Piano;
+        ofxMaxiSample x2;
+        ofxMaxiSample origional3;
+        ofxMaxiSample x3;
+        
+        //sounds fx
+        ofxMaxiSample cheer;
+        ofxMaxiSample badLuck;
+
+    
         ofPage myPage;//base class
-        ofSounds mySounds; 
+        ofSounds mySounds;
     
         //load in pages
-        HomePage myHomePage;
-        Introduction myIntroduction;
+        //HomePage myHomePage;
+        //Introduction myIntroduction;
     
         ofPoint vel;//for accelarometer
         ofPoint vel1;
@@ -53,6 +85,9 @@ class ofApp : public ofxiOSApp{
         
         bool accel;
         vector<Ball> balls;
+    
+        //int testMelodysLength;
+        vector <int> testMelodyNumber1;
 
 };
 
