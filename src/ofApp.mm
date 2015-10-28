@@ -250,14 +250,38 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
             x = practiceMelody_temp + cheer_x + badLuck_x;
         }
         
-        else if (myPage.currentPage >= 4 && myPage.currentPage <= 23){//trial 1 - 20
+        else if (myPage.currentPage >= 4)//&& myPage.currentPage <= 23){//trial 1 - 20
+        {
             //reset practice trials
             for (int i=0; i<4; i++) {
                 testMelodys_v[i].reset();
             }
+            
+            if(myPage.bPlayGroupAMelody == false){
+                for (int i=0; i<20; i++) {
+                    sessionA_Melodys_v[i].reset();
+                }
+            }
+            if(myPage.bPlayGroupBMelody == false){
+                for (int i=0; i<20; i++) {
+                    sessionB_Melodys_v[i].reset();
+                }
+            }
 
             pianoSingle.reset();
             trumpetSingle.reset();
+            
+//            sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].getLength();//get the length to set playback to false
+//            if (sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].position == sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].length){
+//                myPage.bPlayGroupAMelody = false;
+//                sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].reset();
+//            }
+//            
+//            sessionB_Melodys_v[myPage.trialMelody_2_v[myPage.trial_melody_count]].getLength();//get the length to set playback to false
+//            if (sessionB_Melodys_v[myPage.trialMelody_2_v[myPage.trial_melody_count]].position == sessionA_Melodys_v[myPage.trialMelody_2_v[myPage.trial_melody_count]].length){
+//                myPage.bPlayGroupBMelody = false;
+//                sessionB_Melodys_v[myPage.trialMelody_2_v[myPage.trial_melody_count]].reset();
+//            }
     
             if(myPage.bPlayGroupAMelody){
                 trialMelodies_temp = sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].playOnce();

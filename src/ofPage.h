@@ -40,6 +40,7 @@ public: // place public functions or variables declarations here
     bool showAccelPage(int x);
     
     // variables
+    int buttonSize;
     int currentPage;
     int currentFrame;//set up the timing device for the whole book!
     int fadeFrame;
@@ -115,6 +116,8 @@ public: // place public functions or variables declarations here
     
     //animated dots
     bool showDots;
+    bool bGroupAB;
+    bool bGroupBA;
     
     //piano left or right
     bool bPianoLeft;
@@ -182,6 +185,9 @@ private: // place private functions or variables declarations here
     ofImage pianoImg;
     ofImage trumpetImg;
     ofImage cover;
+    
+    ofImage buttonSelect;
+    ofImage buttonSelect2;
 }; // don't forget the semicolon!!
 
 //#endif
