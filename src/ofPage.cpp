@@ -135,7 +135,7 @@ void ofPage::setup(){
         cout << "Test Number Is Now: "  << practice_melody_v[i] <<endl;
     }
     
-    std::random_shuffle (practice_melody_v.begin(), practice_melody_v.end());
+        (practice_melody_v.begin(), practice_melody_v.end());
     
     for(int i = 0; i < practice_melody_v.size(); i++){
         cout << practice_melody_v[i] << endl;
@@ -202,7 +202,7 @@ void ofPage::update(){
     
     if(greyStarCounter.elapsed() > 100000)
     {
-        printf("STOP MELODY PLAYBACK\n");
+        //printf("STOP MELODY PLAYBACK\n");
         bPlayPracticeMelody = false;//reset
         bPlayGroupAMelody = false;
         bPlayGroupBMelody = false;
@@ -316,11 +316,11 @@ void ofPage::draw(){
             ofSetColor(255, 255, 255, 100);
         } else ofSetColor(255,255,255,255);
         
-        if(bSessionA1 == true || bSessionA2 == true)
+        if(bSessionA1 == true || bSessionB1 == true)
         {
             pianoImg.draw(150,350);
             trumpetImg.draw(ofGetScreenWidth()-200,350);
-        } else if(bSessionB1 == true || bSessionB2)
+        } else if(bSessionA2 == true || bSessionB2)
         {
             trumpetImg.draw(150,350);
             pianoImg.draw(ofGetScreenWidth()-200,350);
@@ -339,11 +339,11 @@ void ofPage::draw(){
         //pianoImg.draw(0,0,1024,768);
         //trumpetImg.draw(0,0,1024,768);
         bearImg.draw(10,0,1024,768);//plus 10 pixlels to line up correctly
-        if(bSessionA1 == true || bSessionA2 == true)
+        if(bSessionA1 == true || bSessionB1 == true)
         {
             pianoImg.draw(55,410);
             trumpetImg.draw(ofGetScreenWidth()-380,410);
-        } else if(bSessionB1 == true || bSessionB2)
+        } else if(bSessionA2 == true || bSessionB2)
         {
             trumpetImg.draw(55,410);;
             pianoImg.draw(ofGetScreenWidth()-380,410);
@@ -1040,11 +1040,11 @@ void ofPage::showPage(int x, int y){
         playPianoMelody = false;
         
         if (x > 130 && x < 480 && y < 650 && y > 320){
-            if((bSessionA1) || (bSessionA2))
+            if((bSessionA1) || (bSessionB1))
             {
                 playPianoSingle = true;
                 playTrumpetSingle = false;
-            } else if((bSessionB1) || (bSessionB2))
+            } else if((bSessionA2) || (bSessionB2))
             {
                 playPianoSingle = false;
                 playTrumpetSingle = true;
@@ -1052,11 +1052,11 @@ void ofPage::showPage(int x, int y){
         }
         
         if (x > 570 && x < 890 && y < 650 && y > 320){
-            if((bSessionA1) || (bSessionA2))
+            if((bSessionA1) || (bSessionB1))
             {
                 playPianoSingle = false;
                 playTrumpetSingle = true;
-            } else if((bSessionB1) || (bSessionB2))
+            } else if((bSessionA2) || (bSessionB2))
             {
                 playPianoSingle = true;
                 playTrumpetSingle = false;
@@ -1108,7 +1108,7 @@ void ofPage::showPage(int x, int y){
             //PIANO LEFT
             if (x > 55 && x < 360 && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false)
             {
-                if(bSessionA1 == true || bSessionA2 == true)
+                if(bSessionA1 == true || bSessionB1 == true)
                 {
                     bGuessedPiano = true;
                     hasPressed = true;
@@ -1120,7 +1120,7 @@ void ofPage::showPage(int x, int y){
             //PIANO LEFT
             if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false)
             {
-                if(bSessionA1 == true || bSessionA2 == true)
+                if(bSessionA1 == true || bSessionB1 == true)
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
@@ -1131,7 +1131,7 @@ void ofPage::showPage(int x, int y){
             //PIANO LEFT
             if (x > 55 && x < 360 && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false)
             {
-                if(bSessionA1 == true || bSessionA2 == true)
+                if(bSessionA1 == true || bSessionB1 == true)
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
@@ -1142,7 +1142,7 @@ void ofPage::showPage(int x, int y){
             //PIANO LEFT
             if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false)
             {
-                if(bSessionA1 == true || bSessionA2 == true)
+                if(bSessionA1 == true || bSessionB1 == true)
                 {
                     bGuessedTrumpet = true;
                     hasPressed = true;
@@ -1154,7 +1154,7 @@ void ofPage::showPage(int x, int y){
             //Piano RIGHT!!
             if (x > 55 && x < 360 && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false)
             {
-                if(bSessionB1 == true || bSessionB2 == true)
+                if(bSessionA2 == true || bSessionB2 == true)
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
@@ -1165,7 +1165,7 @@ void ofPage::showPage(int x, int y){
             //Piano RIght
             if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false)
             {
-                if((bSessionB1) || (bSessionB2))
+                if((bSessionA2) || (bSessionB2))
                 {
                     bGuessedPiano = true;
                     hasPressed = true;
@@ -1178,7 +1178,7 @@ void ofPage::showPage(int x, int y){
             //PIANO RIGHT
             if (x > 55 && x < 360 && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false)
             {
-                if((bSessionB1) || (bSessionB2))
+                if((bSessionA2) || (bSessionB2))
                 {
                     bGuessedTrumpet = true;
                     hasPressed = true;
@@ -1190,7 +1190,7 @@ void ofPage::showPage(int x, int y){
             //PIANO RIGHT
             if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false)
             {
-                if((bSessionB1) || (bSessionB2))
+                if((bSessionA2) || (bSessionB2))
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
@@ -1202,7 +1202,7 @@ void ofPage::showPage(int x, int y){
         }
     }
     
-    if (currentPage >= 4 && currentPage < 24) {//trial 1 - 20
+    if (currentPage >= 4 && currentPage < 24) {//TODO trial 1 - 20
         bPlayPracticeMelody = false;
         practice_count = -1;//reset counter for 0 index
         trial_melody_count = (currentPage - 4);
@@ -1225,11 +1225,11 @@ void ofPage::showPage(int x, int y){
             bPlayPracticeMelody = false;
             
             //check what session
-            if(bSessionA1 == true || bSessionA2 == true)
+            if(bSessionA1 == true || bSessionB1 == true)
             {
                 bPlayGroupAMelody = true;
                 bPlayGroupBMelody = false;
-            } else if(bSessionB1 == true || bSessionB2 == true)
+            } else if(bSessionA2 == true || bSessionB2 == true)
             {
                 bPlayGroupBMelody = true;
                 bPlayGroupAMelody = false;
@@ -1277,7 +1277,7 @@ void ofPage::showPage(int x, int y){
             //PIANO LEFT
             if (x > 55 && x < 360 && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false)
             {
-                if(bSessionA1 == true || bSessionA2 == true)
+                if(bSessionA1 == true || bSessionB1 == true)
                 {
                     bGuessedPiano = true;
                     hasPressed = true;
@@ -1289,7 +1289,7 @@ void ofPage::showPage(int x, int y){
             //PIANO LEFT
             if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false)
             {
-                if(bSessionA1 == true || bSessionA2 == true)
+                if(bSessionA1 == true || bSessionB1 == true)
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
@@ -1300,7 +1300,7 @@ void ofPage::showPage(int x, int y){
             //PIANO LEFT
             if (x > 55 && x < 360 && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false)
             {
-                if(bSessionA1 == true || bSessionA2 == true)
+                if(bSessionA1 == true || bSessionB1 == true)
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
@@ -1311,7 +1311,7 @@ void ofPage::showPage(int x, int y){
             //PIANO LEFT
             if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false)
             {
-                if(bSessionA1 == true || bSessionA2 == true)
+                if(bSessionA1 == true || bSessionB1 == true)
                 {
                     bGuessedTrumpet = true;
                     hasPressed = true;
@@ -1323,7 +1323,7 @@ void ofPage::showPage(int x, int y){
             //Piano RIGHT!!
             if (x > 55 && x < 360 && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false)
             {
-                if(bSessionB1 == true || bSessionB2 == true)
+                if(bSessionA2 == true || bSessionB2 == true)
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
@@ -1334,7 +1334,7 @@ void ofPage::showPage(int x, int y){
             //Piano RIght
             if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && playPianoMelody == true && hasPressed == false)
             {
-                if((bSessionB1) || (bSessionB2))
+                if((bSessionA2) || (bSessionB2))
                 {
                     bGuessedPiano = true;
                     hasPressed = true;
@@ -1347,7 +1347,7 @@ void ofPage::showPage(int x, int y){
             //PIANO RIGHT
             if (x > 55 && x < 360 && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false)
             {
-                if((bSessionB1) || (bSessionB2))
+                if((bSessionA2) || (bSessionB2))
                 {
                     bGuessedTrumpet = true;
                     hasPressed = true;
@@ -1359,7 +1359,7 @@ void ofPage::showPage(int x, int y){
             //PIANO RIGHT
             if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && playTrumpetMelody == true && hasPressed == false)
             {
-                if((bSessionB1) || (bSessionB2))
+                if((bSessionA2) || (bSessionB2))
                 {
                     bGuessedWrong = true;
                     hasPressed = true;

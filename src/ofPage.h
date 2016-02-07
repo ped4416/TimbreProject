@@ -17,10 +17,6 @@ public: // place public functions or variables declarations here
     
     //what state is the app in??
     enum state_t {
-        state_read_toMe,
-        state_music_play,
-        state_music_off,
-        state_read_toMyself,
         
     };
     
