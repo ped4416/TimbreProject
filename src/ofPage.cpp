@@ -11,7 +11,7 @@ ofPage::ofPage(){
     trial_melody_count = -1;//allow for 0 index
     currentFrame = 0;
     fadeFrame = 0;
-    currentPage = 0;//TODO - set user input..
+    currentPage = -1;//TODO - set user input..
     secondTime = 30;//20
     fadeUpTime = 0.05;
    
@@ -26,7 +26,9 @@ ofPage::ofPage(){
     pressBackHome = false;
     pageBack = false;//allows correct files to load or unload
     pageForward = false;
-
+    
+    showGreenDot = false;//start as false
+    showRedDot = true;//start with warning that trial must be completed
     showStars = false;
     playPianoSingle = false;
     playTrumpetSingle = false;
@@ -72,6 +74,11 @@ ofPage::ofPage(){
     bPlayPracticeMelody = false;
     bPlayGroupAMelody = false;
     bPlayGroupBMelody = false;
+    
+    //practice note association
+    pianoNote = false;
+    trumpetNote = false;
+    single_count = 0;
 }
 
 void ofPage::setup(){
@@ -107,6 +114,9 @@ void ofPage::setup(){
     trumpetImg.loadImage("Images/TRUMPET.png");
     buttonSelect.loadImage("buttons/slow.png");
     buttonSelect2.loadImage("buttons/start.png");
+    
+    greenButton.loadImage("buttons/start.png");
+    redButton.loadImage("buttons/stop.png");
     
     //set up fonts
     franklinBook14.loadFont("fonts/Georgia.ttf", 22);
@@ -249,7 +259,7 @@ void ofPage::draw(){
     {
     }
     
-    if(currentPage == 0)
+    if(currentPage == -1)
     {
         ofEnableAlphaBlending();
         ofSetColor(255);
@@ -297,7 +307,7 @@ void ofPage::draw(){
         }
     }
     
-    if (currentPage == 1){
+    if (currentPage == 0){
         ofEnableAlphaBlending();
         //dim page and stop interaction and music if options are on display
         if(showOptionsTab == true || showSettings == true){
@@ -309,7 +319,7 @@ void ofPage::draw(){
         //printf("%d\n",currentFrame);//keep track of timer as each page is clicked.
     }
     
-    if (currentPage == 2){
+    if (currentPage == 1){
         ofEnableAlphaBlending();
         //dim page and stop interaction and music if options are on display
         if(showOptionsTab == true || showSettings == true){
@@ -330,7 +340,7 @@ void ofPage::draw(){
         //printf("%d\n",currentFrame);//keep track of timer as each page is clicked.
     }
     
-    if (currentPage >= 3 && currentPage < 24){// && guessedWrong == false && guessedPiano == false && guessedTrumpet == false){
+    if (currentPage >= 2 && currentPage < 24){// && guessedWrong == false && guessedPiano == false && guessedTrumpet == false){
         ofEnableAlphaBlending();
         //dim page and stop interaction and music if options are on display
         if(showOptionsTab == true || showSettings == true){
@@ -446,10 +456,7 @@ void ofPage::draw(){
             
             //printf("fade counter is: ""%d\n",greyCounter);
             //printf("greyStarCounter is : ""%lld\n",greyStarCounter.elapsed());
-            
-            
-            ofSetColor(0);
-            franklinBook14.drawString("Better Luck Next Time!", 100, 400);
+           
         }
         
         // some information about the timer
@@ -644,23 +651,28 @@ void ofPage::draw(){
     } else ofSetColor(255, 255, 255, go);
     
     //All text for pages displays here
-    if(currentPage == 1 && bGuessedWrong == false && bGuessedPiano == false && bGuessedTrumpet == false){
+    if(currentPage == 0 && bGuessedWrong == false && bGuessedPiano == false && bGuessedTrumpet == false){
         ofSetColor(0, 0, 0);
         franklinBook14.drawString("This is Giles the Bear! \n\n\n\nHe can't hear very well. \n\n\n\nCan you help him hear \n\nwhat the music is? ", 120, 200);
     }
     
-    if(currentPage == 2){
+    if(currentPage == 1){
         ofSetColor(0, 0, 0);
         franklinBook14.drawString("Press the Piano! \n\nWhat do you hear?. \n\n\n\nNow press the trumpet.\n\nCan you hear it is different? ", 120, 150);
     }
     
+    if(currentPage == 2 && bGuessedWrong == false && bGuessedPiano == false && bGuessedTrumpet == false && single_count == 0){
+        ofSetColor(0, 0, 0);
+        franklinBook14.drawString("Now we are going to hear a sound, \n\neither a piano or a trumpet.\n\n\n\nAs soon as you hear what the \n\nsound is, press the correct image \n\nwith your finger as fast as you can!\n\n\n\nPress Giles's ear to hear the sound!", 100, 70);
+    }
+    
     if(currentPage == 3 && bGuessedWrong == false && bGuessedPiano == false && bGuessedTrumpet == false && practice_count == -1){
         ofSetColor(0, 0, 0);
-        franklinBook14.drawString("Can you tell Giles what \n\ninstrument is playing?\n\n\n\nIs it a piano?\n\n\n\nOr is it a trumpet? \n\n\n\nPress Giles's ear to hear the tune!", 100, 70);
+        franklinBook14.drawString("Now we are going to hear a song. \n\n\n\nThe last sound will be either a \n\ntrumpet or a piano.\n\n\n\nAs soon as you hear what the sound\n\n\is, press the correct image with your \n\nfinger as fast as you can!\n\n\n\nPress Giles's ear to hear the tune!", 100, 70);
     } else if(currentPage == 3 && practice_count == 3){//edit to 2 for final APP TODO
         if(bPlayPracticeMelody == false){
             ofSetColor(0, 0, 0);
-            franklinBook14.drawString("Let's move on!", 100, 200);
+            franklinBook14.drawString("Do you want to keep practicing? \n\n\n\nIf so just keep pressing Gilies's ear.\n\n\n\nJust press on the right arrow to move on to the trials.", 100, 200);
         }
     }
     
@@ -669,72 +681,103 @@ void ofPage::draw(){
         franklinBook14.drawString("Are you ready to start?\n\n\n\nListen out for the last note. \n\n\n\nCan you tell Giles what \n\nthe instrument is?", 100, 70);
     }
     
+    if(currentPage == 3 && practice_count == 0) {
+        ofSetColor(0, 0, 0);
+        trials.drawString("Practice 1", trialXpos, 50);//Trial no data kept
+    }
+    
+    if(currentPage == 3 && practice_count == 1) {
+        ofSetColor(0, 0, 0);
+        trials.drawString("Practice 2", trialXpos, 50);//Trial no data kept
+    }
+    
+    if(currentPage == 3 && practice_count == 2) {
+        ofSetColor(0, 0, 0);
+        trials.drawString("Practice 3", trialXpos, 50);//Trial no data kept
+    }
+    
+    if(currentPage == 3 && practice_count == 3) {
+        ofSetColor(0, 0, 0);
+        trials.drawString("Practice 4", trialXpos, 50);//Trial no data kept
+    }
+    
     if(currentPage >= 4){
-    ofSetColor(0, 0, 0);
-        switch(currentPage){
-            case 4  :
-                trials.drawString("Trial 1", trialXpos, 50);//Trial no data kept
-                break;
-            case 5  :
-                trials.drawString("Trial 2", trialXpos, 50);//Trial no data kept
-                break;
-                
-            //*** START COLLECTING TIME DATA HERE ***
-            case 6  :
-                trials.drawString("Trial 3", trialXpos, trialYpos);
-                break;
-            case 7  :
-                trials.drawString("Trial 4", trialXpos, trialYpos);
-                break;
-            case 8  :
-                trials.drawString("Trial 5", trialXpos, trialYpos);
-                break;
-            case 9  :
-                trials.drawString("Trial 6", trialXpos, trialYpos);
-                break;
-            case 10  :
-                trials.drawString("Trial 7", trialXpos, trialYpos);
-                break;
-            case 11  :
-                trials.drawString("Trial 8", trialXpos, trialYpos);
-                break;
-            case 12  :
-                trials.drawString("Trial 9", trialXpos, trialYpos);
-                break;
-            case 13  :
-                trials.drawString("Trial 10", trialXpos, trialYpos);
-                break;
-            case 14  :
-                trials.drawString("Trial 11", trialXpos, trialYpos);
-                break;
-            case 15  :
-                trials.drawString("Trial 12", trialXpos, trialYpos);
-                break;
-            case 16  :
-                trials.drawString("Trial 13", trialXpos, trialYpos);
-                break;
-            case 17  :
-                trials.drawString("Trial 14", trialXpos, trialYpos);
-                break;
-            case 18  :
-                trials.drawString("Trial 15", trialXpos, trialYpos);
-                break;
-            case 19  :
-                trials.drawString("Trial 16", trialXpos, trialYpos);
-                break;
-            case 20  :
-                trials.drawString("Trial 17", trialXpos, trialYpos);
-                break;
-            case 21  :
-                trials.drawString("Trial 18", trialXpos, trialYpos);
-                break;
-            case 22  :
-                trials.drawString("Trial 19", trialXpos, trialYpos);
-                break;
-            case 23  :
-                trials.drawString("Trial 20", trialXpos, trialYpos);
-                break;
+        
+        //ofSetColor(255, 255, 120);
+        if(showRedDot){
+            ofSetColor(255, 0, 0, 150);
+            ofEllipse(840, 50, 50, 50);
+            //redButton.draw(840, 20, 50, 50);
+        } else if(showGreenDot){
+            ofSetColor(0, 255, 0, 150);
+            ofEllipse(840, 50, 50, 50);
+            //greenButton.draw(840, 50, 50, 50);
+            
         }
+    
+        ofSetColor(0, 0, 0);
+            switch(currentPage){
+                case 4  :
+                    trials.drawString("Trial 1", trialXpos, 50);//Trial no data kept
+                    break;
+                case 5  :
+                    trials.drawString("Trial 2", trialXpos, 50);//Trial no data kept
+                    break;
+                case 6  :
+                    trials.drawString("Trial 3", trialXpos, trialYpos);
+                    break;
+                case 7  :
+                    trials.drawString("Trial 4", trialXpos, trialYpos);
+                    break;
+                case 8  :
+                    trials.drawString("Trial 5", trialXpos, trialYpos);
+                    break;
+                case 9  :
+                    trials.drawString("Trial 6", trialXpos, trialYpos);
+                    break;
+                case 10  :
+                    trials.drawString("Trial 7", trialXpos, trialYpos);
+                    break;
+                case 11  :
+                    trials.drawString("Trial 8", trialXpos, trialYpos);
+                    break;
+                case 12  :
+                    trials.drawString("Trial 9", trialXpos, trialYpos);
+                    break;
+                case 13  :
+                    trials.drawString("Trial 10", trialXpos, trialYpos);
+                    break;
+                case 14  :
+                    trials.drawString("Trial 11", trialXpos, trialYpos);
+                    break;
+                case 15  :
+                    trials.drawString("Trial 12", trialXpos, trialYpos);
+                    break;
+                case 16  :
+                    trials.drawString("Trial 13", trialXpos, trialYpos);
+                    break;
+                case 17  :
+                    trials.drawString("Trial 14", trialXpos, trialYpos);
+                    break;
+                case 18  :
+                    trials.drawString("Trial 15", trialXpos, trialYpos);
+                    break;
+                case 19  :
+                    trials.drawString("Trial 16", trialXpos, trialYpos);
+                    break;
+                case 20  :
+                    trials.drawString("Trial 17", trialXpos, trialYpos);
+                    break;
+                case 21  :
+                    trials.drawString("Trial 18", trialXpos, trialYpos);
+                    break;
+                case 22  :
+                    trials.drawString("Trial 19", trialXpos, trialYpos);
+                    break;
+                case 23  :
+                    trials.drawString("Trial 20", trialXpos, trialYpos);
+                    break;
+            }
     }
     currentFrame++;//counter keeps the timing of the book
     fadeFrame ++;//all animation fades
@@ -747,7 +790,7 @@ void ofPage::touchPressed(int x, int y){//this is overidden in subclasses
 
 void ofPage::showPage(int x, int y){
     
-    if(currentPage == 0)
+    if(currentPage == -1)
     {
         //set up for slecting the group AB or BA
         int AB_x1 = 90;
@@ -995,7 +1038,7 @@ void ofPage::showPage(int x, int y){
     //see how to navigate the app
     if (howTo == true) {
         
-        if(showOptionsTab == false || currentPage == 0){
+        if(showOptionsTab == false || currentPage == -1){
             
             int homeButtonX1 = 0;
             int homeButtonX2 = 65;
@@ -1025,15 +1068,16 @@ void ofPage::showPage(int x, int y){
         }
     }
     
-    if(currentPage == 1){
+    if(currentPage == 0){
         playTrumpetMelody = false;
         playPianoMelody = false;
         playTrumpetSingle = false;
         playPianoSingle = false;
     }
     
-    //press functions for Starting Melodies
-    if (currentPage == 2) {
+    /******** ASSOCIATE SINGLE TONES  *******/
+    if (currentPage == 1) {
+        single_count = 0;//reset to show text if needed
         practice_count = -1;//reset counter for 0 index
         bPlayPracticeMelody = false;
         playTrumpetMelody = false;
@@ -1064,8 +1108,149 @@ void ofPage::showPage(int x, int y){
         }
     }
     
+    /******** SINGLE NOTE HEAR AND PRESS BEGIN HERE *******/
+    if (currentPage == 2) {
+        practice_count = -1;//reset counter for 0 index on page 3
+//        cout << "Piano note is now playing " << playPianoSingle << endl;
+//        cout << "Trumpet note is now playing " << playTrumpetSingle << endl;
+        
+        if (x > 780 && y < 290 && y > 0){//press bear to start single note
+            single_count ++;
+            
+            if(single_count > 4){
+                single_count = 1;//reset the counter
+            }
+        
+            greyStarCounter.reset();//reset timers
+            melodyCounter.reset();
+            showStars = false;
+            hasPressed = false;
+            bGuessedWrong = false;
+            showDots = false;
+            bMelodyFinished = true;//stops a bug so answer can be given quicky
+    
+            cout << "\nSingle Note Counter = " << single_count << endl;
+        
+            if(single_count == 1 ||  single_count == 3){
+                playPianoSingle = true;//play first piano note
+                playTrumpetSingle = false;
+                //allow longer to press the corect note
+                //practice note association
+                pianoNote = true;
+                trumpetNote = false;
+                
+                printf("\nPiano Single\n");
+            } else if(single_count == 2 || single_count == 4){
+                playTrumpetSingle = true;
+                playPianoSingle = false;
+                //practice note association
+                pianoNote = false;
+                trumpetNote = true;
+                printf("\nTrumpet Single \n");
+            }
+        }
+        
+        //PIANO LEFT
+        if (x > 55 && x < 360 && y < 690 && y > 435 && pianoNote == true && hasPressed == false)
+        {
+            if(bSessionA1 == true || bSessionB1 == true)
+            {
+                bGuessedPiano = true;
+                hasPressed = true;
+                printf("\nGUESS PIANO LEFT");
+                showStars = true;//show stars!
+                printf("\nWELLDONE");
+            }
+        }
+        //PIANO LEFT
+        if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && pianoNote == true && hasPressed == false)
+        {
+            if(bSessionA1 == true || bSessionB1 == true)
+            {
+                bGuessedWrong = true;
+                hasPressed = true;
+                showStars = false;
+                printf("\nWRONG IT WAS PIANO");
+            }
+        }
+        //PIANO LEFT
+        if (x > 55 && x < 360 && y < 690 && y > 435 && trumpetNote == true && hasPressed == false)
+        {
+            if(bSessionA1 == true || bSessionB1 == true)
+            {
+                bGuessedWrong = true;
+                hasPressed = true;
+                showStars = false;
+                printf("\nWRONG IT WAS TRUMPET");
+            }
+        }
+        //PIANO LEFT=
+        if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && trumpetNote == true)
+        {
+            if(bSessionA1 == true || bSessionB1 == true)
+            {
+                bGuessedTrumpet = true;
+                hasPressed = true;
+                printf("\nGUESS TRUMPET RIGHT");
+                showStars = true;//show stars!
+                printf("\nWELLDONE");
+            }
+        }
+        //Piano RIGHT!!
+        if (x > 55 && x < 360 && y < 690 && y > 435 && pianoNote == true && hasPressed == false)
+        {
+            if(bSessionA2 == true || bSessionB2 == true)
+            {
+                bGuessedWrong = true;
+                hasPressed = true;
+                showStars = false;
+                printf("\nWRONG IT WAS PIANO");
+            }
+        }
+        //Piano RIght
+        if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && pianoNote == true && hasPressed == false)
+        {
+            if((bSessionA2) || (bSessionB2))
+            {
+                bGuessedPiano = true;
+                hasPressed = true;
+                printf("\nGUESS PIANO LEFT");
+                showStars = true;//show stars!
+                printf("\nWELLDONE");
+                
+            }
+        }
+        //PIANO RIGHT
+        if (x > 55 && x < 360 && y < 690 && y > 435 && trumpetNote == true && hasPressed == false)
+        {
+            if((bSessionA2) || (bSessionB2))
+            {
+                bGuessedTrumpet = true;
+                hasPressed = true;
+                printf("\nGUESS TRUMPET RIGHT");
+                showStars = true;//show stars!
+                printf("\nWELLDONE");
+            }
+        }
+        //PIANO RIGHT
+        if (x > ofGetScreenWidth()-380 && x < 711 && y < 690 && y > 435 && trumpetNote == true && hasPressed == false)
+        {
+            if((bSessionA2) || (bSessionB2))
+            {
+                bGuessedWrong = true;
+                hasPressed = true;
+                showStars = false;
+                printf("\nWRONG IT WAS TRUMPET");
+                
+            }
+        }
+    }
+    
+    /******** PRACTICE TRIALS x 4 *******/
+    
     if (currentPage == 3)
     {
+        single_count = 0;//reset incase we want to see text on page 2 again.
         playTrumpetSingle = false;
         playPianoSingle = false;
         trial_melody_count = -1;//0 index ready for trials
@@ -1074,7 +1259,7 @@ void ofPage::showPage(int x, int y){
             practice_count ++;
             if (practice_count > 3)
             {
-                practice_count = 3;
+                practice_count = 0;
             }
             greyStarCounter.reset();//reset timers
             melodyCounter.reset();
@@ -1082,7 +1267,8 @@ void ofPage::showPage(int x, int y){
             showStars = false;
             hasPressed = false;
             bGuessedWrong = false;
-            showDots = false;
+            showDots = true;
+            startDotTime = ofGetElapsedTimeMillis();  // get the start time
             bPlayPracticeMelody = true;//start the test melody
           
             cout << "\nMelodyCounter = " << practice_count << endl;
@@ -1202,6 +1388,7 @@ void ofPage::showPage(int x, int y){
         }
     }
     
+    /******** TRIALS BEGIN HERE *******/
     if (currentPage >= 4 && currentPage < 24) {//TODO trial 1 - 20
         bPlayPracticeMelody = false;
         practice_count = -1;//reset counter for 0 index

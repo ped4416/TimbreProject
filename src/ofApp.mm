@@ -179,7 +179,7 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
             cheer_x = cheer.playOnce();
         } else cheer.reset();
         
-        if (myPage.currentPage == 0 || myPage.currentPage == 1){
+        if (myPage.currentPage == 0){
             
             trial1_x_piano.reset();//3-56-4-x-piano-120
             trial2_trumpet.reset();//3-79-10-original-trumpet-120
@@ -197,7 +197,7 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
         }
         
         //idividual tones
-        else if (myPage.currentPage == 2){
+        else if (myPage.currentPage == 1 || myPage.currentPage == 2){
             
             for (int i=0; i<4; i++) {
                 testMelodys_v[i].reset();

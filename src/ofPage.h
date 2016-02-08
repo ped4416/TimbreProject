@@ -68,6 +68,8 @@ public: // place public functions or variables declarations here
     bool back;
     
     //animation booleans
+    bool showGreenDot;
+    bool showRedDot;
     bool showStars;
     
     //sound booleans
@@ -136,6 +138,11 @@ public: // place public functions or variables declarations here
     int greyCounter;
     int greyCounter2;
     
+    //practice note association
+    bool pianoNote;
+    bool trumpetNote;
+    int single_count;
+    
     //Practicemelody setup
     bool bPlayPracticeMelody;
     vector<int> practice_melody_v;
@@ -184,6 +191,9 @@ private: // place private functions or variables declarations here
     
     ofImage buttonSelect;
     ofImage buttonSelect2;
+    
+    ofImage greenButton;
+    ofImage redButton;
 }; // don't forget the semicolon!!
 
 //#endif
