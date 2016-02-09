@@ -137,7 +137,7 @@ void ofApp::draw(){
     x = myPage.showAccelPage(1);
     
     if (x == 1) {
-        
+
         ofPushStyle();
         ofEnableBlendMode(OF_BLENDMODE_MULTIPLY);
         for(int i = 0; i< balls.size(); i++){
@@ -212,7 +212,7 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
             } else pianoSingle.reset();
             
             pianoSingle.getLength();//get the length to set playback to false
-            if (pianoSingle.position == pianoSingle.length - 3000){//need a plus 1 otherwise the sample is too short
+            if (pianoSingle.position == pianoSingle.length - 3000){
                 myPage.playPianoSingle = false;
                 pianoSingle.reset();
             }
@@ -223,30 +223,43 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
             } else trumpetSingle.reset();
             
             trumpetSingle.getLength();//get the length to set playback to false
-            if (trumpetSingle.position == pianoSingle.length - 3000){//need a plus 1 otherwise the sample is too short
+            if (trumpetSingle.position == pianoSingle.length - 3000){
                 myPage.playTrumpetSingle = false;
                 trumpetSingle.reset();
             }
             x = trumpetSingle_x + pianoSingle_x + cheer_x + badLuck_x;
         }
-        else if (myPage.currentPage == 3){//practice session x 4 || 2?
+        else if (myPage.currentPage == 3) //practice session x 4 || 2?
+        {
             //reset session files
             for (int i=0; i<20; i++) {
                 sessionA_Melodys_v[i].reset();
                 sessionB_Melodys_v[i].reset();
             }
             
+            //reset single notes
             pianoSingle.reset();
             trumpetSingle.reset();
-
-            if(myPage.bPlayPracticeMelody){
+            
+            if(myPage.bPlayPracticeMelody)
+            {
                 practiceMelody_temp = testMelodys_v[myPage.practice_melody_v[myPage.practice_count]].playOnce();
+                
+//                //reset current practice melodies if all 4 have played
+//                for (int i=1; i<5; i++)
+//                {
+//                    testMelodys_v[i].getLength();
+//                    if (testMelodys_v[i].position == testMelodys_v[i].length-3000)
+//                    {
+//                        testMelodys_v[i].reset();
+//                    }
+//                }
             }
-            else if(myPage.bPlayGroupBMelody){
-                for (int i=0; i<4; i++) {
-                    testMelodys_v[i].reset();
-                }
-            }
+//            else if(myPage.bPlayGroupBMelody){
+//                for (int i=0; i<4; i++) {
+//                    testMelodys_v[i].reset();
+//                }
+//            }
             x = practiceMelody_temp + cheer_x + badLuck_x;
         }
         
@@ -257,16 +270,7 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
                 testMelodys_v[i].reset();
             }
             
-            if(myPage.bPlayGroupAMelody == false){
-                for (int i=0; i<20; i++) {
-                    sessionA_Melodys_v[i].reset();
-                }
-            }
-            if(myPage.bPlayGroupBMelody == false){
-                for (int i=0; i<20; i++) {
-                    sessionB_Melodys_v[i].reset();
-                }
-            }
+        
 
             pianoSingle.reset();
             trumpetSingle.reset();
@@ -283,11 +287,24 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
 //                sessionB_Melodys_v[myPage.trialMelody_2_v[myPage.trial_melody_count]].reset();
 //            }
     
-            if(myPage.bPlayGroupAMelody){
+            if(myPage.bPlayGroupAMelody == true && myPage.bResetMelody == false){
                 trialMelodies_temp = sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].playOnce();
             }
-            else if(myPage.bPlayGroupBMelody == true){
+            else if(myPage.bPlayGroupBMelody == true && myPage.bResetMelody == false){
                 trialMelodies_temp = sessionB_Melodys_v[myPage.trialMelody_2_v[myPage.trial_melody_count]].playOnce();
+            }
+            
+            //if(myPage.bPlayGroupAMelody == false){
+            if(myPage.bResetMelody == true){
+                for (int i=0; i<20; i++) {
+                    sessionA_Melodys_v[i].reset();
+                }
+            }
+            //if(myPage.bPlayGroupBMelody == false){
+            if(myPage.bResetMelody == true){
+                for (int i=0; i<20; i++) {
+                    sessionB_Melodys_v[i].reset();
+                }
             }
             x = trialMelodies_temp + cheer_x + badLuck_x;
         }

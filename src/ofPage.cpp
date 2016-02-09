@@ -37,6 +37,9 @@ ofPage::ofPage(){
     bGuessedPiano = false;
     bGuessedTrumpet = false;
     bGuessedWrong = false;
+    bShowTrialText = false;
+    bShowSingleNoteText = false;
+
     
     //user setup
     bSessionA1 = false;
@@ -74,6 +77,7 @@ ofPage::ofPage(){
     bPlayPracticeMelody = false;
     bPlayGroupAMelody = false;
     bPlayGroupBMelody = false;
+    bResetMelody = false;
     
     //practice note association
     pianoNote = false;
@@ -114,10 +118,7 @@ void ofPage::setup(){
     trumpetImg.loadImage("Images/TRUMPET.png");
     buttonSelect.loadImage("buttons/slow.png");
     buttonSelect2.loadImage("buttons/start.png");
-    
-    greenButton.loadImage("buttons/start.png");
-    redButton.loadImage("buttons/stop.png");
-    
+        
     //set up fonts
     franklinBook14.loadFont("fonts/Georgia.ttf", 22);
     franklinBook14.setLineHeight(18.0f);
@@ -145,7 +146,7 @@ void ofPage::setup(){
         cout << "Test Number Is Now: "  << practice_melody_v[i] <<endl;
     }
     
-        (practice_melody_v.begin(), practice_melody_v.end());
+        //(practice_melody_v.begin(), practice_melody_v.end());
     
     for(int i = 0; i < practice_melody_v.size(); i++){
         cout << practice_melody_v[i] << endl;
@@ -195,18 +196,32 @@ void ofPage::update(){
         //cout << "TIMER IS NOW " << melodyCounter.elapsed() << endl;
     }
     
-    if(melodyCounter.elapsed() > 2050000)
-    {//set to 50ms after last note onset?
+    //timer set to 50ms after last note onset for setting the permitted start time to answer
+    if(melodyCounter.elapsed() > 2050000 && greyStarCounter.elapsedSeconds() < 2000000)
+    {
         //printf("MELODY FINISHED\n");
         //cout << "\nMELODY FINISHED  " << bMelodyFinished << endl;//debug?
         bMelodyFinished = true;
         bMelodyStart = false;
     }
     
+    //timer to reset all the audio files once last note is heard
+    if(melodyCounter.elapsed() > 4001000)
+    {
+        bResetMelody = true;
+        bShowTrialText = true;
+    } else bResetMelody = false;
+//    //reset bool to allow multiple trials
+//    if(melodyCounter.elapsed() > 4000000)
+//    {
+//        bResetMelody = false;
+//    }
+    
+    //counter is only activated when the user presses either piano or trumpet
     if (greyStarCounter.elapsedSeconds() > 2000000)
     {
         bMelodyFinished = false;//allow 2 seconds to answer the test?
-        printf("TIME UP\n");
+        printf("\nTIME UP\n");
         melodyCounter.reset();
     }
     
@@ -220,7 +235,7 @@ void ofPage::update(){
     
     if(greyStarCounter.elapsed() >= 2999000)
     {//allow 3 seconds before reset
-        printf("STOP");
+        printf("\nSTOP\n");
         bMelodyFinished = false;
         bGuessedWrong = false;
         bGuessedPiano = false;
@@ -469,7 +484,7 @@ void ofPage::draw(){
         fadePage = true;
         
         //show the dots and question mark
-        if(showDots == true){
+        if(showDots == true && bResetMelody == false){
             ofSetColor(0, 0, 0, 200);
             float dotTimer = ((ofGetElapsedTimeMillis() - startDotTime));
             // some information about the timer
@@ -666,19 +681,29 @@ void ofPage::draw(){
         franklinBook14.drawString("Now we are going to hear a sound, \n\neither a piano or a trumpet.\n\n\n\nAs soon as you hear what the \n\nsound is, press the correct image \n\nwith your finger as fast as you can!\n\n\n\nPress Giles's ear to hear the sound!", 100, 70);
     }
     
+    //cout<< hasPressed << endl;
+    
+    if(currentPage == 2 && bShowSingleNoteText == true){
+        ofSetColor(0, 0, 0);
+        franklinBook14.drawString("Press Giles's ear to hear another \n\nnote!\n\n\n\nOr press the right arrow to move \n\non.", 100, 170);
+    }
+    
     if(currentPage == 3 && bGuessedWrong == false && bGuessedPiano == false && bGuessedTrumpet == false && practice_count == -1){
         ofSetColor(0, 0, 0);
-        franklinBook14.drawString("Now we are going to hear a song. \n\n\n\nThe last sound will be either a \n\ntrumpet or a piano.\n\n\n\nAs soon as you hear what the sound\n\n\is, press the correct image with your \n\nfinger as fast as you can!\n\n\n\nPress Giles's ear to hear the tune!", 100, 70);
-    } else if(currentPage == 3 && practice_count == 3){//edit to 2 for final APP TODO
+        franklinBook14.drawString("Now we are going to hear a song. \n\n\n\nThe last sound will be either a \n\ntrumpet or a piano.\n\n\n\nAs soon as you hear what the sound\n\nis, press the correct image with \n\nyour finger as fast as you can!\n\n\n\nPress Giles's ear to hear the tune!", 100, 70);
+        
+    } else if(currentPage == 3 && practice_count == 3){//edit to 2 for final APP TODO ?
         if(bPlayPracticeMelody == false){
             ofSetColor(0, 0, 0);
-            franklinBook14.drawString("Do you want to keep practicing? \n\n\n\nIf so just keep pressing Gilies's ear.\n\n\n\nPress on the right arrow to move \n\non to the trials.", 100, 200);
+            franklinBook14.drawString("Press on the right arrow to move \n\non to the trials.", 100, 200);
         }
     }
     
-    if(currentPage == 4 && showDots == false){
-        ofSetColor(0, 0, 0);
-        franklinBook14.drawString("Are you ready to start?\n\n\n\nListen out for the last note. \n\n\n\nCan you tell Giles what \n\nthe instrument is?", 100, 70);
+    if(currentPage == 3 && practice_count >= 0 && practice_count < 3){
+        if(bPlayPracticeMelody == false){
+            ofSetColor(0, 0, 0);
+            franklinBook14.drawString("Press Giles's ear to hear another\n\npractice melody!\n\n\n\nOr press on the right arrow to move \n\non to the trials.", 100, 170);
+        }
     }
     
     if(currentPage == 3 && practice_count == 0) {
@@ -701,9 +726,24 @@ void ofPage::draw(){
         trials.drawString("Practice 4", trialXpos, 50);//Trial no data kept
     }
     
+    if(currentPage == 4 && showDots == false){
+        ofSetColor(0, 0, 0);
+        franklinBook14.drawString("Are you ready to start?\n\n\n\nAs soon as you hear what the sound\n\nis, press the correct image with your \n\nfinger as fast as you can!\n\n\n\nPress Giles's ear to hear the tune!", 100, 70);
+    }
+    
+    if(currentPage >= 4 && currentPage < 23 && bShowTrialText == true){
+        ofSetColor(0, 0, 0);
+        franklinBook14.drawString("Press Giles's ear to hear the trial \n\nmelody again!\n\n\n\nOr press the right arrow to move \n\non to the next melody.", 100, 170);
+    }
+    
+    if(currentPage == 23 && bShowTrialText == true){
+        ofSetColor(0, 0, 0);
+        franklinBook14.drawString("Press Giles's ear to hear the trial \n\nmelody again!\n\n\n\nOr press the right arrow to move \n\nto the finish!", 100, 170);
+    }
+    
     if(currentPage >= 4){
         
-        cout<< showRedDot << endl;
+        //cout<< showRedDot << endl;
         //ofSetColor(255, 255, 120);
         ofEnableSmoothing();
         if(showGreenDot == true){
@@ -937,10 +977,13 @@ void ofPage::showPage(int x, int y){
                 greyCounter2 = 0;
                 bPlayGroupBMelody = false;
                 bPlayGroupAMelody = false;
+                showDots = false;
+                bShowTrialText = false;
+                bShowSingleNoteText = false;
 
-//                printf("%d\n",currentPage);
-//                printf("%d\n",pageForward);
-//                printf("%d\n",pageBack);
+                printf("%d\n",currentPage);
+                //printf("%d\n",pageForward);
+                //printf("%d\n",pageBack);
                 
             } else if (currentPage > -1 && x <= pageBackwardX && y > pageBackwardY){
                 pageBack = true;//allows correct files to load or unload
@@ -961,9 +1004,13 @@ void ofPage::showPage(int x, int y){
                 greyCounter2 = 0;
                 bPlayGroupBMelody = false;
                 bPlayGroupAMelody = false;
+                showDots = false;
+                bShowTrialText = false;
+                bShowSingleNoteText = false;
+                
                 printf("Page number is:  ""%d\n",currentPage);
-                printf("%d\n",pageForward);
-                printf("%d\n",pageBack);
+                //printf("%d\n",pageForward);
+                //printf("%d\n",pageBack);
                 
             }
             
@@ -1043,9 +1090,7 @@ void ofPage::showPage(int x, int y){
                 showOptionsTab = false;
                 showSettings = true;
             }
-            
         }
-        
     }
     //if howToPage is active allow sound to be switched off
     //see how to navigate the app
@@ -1129,6 +1174,8 @@ void ofPage::showPage(int x, int y){
         
         if (x > 780 && y < 290 && y > 0){//press bear to start single note
             single_count ++;
+            bShowSingleNoteText = false;
+
             
             if(single_count > 4){
                 single_count = 1;//reset the counter
@@ -1140,7 +1187,7 @@ void ofPage::showPage(int x, int y){
             hasPressed = false;
             bGuessedWrong = false;
             showDots = false;
-            bMelodyFinished = true;//stops a bug so answer can be given quicky
+            bMelodyFinished = true;//stops a bug so answer can be given quicky (length of melody)
     
             cout << "\nSingle Note Counter = " << single_count << endl;
         
@@ -1170,6 +1217,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedPiano = true;
                 hasPressed = true;
+                bShowSingleNoteText = true;
                 printf("\nGUESS PIANO LEFT");
                 showStars = true;//show stars!
                 printf("\nWELLDONE");
@@ -1182,6 +1230,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedWrong = true;
                 hasPressed = true;
+                bShowSingleNoteText = true;
                 showStars = false;
                 printf("\nWRONG IT WAS PIANO");
             }
@@ -1193,6 +1242,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedWrong = true;
                 hasPressed = true;
+                bShowSingleNoteText = true;
                 showStars = false;
                 printf("\nWRONG IT WAS TRUMPET");
             }
@@ -1204,9 +1254,10 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedTrumpet = true;
                 hasPressed = true;
-                printf("\nGUESS TRUMPET RIGHT");
+                bShowSingleNoteText = true;
+                printf("\nGUESS TRUMPET RIGHT\n");
                 showStars = true;//show stars!
-                printf("\nWELLDONE");
+                printf("\nWELL DONE\n");
             }
         }
         //Piano RIGHT!!
@@ -1216,8 +1267,9 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedWrong = true;
                 hasPressed = true;
+                bShowSingleNoteText = true;
                 showStars = false;
-                printf("\nWRONG IT WAS PIANO");
+                printf("\nWRONG IT WAS PIANO\n");
             }
         }
         //Piano RIght
@@ -1227,9 +1279,10 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedPiano = true;
                 hasPressed = true;
-                printf("\nGUESS PIANO LEFT");
+                bShowSingleNoteText = true;
+                printf("\nGUESS PIANO LEFT\n");
                 showStars = true;//show stars!
-                printf("\nWELLDONE");
+                printf("\nWELLDONE\n");
                 
             }
         }
@@ -1240,9 +1293,10 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedTrumpet = true;
                 hasPressed = true;
-                printf("\nGUESS TRUMPET RIGHT");
+                bShowSingleNoteText = true;
+                printf("\nGUESS TRUMPET RIGHT\n");
                 showStars = true;//show stars!
-                printf("\nWELLDONE");
+                printf("\nWELLDONE\n");
             }
         }
         //PIANO RIGHT
@@ -1252,8 +1306,9 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedWrong = true;
                 hasPressed = true;
+                bShowSingleNoteText = true;
                 showStars = false;
-                printf("\nWRONG IT WAS TRUMPET");
+                printf("\nWRONG IT WAS TRUMPET\n");
                 
             }
         }
@@ -1425,6 +1480,8 @@ void ofPage::showPage(int x, int y){
             showRedDot = true;
             startDotTime = ofGetElapsedTimeMillis();  // get the start time
             bPlayPracticeMelody = false;
+            bResetMelody = false;//must reset the melodies if child does not press
+            bShowTrialText = false;
             
             //check what session
             if(bSessionA1 == true || bSessionB1 == true)

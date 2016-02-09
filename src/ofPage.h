@@ -154,6 +154,9 @@ public: // place public functions or variables declarations here
     vector<int> trialMelody_1_v;
     vector<int> trialMelody_2_v;
     int trial_melody_count;
+    bool bResetMelody;
+    bool bShowTrialText;
+    bool bShowSingleNoteText;
 
 private: // place private functions or variables declarations here
     
@@ -191,9 +194,6 @@ private: // place private functions or variables declarations here
     
     ofImage buttonSelect;
     ofImage buttonSelect2;
-    
-    ofImage greenButton;
-    ofImage redButton;
 }; // don't forget the semicolon!!
 
 //#endif
