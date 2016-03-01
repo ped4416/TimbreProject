@@ -13,8 +13,6 @@
 // and Contributors.
 //
 // SPDX-License-Identifier:	BSL-1.0
-//
-
 
 #ifndef Foundation_Stopwatch_INCLUDED
 #define Foundation_Stopwatch_INCLUDED

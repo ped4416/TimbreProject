@@ -1,3 +1,7 @@
+/*--------------------------------------------------------------
+ This app is created for a music perception project looking at musical expectance in children aged 4
+ 
+*/
 #include "ofApp.h"
 #define BOUNCE_FACTOR     0.7
 
@@ -81,7 +85,100 @@ void ofApp::setup(){
             sessionB_Melodys_v[i].load(ofToDataPath(ofToString(filePath3)));
         }
     } else printf("Could not find folder Session B\n");
-
+    
+    /*============ Variable arrays setup ================== */
+    ap1="ap1"; ap2="ap2"; a1="a1"; a2="a2"; a3="a3"; a4="a4"; a5="a5"; a6="a6"; a7="a7"; a8="a8"; a9="a9"; a10="a10"; a11="a11"; a12="a12"; a13="a13"; a14="a14"; a15="a15"; a16="a16"; a17="a17"; a18="a18"; a19="a19"; a20="a20"; bp1="bp1"; bp2="bp2"; b1="b1"; b2="b2"; b3="b3"; b4="b4"; b5="b5"; b6="b6"; b7="b7"; b8="b8"; b9="b9"; b10="b10"; b11="b11"; b12="b12"; b13="b13"; b14="b14"; b15="b15"; b16="b16"; b17="b17"; b18="b18"; b19="b19"; b20="b20";
+    //set the variable array sizes
+    number_v.resize(20);
+    ID_v.resize(20);
+    //array if A melodies are playing
+    for (int i = 0; i< myPage.trialMelody_1_v.size(); i++) {
+        if (myPage.trialMelody_1_v[i]==0) {
+            number_v[i] = 3;
+            ID_v[i] = a1;
+//            vector<int> session_v;
+//            vector<int> practice_v;
+//            vector<int> timbre_v;
+//            vector<int> probability_v;
+//            vector<int> basename_v;
+//            vector<int> filename_v;
+//            vector<int> pitch_v;
+//            vector<int> pitch_intercal_v;
+//            vector<int> interval_size_v;
+//            vector<int> interval_direction_v;
+//            vector<int> information_content_v;
+//            vector<int> probe_repetitions_v;
+//            vector<int> probe_octave_repetitions_v;
+            
+        }
+        
+        if(myPage.trialMelody_1_v[i]==1) {
+            number_v[i] = 4;
+            ID_v[i] = a2;
+        } else if(myPage.trialMelody_1_v[i]==2) {
+            number_v[i] = 5;
+            ID_v[i] = a3;
+        } else if(myPage.trialMelody_1_v[i]==3) {
+            number_v[i] = 6;
+            ID_v[i] = a4;
+        } else if(myPage.trialMelody_1_v[i]==4) {
+            number_v[i] = 7;
+            ID_v[i] = a5;
+        } else if(myPage.trialMelody_1_v[i]==5) {
+            number_v[i] = 8;
+            ID_v[i] = a6;
+        } else if(myPage.trialMelody_1_v[i]==6) {
+            number_v[i] = 9;
+            ID_v[i] = a7;
+        } else if(myPage.trialMelody_1_v[i]==7) {
+            number_v[i] = 10;
+            ID_v[i] = a8;
+        } else if(myPage.trialMelody_1_v[i]==8) {
+            number_v[i] = 11;
+            ID_v[i] = a9;
+        } else if(myPage.trialMelody_1_v[i]==9) {
+            number_v[i] = 12;
+            ID_v[i] = a10;
+        } else if(myPage.trialMelody_1_v[i]==10) {
+            number_v[i] = 13;
+            ID_v[i] = a11;
+        } else if(myPage.trialMelody_1_v[i]==11) {
+            number_v[i] = 14;
+            ID_v[i] = a12;
+        } else if(myPage.trialMelody_1_v[i]==12) {
+            number_v[i] = 15;
+            ID_v[i] = a13;
+        } else if(myPage.trialMelody_1_v[i]==13) {
+            number_v[i] = 16;
+            ID_v[i] = a14;
+        } else if(myPage.trialMelody_1_v[i]==14) {
+            number_v[i] = 17;
+            ID_v[i] = a15;
+        } else if(myPage.trialMelody_1_v[i]==15) {
+            number_v[i] = 18;
+            ID_v[i] = a16;
+        } else if(myPage.trialMelody_1_v[i]==16) {
+            number_v[i] = 19;
+            ID_v[i] = a17;
+        } else if(myPage.trialMelody_1_v[i]==17) {
+            number_v[i] = 20;
+            ID_v[i] = a18;
+        } else if(myPage.trialMelody_1_v[i]==18) {
+            number_v[i] = 21;
+            ID_v[i] = a19;
+        } else if(myPage.trialMelody_1_v[i]==19) {
+            number_v[i] = 22;
+            ID_v[i] = a20;
+        }
+    }
+    
+    //print out array contents
+    for(int i = 0; i < number_v.size(); i++){
+        cout << "Number ID = " << number_v[i] << endl;
+        cout << "ID CHAR = " << ID_v[i] << endl;
+        //printf("%c\n", ID_v);
+        
+    }
 }
 
 //--------------------------------------------------------------

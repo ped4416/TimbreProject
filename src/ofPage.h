@@ -151,12 +151,17 @@ public: // place public functions or variables declarations here
     //trial melody setup
     bool bPlayGroupAMelody;
     bool bPlayGroupBMelody;
-    vector<int> trialMelody_1_v;
-    vector<int> trialMelody_2_v;
     int trial_melody_count;
     bool bResetMelody;
     bool bShowTrialText;
     bool bShowSingleNoteText;
+    
+    //vectors used to store the index for each set of melodies
+    //these are randomised in ofPage.cpp every time the app launches
+    //using std::random_shuffle these indexes must be used to find out exactly
+    //what the other variables are that Marco gives such as expectancy, group etc 
+    vector<int> trialMelody_1_v;
+    vector<int> trialMelody_2_v;
 
 private: // place private functions or variables declarations here
     

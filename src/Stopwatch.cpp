@@ -1,4 +1,3 @@
-//
 // Stopwatch.cpp
 //
 // $Id: //poco/1.3/Foundation/src/Stopwatch.cpp#1 $
