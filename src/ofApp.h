@@ -117,24 +117,24 @@ class ofApp : public ofxiOSApp{
         //vectors to store all the variables Marco has made available
         vector<int> number_v;
         vector<string> ID_v;
-        vector<int> session_v;
-        vector<int> practice_v;
-        vector<int> timbre_v;
-        vector<int> probability_v;
-        vector<int> basename_v;
-        vector<int> filename_v;
+        vector<string> session_v;
+        vector<string> practice_v;
+        vector<string> timbre_v;
+        vector<string> probability_v;
+        vector<string> basename_v;
+        vector<string> filename_v;
         vector<int> pitch_v;
-        vector<int> pitch_intercal_v;
-        vector<int> interval_size_v;
-        vector<int> interval_direction_v;
-        vector<int> information_content_v;
+        vector<int> pitch_interval_v;
+        vector<string> interval_size_v;
+        vector<string> interval_direction_v;
+        vector<float> information_content_v;
         vector<int> probe_repetitions_v;
         vector<int> probe_octave_repetitions_v;
     
         //create all the char's needed to fill the arrays apropriatley.
-        string ap1, ap2, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, bp1, bp2, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17, b18, b19, b20;
+    string ap1, ap2, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, bp1, bp2, b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17, b18, b19, b20, session_A, session_B, practice_yes, practice_no, timbre_piano, timbre_trumpet, probability_high, probability_low, base_1, base_2, base_3, base_4, base_5, base_6, base_7, base_8, base_9, base_10, base_11, base_12, base_13, base_14, base_15, base_16, base_17, base_18, base_19, base_20, base_21, base_22, base_23, base_24, base_25, base_26, base_27, base_28, base_29, base_30, base_31, base_32, base_33, base_34, base_35, base_36, base_37, base_38, base_39, base_40, base_41, base_42, base_43, base_44, filename_1, filename_2, filename_3, filename_4, filename_5, filename_6, filename_7, filename_8, filename_9, filename_10, filename_11, filename_12, filename_13, filename_14, filename_15, filename_16, filename_17, filename_18, filename_19, filename_20, filename_21, filename_22, filename_23, filename_24, filename_25, filename_26, filename_27, filename_28, filename_29, filename_30, filename_31, filename_32, filename_33, filename_34, filename_35, filename_36, filename_37, filename_38, filename_39, filename_40, filename_41, filename_42, filename_43, filename_44, pitch_interval_small, pitch_interval_large, interval_direction_decending, interval_direction_ascending;
     
-    
+
 };
 
 
