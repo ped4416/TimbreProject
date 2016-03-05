@@ -14,6 +14,7 @@ ofPage::ofPage(){
     currentPage = -1;//TODO - set user input..
     secondTime = 30;//20
     fadeUpTime = 0.05;
+    current_trial_time_counter = 0;
    
     
     //bools for page naviagation
@@ -184,9 +185,29 @@ void ofPage::update(){
     //update timers
     if (bMelodyStart == true) {
         melodyCounter.start();
+        //cout << "MELODY TIMER IS NOW: " << melodyCounter.elapsed() << endl;
     }
     
-    if(melodyCounter.elapsed() > 10 && melodyCounter.elapsed() < 2050000){//50ms(50,000 macros)
+    float current_melodyCouter = melodyCounter.elapsed();
+    //cout << "MELODY TIMER IS NOW: " << current_melodyCouter << endl;
+
+    
+    //exact time for practice trials and main trials to store into arrays
+    if(current_melodyCouter >= 2000000){//onset of last note
+        trial_time_counter.start();
+        //cout << "START TRIAL TIMER " << endl;
+    }
+    
+    //exact time for practice trials and main trials to store into arrays
+    if(hasPressed == true){//onset of last note
+        cout << "TIMER IS NOW: " << trial_time_counter.elapsed() << endl;
+        current_trial_time_counter = trial_time_counter.elapsed();
+        hasPressed = false;//reset to store just one timestamp for each answer
+    }
+    
+    
+    
+    if(melodyCounter.elapsed() > 10 && melodyCounter.elapsed() < 2050000){//50ms/50,000 microseconds)
         showStars = false;
         hasPressed = false;
         bGuessedWrong = false;
@@ -223,6 +244,7 @@ void ofPage::update(){
         bMelodyFinished = false;//allow 2 seconds to answer the test?
         printf("\nTIME UP\n");
         melodyCounter.reset();
+        trial_time_counter.reset();
     }
     
     if(greyStarCounter.elapsed() > 100000)
@@ -250,6 +272,7 @@ void ofPage::update(){
         greyCounter2 = 0;
         greyStarCounter.reset();//reset timer
         melodyCounter.reset();
+        trial_time_counter.reset();
     }
 }
 
@@ -1183,6 +1206,7 @@ void ofPage::showPage(int x, int y){
         
             greyStarCounter.reset();//reset timers
             melodyCounter.reset();
+            trial_time_counter.reset();
             showStars = false;
             hasPressed = false;
             bGuessedWrong = false;
@@ -1220,7 +1244,7 @@ void ofPage::showPage(int x, int y){
                 bShowSingleNoteText = true;
                 printf("\nGUESS PIANO LEFT");
                 showStars = true;//show stars!
-                printf("\nWELLDONE");
+                printf("\nWELLDONE\n");
             }
         }
         //PIANO LEFT
@@ -1331,6 +1355,7 @@ void ofPage::showPage(int x, int y){
             }
             greyStarCounter.reset();//reset timers
             melodyCounter.reset();
+            trial_time_counter.reset();
             bMelodyStart = true;
             showStars = false;
             hasPressed = false;
@@ -1471,6 +1496,7 @@ void ofPage::showPage(int x, int y){
         {
             greyStarCounter.reset();//reset timers
             melodyCounter.reset();
+            trial_time_counter.reset();
             bMelodyStart = true;
             hasPressed = false;
             bGuessedWrong = false;

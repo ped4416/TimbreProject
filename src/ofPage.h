@@ -127,6 +127,7 @@ public: // place public functions or variables declarations here
     //timer
     float startTime; // store when we start time timer
     float startDotTime; // store when we start time timer
+    float current_trial_time_counter;//store the answers to all melodies 
     float endTime; // when do want to stop the timer
     bool  bTimerReached; // used as a trigger when we hit the timer
     bool bMelodyStart;
@@ -135,6 +136,8 @@ public: // place public functions or variables declarations here
     //timers using class
     Poco::Stopwatch greyStarCounter;
     Poco::Stopwatch melodyCounter;//only allow an answer after this timer
+    Poco::Stopwatch practice_time_counter;//start at exactly 200000ms
+    Poco::Stopwatch trial_time_counter;//start at exactly 200000ms
     int greyCounter;
     int greyCounter2;
     
@@ -159,7 +162,7 @@ public: // place public functions or variables declarations here
     //vectors used to store the index for each set of melodies
     //these are randomised in ofPage.cpp every time the app launches
     //using std::random_shuffle these indexes must be used to find out exactly
-    //what the other variables are that Marco gives such as expectancy, group etc 
+    //what the other variables are that Marco gives such as expectancy, group etc
     vector<int> trialMelody_1_v;
     vector<int> trialMelody_2_v;
 
