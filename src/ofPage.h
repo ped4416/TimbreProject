@@ -70,6 +70,8 @@ public: // place public functions or variables declarations here
     //animation booleans
     bool showGreenDot;
     bool showRedDot;
+    //store the answers to keep track of all green dots
+    vector<int> answered_v;
     bool showStars;
     
     //sound booleans
@@ -103,7 +105,8 @@ public: // place public functions or variables declarations here
     int trialXpos;
     int trialYpos;
     
-    bool hasPressed; 
+    bool hasPressed;
+    bool bPermitNextPage;
     
     //fonts
     ofTrueTypeFont franklinBook14;
@@ -202,6 +205,8 @@ private: // place private functions or variables declarations here
     
     ofImage buttonSelect;
     ofImage buttonSelect2;
+    
+    string answered_all;
 }; // don't forget the semicolon!!
 
 //#endif
