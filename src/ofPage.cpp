@@ -11,7 +11,7 @@ ofPage::ofPage(){
     trial_melody_count = -1;//allow for 0 index
     currentFrame = 0;
     fadeFrame = 0;
-    currentPage = -1;//TODO - set user input..
+    currentPage = -4;//TODO - set user input..
     secondTime = 30;//20
     fadeUpTime = 0.05;
     current_trial_time_counter = 0;
@@ -26,11 +26,11 @@ ofPage::ofPage(){
     showSettings = false;
     homeButtonBack = false;
     pressBackHome = false;
-    pageBack = false;//allows correct files to load or unload
-    pageForward = false;
+    bFinished = false; 
     
     showGreenDot = false;//start as false
     showRedDot = true;//start with warning that trial must be completed
+    bPermitGreenDot = false;//bool to store dots in the array
     answered_v.resize(20);//store 1 for green dot and 0 for red dot!
     for(int i = 0; i <20; i++){
         answered_v[i] = 0;//fill array with 0s
@@ -187,12 +187,26 @@ void ofPage::setup(){
 }
 
 void ofPage::update(){
+//    //udate green dot to permit retakes of pages easily
+    for (int i = 0; i < 20; i++) {
+        if(currentPage == i+4){
+            if(answered_v[i] == 1){
+                showGreenDot = true;
+                showRedDot = false;
+                //cout << "SHOW GREEN DOT!" << endl;
+            } else if(answered_v[i] == 0){
+                showRedDot = true;
+                showGreenDot = false;
+                //cout << "SHOW RED DOT!" << endl;
+            }
+        }
+    }
     
-    cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
+    //cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
     //update timers
     if (bMelodyStart == true) {
         melodyCounter.start();
-        cout << "MELODY TIMER IS NOW: " << melodyCounter.elapsed()/1000 << endl;
+        //cout << "MELODY TIMER IS NOW: " << melodyCounter.elapsed()/1000 << endl;
     }
     
     float current_melodyCounter = melodyCounter.elapsed()/1000;
@@ -224,7 +238,6 @@ void ofPage::update(){
     
     if(melodyCounter.elapsed() > 10 && melodyCounter.elapsed() < 2050000){//50ms/50,000 microseconds)
         showStars = false;
-        hasPressed = false;
         bGuessedWrong = false;
         //printf("MELODY PLAYING NOW\n");
         //cout << "SHOW STARS IS " << showStars << endl;
@@ -246,19 +259,22 @@ void ofPage::update(){
         bResetMelody = true;
         bShowTrialText = true;
     } else bResetMelody = false;
+    
 //    //reset bool to allow multiple trials
 //    if(melodyCounter.elapsed() > 4000000)
 //    {
 //        bResetMelody = false;
 //    }
     
-    //counter is only activated when the user presses either piano or trumpet
+//    //counter is only activated when the user presses either piano or trumpet
+    
     if (greyStarCounter.elapsed() > 2000000)
     {
-        bMelodyFinished = false;//allow 2 seconds to answer the test?
-        printf("\nTIME UP\n");
-        melodyCounter.reset();
-        trial_time_counter.reset();
+        //bMelodyFinished = false;//allow 2 seconds to answer the test?
+        //printf("\nTIME UP\n");
+        //melodyCounter.reset();
+        //trial_time_counter.reset();
+        
         bPermitNextPage = true;//remain true until the next page is reached..
     }
     
@@ -278,9 +294,7 @@ void ofPage::update(){
         bGuessedPiano = false;
         bGuessedTrumpet = false;
         showStars = false;
-        pageForward = false;
-        hasPressed = false;
-        pageBack = false;
+        //hasPressed = false;
         currentFrame = 0;
         fadeFrame = 0;
         greyCounter = 0;
@@ -358,6 +372,11 @@ void ofPage::draw(){
         {
             franklinBook14.drawString("Sesssion B2 is selected!", 540, 650);
         }
+        
+        if((bGroupAB || bGroupBA) && (bSessionB2 || bSessionA2 || bSessionB1 || bSessionA1)){
+            franklinBook14.drawString("Press right arrow to continue.", 250, 730);
+        }
+        currentFrame++;
     }
     
     if (currentPage == 0){
@@ -431,11 +450,20 @@ void ofPage::draw(){
         {
         
             ofSetColor(0, 0, 0, 255);
-            franklinBook14.drawString("It seems like you have not answered all \n\nthe trial numbers.\n\n\n\nPlease navigate back and retake any \n\ntrials with a red circle above them. \n\n\n\nMake sure the dot turns green!", 50, 130);
+            franklinBook14.drawString("It seems like you have not answered all \n\nthe trial numbers.\n\n\n\nPlease navigate back and retake any \n\ntrials with a red circle above them. \n\n\n\nMake sure the dot turns green!\n\n\n\nPress Giles's ear to go back to trial 1 \n\nand check everything is in order!", 50, 130);
+            bFinished = false;
+            showRedDot = true;
+            showGreenDot = false;
+            bPermitNextPage = true;//allow user to navigate back
+
             
         } else {
             ofSetColor(0, 0, 0, 255);
             franklinBook14.drawString("Well Done! \n\n\n\n\n\n20 Tunes are now completed!\n\n\n\n\n\nAll the data is stored. \n\nPlease exit the app now. ", 50, 130);
+            bFinished = true;
+            showGreenDot = true;
+            showRedDot = false;
+            bPermitNextPage = true;//allow user to navigate back 
         }
         
         //printf("%d\n",currentFrame);//keep track of timer as each page is clicked.
@@ -456,7 +484,7 @@ void ofPage::draw(){
        if(showStars == true && bMelodyFinished){//only permit after melody finished
            bGuessedWrong = false;
            greyStarCounter.start();
-           printf("greyStarCounter is : ""%lld\n",greyStarCounter.elapsed());
+           //printf("greyStarCounter is : ""%lld\n",greyStarCounter.elapsed());
        }
         
        if (bGuessedWrong == true && bMelodyFinished) {
@@ -579,6 +607,8 @@ void ofPage::draw(){
         }
         
         
+        
+        
         if(currentFrame >= secondTime*2){//&& currentFrame < secondTime*2){
             float go1 = 0;
             //float startFade = secondTime/20;
@@ -606,11 +636,12 @@ void ofPage::draw(){
             ofEnableAlphaBlending();
             homeButton.draw(20,20);
             
-            if(currentPage <25){//show right arrow up till last book page then allow home key to move on final page.
+            if(currentPage >= -1 && currentPage <= 24){//show right arrow up till last book page then allow home key to move on final page.
+                //cout << "SHOW RIGHT ARROW NOW!!!" << endl;
                 rightArrow.draw(938,710);
             }
             
-            if(currentPage >= 0){//only show left arrow from page 0
+            if(currentPage >= -1){
                 leftArrow.draw(10,710);
             }
             
@@ -697,6 +728,7 @@ void ofPage::draw(){
         ofEnableAlphaBlending();
         ofSetColor(255, 255, 255, go3);
         homeButton.draw(sin(ofGetElapsedTimeMillis()/100.0f) * 1 + 20, 20 + sin(ofGetElapsedTimeMillis()/100.0f));
+        leftArrow.draw(10,710);
         ofDisableAlphaBlending();
     }
     
@@ -718,12 +750,12 @@ void ofPage::draw(){
     //All text for pages displays here
     if(currentPage == 0 && bGuessedWrong == false && bGuessedPiano == false && bGuessedTrumpet == false){
         ofSetColor(0, 0, 0);
-        franklinBook14.drawString("This is Giles the Bear! \n\n\n\nHe can't hear very well. \n\n\n\nCan you help him hear \n\nwhat the music is? ", 120, 200);
+        franklinBook14.drawString("This is Giles the Bear! \n\n\n\nHe can't hear very well. \n\n\n\nCan you help him hear \n\nwhat the music is? \n\n\n\nPress the right arrow to continue.", 120, 200);
     }
     
     if(currentPage == 1){
         ofSetColor(0, 0, 0);
-        franklinBook14.drawString("Press the Piano! \n\nWhat do you hear?. \n\n\n\nNow press the trumpet.\n\nCan you hear it is different? ", 120, 150);
+        franklinBook14.drawString("Press the Piano! \n\nWhat do you hear?. \n\n\n\nNow press the trumpet.\n\nCan you hear it is different? \n\n\n\nPress the right arrow to continue.", 120, 100);
     }
     
     if(currentPage == 2 && bGuessedWrong == false && bGuessedPiano == false && bGuessedTrumpet == false && single_count == 0){
@@ -772,7 +804,7 @@ void ofPage::draw(){
             trials.drawString("Practice 3", trialXpos, 50);//Trial no data kept
         }
         
-        if(currentPage == 3 && practice_count == 3) {
+        if(currentPage == 3 && practice_count >= 3) {
             ofSetColor(0, 0, 0);
             trials.drawString("Practice 4", trialXpos, 50);//Trial no data kept
         }
@@ -891,6 +923,11 @@ void ofPage::touchPressed(int x, int y){//this is overidden in subclasses
 
 void ofPage::showPage(int x, int y){
     
+    //permit any page changes
+    if(currentPage <= 1){
+        bPermitNextPage = true;
+    }
+    
     if(currentPage == -1)
     {
         //set up for slecting the group AB or BA
@@ -945,6 +982,7 @@ void ofPage::showPage(int x, int y){
             bSessionA2 = false;
             bSessionB1 = false;
             bSessionB2 = false;
+            bPianoLeft = true;
 //            bPlayGroupAMelody = true;
 //            bPlayGroupBMelody = false;
             cout << "\nA1 Session  " << endl;
@@ -955,6 +993,7 @@ void ofPage::showPage(int x, int y){
             bSessionA2 = true;
             bSessionB1 = false;
             bSessionB2 = false;
+            bPianoLeft = false;//piano right
 //            bPlayGroupAMelody = true;
 //            bPlayGroupBMelody = false;
             cout << "\nA2 Session  " << endl;
@@ -965,6 +1004,7 @@ void ofPage::showPage(int x, int y){
             bSessionA2 = false;
             bSessionB1 = true;
             bSessionB2 = false;
+            bPianoLeft = true;
 //            bPlayGroupBMelody = true;
 //            bPlayGroupAMelody = false;
             cout << "\nB1 Session  " << endl;
@@ -975,6 +1015,7 @@ void ofPage::showPage(int x, int y){
             bSessionA2 = false;
             bSessionB1 = false;
             bSessionB2 = true;
+            bPianoLeft = false;
 //            bPlayGroupBMelody = true;
 //            bPlayGroupAMelody = false;
             cout << "\nB2 Session  " << endl;
@@ -988,7 +1029,7 @@ void ofPage::showPage(int x, int y){
             bGuessedWrong = false;
             bGuessedPiano = false;
             bGuessedTrumpet = false;
-            hasPressed = false;
+            //hasPressed = false;
             currentFrame = 0;
             fadeFrame = 0;
             greyStarCounter.reset();//reset timer
@@ -997,10 +1038,10 @@ void ofPage::showPage(int x, int y){
         }
         if(showOptionsTab == false && stopPress == false){
             //code for basic arrow function
-            int pageForwardX = 960;
-            int pageForwardY = 708;
-            int pageBackwardX = 60;
-            int pageBackwardY = 708;
+            int pageForwardX = 920;
+            int pageForwardY = 700;
+            int pageBackwardX = 80;
+            int pageBackwardY = 700;
             
 //            if (currentPage > 3 && currentPage < 24 && x >= pageForwardX && y > pageForwardY )
 //            {
@@ -1018,29 +1059,62 @@ void ofPage::showPage(int x, int y){
             }
 
                 
-            if (currentPage >= -1 && currentPage < 24 && x >= pageForwardX && y > pageForwardY && bPermitNextPage)
+            if (currentPage >= -3 && currentPage < 24 && x >= pageForwardX && y > pageForwardY && (bPermitNextPage || showGreenDot))
             {
                 
-                pageForward = true;//allows correct files to load or unload
+                trumpetNote = false;
+                pianoNote = false;
                 showStars = false;
                 bGuessedWrong = false;
                 bGuessedPiano = false;
                 bGuessedTrumpet = false;
-                hasPressed = false;
-                pageBack = false;
+                //hasPressed = false;
+                bPermitGreenDot = false;
+                
+                //permit user to navigate these pages at any time
+                if(currentPage < -1 || currentPage == 0 || currentPage == 1){
+                    currentPage ++;
+                    bPermitNextPage = true;
+                    cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
+                } else if((currentPage == -1) && (bGroupAB || bGroupBA) && (bSessionB2 || bSessionA2 || bSessionB1 || bSessionA1))
+                {
+                    cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
+                    currentPage ++;
+                    bPermitNextPage = true;
+                }
+                
                 //constrain pages to only move forward if the answer is given and feedback displayed
-                if (currentPage >= 3 && currentPage < 24 && bPermitNextPage) {
+                if (currentPage > 1 && currentPage < 3 && bPermitNextPage) {
                      currentPage ++;
                      bPermitNextPage = false;
                      cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
-                } else if(currentPage < 3){
-                    currentPage ++;
+                    
+                //constrain the practice trials so 2 must be acheived!
+                } else if(currentPage == 3 && practice_count <= 1 && bPermitNextPage)
+                {
+                     currentPage ++;
+                     bPermitNextPage = false;
                      cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
-                    bPermitNextPage = true;
+                     cout << "PRACTICE COUNT " << practice_count << endl;
+
+                } else if(currentPage == 3 && practice_count >= 2)
+                {
+                        currentPage ++;
+                        bPermitNextPage = true;
+                        cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
+                        cout << "PRACTICE COUNT " << practice_count << endl;
+
+                } else if (currentPage >= 4 && currentPage < 24 && (bPermitNextPage || showGreenDot)) {
+                     currentPage ++;
+                     bPermitNextPage = false;
+                     cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
                 }
+                
                 currentFrame = 0;
                 fadeFrame = 0;
-                greyStarCounter.reset();//reset timer
+                greyStarCounter.reset();//reset timers
+                melodyCounter.reset();
+                trial_time_counter.reset();
                 greyCounter = 0;
                 greyCounter2 = 0;
                 bPlayGroupBMelody = false;
@@ -1054,19 +1128,32 @@ void ofPage::showPage(int x, int y){
                 //printf("%d\n",pageBack);
                 //bPermitNextPage = false;
                 
-            } else if (currentPage > -1 && x <= pageBackwardX && y > pageBackwardY && bPermitNextPage){
-                pageBack = true;//allows correct files to load or unload
+            } else if (currentPage > -3 && x <= pageBackwardX && y > pageBackwardY && (bPermitNextPage || showGreenDot))
+            {
+                
+                trumpetNote = false;
+                pianoNote = false;
                 showStars = false;
                 bGuessedWrong = false;
                 bGuessedPiano = false;
                 bGuessedTrumpet = false;
-                pageForward = false;
-                hasPressed = false;
-                if (currentPage >= 3 && currentPage < 24 && bPermitNextPage) {
+                //hasPressed = false;
+                bPermitGreenDot = false;
+                
+                //permit user to navigate these pages at any time
+                if(currentPage <= 1){
                     currentPage --;
-                    bPermitNextPage = false;
+                    bPermitNextPage = true;
                     cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
-                } else if(currentPage < 3 || currentPage == 23){
+                } else if (currentPage > 1 && currentPage <= 3 && bPermitNextPage) {
+                    currentPage --;
+                    bPermitNextPage = false;//set to false ready for timer to permit moving back
+                    cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
+                } else if (currentPage >= 4 && currentPage < 24 && (bPermitNextPage || showGreenDot)) {
+                    currentPage --;
+                    bPermitNextPage = false;//set to false ready for timer to permit moving back
+                    cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
+                } else if(currentPage == 24){
                     currentPage --;
                     cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
                     bPermitNextPage = true;
@@ -1076,7 +1163,9 @@ void ofPage::showPage(int x, int y){
                 //reset text on each page turn
                 textshow = true;
                 texthide = false;
-                greyStarCounter.reset();//reset timer
+                greyStarCounter.reset();//reset timers
+                melodyCounter.reset();
+                trial_time_counter.reset();
                 greyCounter = 0;
                 greyCounter2 = 0;
                 bPlayGroupBMelody = false;
@@ -1190,21 +1279,6 @@ void ofPage::showPage(int x, int y){
     }
     
     
-    if(currentPage == 27){
-        //press functions for the homing button from credits page
-        int homeButtonX1 = 0;
-        int homeButtonX2 = 65;
-        int homeButtonY1 = 0;
-        int homeButtonY2 = 75;
-        
-        if (x > homeButtonX1 && x < homeButtonX2
-            && y > homeButtonY1 && y < homeButtonY2 ){
-            currentPage = 0;
-            showCredits = true;
-
-        }
-    }
-    
     if(currentPage == 0){
         playTrumpetMelody = false;
         playPianoMelody = false;
@@ -1297,6 +1371,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedPiano = true;
                 hasPressed = true;
+                bPermitGreenDot = true;
                 bShowSingleNoteText = true;
                 printf("\nGUESS PIANO LEFT\n");
                 showStars = true;//show stars!
@@ -1310,6 +1385,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedWrong = true;
                 hasPressed = true;
+                bPermitGreenDot = true;
                 bShowSingleNoteText = true;
                 showStars = false;
                 printf("\nWRONG IT WAS PIANO\n");
@@ -1322,6 +1398,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedWrong = true;
                 hasPressed = true;
+                bPermitGreenDot = true;
                 bShowSingleNoteText = true;
                 showStars = false;
                 printf("\nWRONG IT WAS TRUMPET\n");
@@ -1334,6 +1411,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedTrumpet = true;
                 hasPressed = true;
+                bPermitGreenDot = true;
                 bShowSingleNoteText = true;
                 printf("\nGUESS TRUMPET RIGHT\n");
                 showStars = true;//show stars!
@@ -1347,6 +1425,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedWrong = true;
                 hasPressed = true;
+                bPermitGreenDot = true;
                 bShowSingleNoteText = true;
                 showStars = false;
                 printf("\nWRONG IT WAS PIANO\n");
@@ -1359,6 +1438,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedPiano = true;
                 hasPressed = true;
+                bPermitGreenDot = true;
                 bShowSingleNoteText = true;
                 printf("\nGUESS PIANO RIGHT\n");
                 showStars = true;//show stars!
@@ -1373,6 +1453,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedTrumpet = true;
                 hasPressed = true;
+                bPermitGreenDot = true;
                 bShowSingleNoteText = true;
                 printf("\nGUESS TRUMPET LEFT\n");
                 showStars = true;//show stars!
@@ -1386,6 +1467,7 @@ void ofPage::showPage(int x, int y){
             {
                 bGuessedWrong = true;
                 hasPressed = true;
+                bPermitGreenDot = true;
                 bShowSingleNoteText = true;
                 showStars = false;
                 printf("\nWRONG IT WAS TRUMPET\n");
@@ -1420,6 +1502,7 @@ void ofPage::showPage(int x, int y){
             {
                 cout << "PRACTICE COUNTER" << practice_count << endl;
                 showDots = false, bPlayPracticeMelody = false;
+                //practice_count = -1;
             } else if(practice_count <= 3)
             {
                 greyStarCounter.reset();//reset timers
@@ -1460,6 +1543,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedPiano = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     printf("\nGUESS PIANO LEFT\n");
                     showStars = true;//show stars!
                     //printf("\nWELLDONE");
@@ -1472,6 +1556,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     showStars = false;
                     printf("\nWRONG IT WAS PIANO\n");
                 }
@@ -1483,6 +1568,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     showStars = false;
                     printf("\nWRONG IT WAS TRUMPET");
                 }
@@ -1494,6 +1580,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedTrumpet = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     printf("\nGUESS TRUMPET RIGHT\n");
                     showStars = true;//show stars!
                     //printf("\nWELLDONE");
@@ -1506,6 +1593,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     showStars = false;
                     printf("\nWRONG IT WAS PIANO\n");
                 }
@@ -1517,6 +1605,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedPiano = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     printf("\nGUESS PIANO RIGHT");
                     showStars = true;//show stars!
                     //printf("\nWELLDONE");
@@ -1530,6 +1619,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedTrumpet = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     printf("\nGUESS TRUMPET LEFT");
                     showStars = true;//show stars!
                     //printf("\nWELLDONE");
@@ -1542,6 +1632,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     showStars = false;
                     printf("\nWRONG IT WAS TRUMPET");
                     
@@ -1555,13 +1646,13 @@ void ofPage::showPage(int x, int y){
         bPlayPracticeMelody = false;
         practice_count = -1;//reset counter for 0 index
         trial_melody_count = (currentPage - 4);
-        //cout << "\nTrial Melody Counter = " << trial_melody_count + 1 << endl;
+        cout << "\nTrial Melody Counter = " << trial_melody_count + 1 << endl;
         if (trial_melody_count > 20) {
             trial_melody_count = 20;
         }
 
         //press bear head to sound.. or trial number to sound
-        if (x > 780 && y < 290 && y > 0 && hasPressed == false)
+        if (x > 780 && y < 290 && y > 0)
         {
             greyStarCounter.reset();//reset timers
             melodyCounter.reset();
@@ -1635,6 +1726,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedPiano = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     printf("\nGUESS PIANO LEFT\n");
                     showStars = true;//show stars!
                     //showGreenDot = true;
@@ -1648,6 +1740,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     showStars = false;
                     //showGreenDot = true;
                     printf("\nWRONG IT WAS PIANO\n");
@@ -1660,6 +1753,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     showStars = false;
                     //showGreenDot = true;
                     printf("\nWRONG IT WAS TRUMPET\n");
@@ -1672,6 +1766,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedTrumpet = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     //showGreenDot = true;
                     printf("\nGUESS TRUMPET RIGHT\n");
                     showStars = true;//show stars!
@@ -1685,6 +1780,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     showStars = false;
                     //showGreenDot = true;
                     printf("\nWRONG IT WAS PIANO\n");
@@ -1697,6 +1793,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedPiano = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     //showGreenDot = true;
                     printf("\nGUESS PIANO RIGHT\n");
                     showStars = true;//show stars!
@@ -1711,6 +1808,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedTrumpet = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     //showGreenDot = true;
                     printf("\nGUESS TRUMPET LEFT\n");
                     showStars = true;//show stars!
@@ -1724,6 +1822,7 @@ void ofPage::showPage(int x, int y){
                 {
                     bGuessedWrong = true;
                     hasPressed = true;
+                    bPermitGreenDot = true;
                     showStars = false;
                     //showGreenDot = true;
                     printf("\nWRONG IT WAS TRUMPET\n");
@@ -1738,7 +1837,7 @@ void ofPage::showPage(int x, int y){
         //allow user to know if they have answered any of the trials with a green or red dot
         for (int i = 0; i < 20; i++) {
             if(currentPage == i+4){
-                if(hasPressed){
+                if(bPermitGreenDot){
                     answered_v[i] = 1;//assign 1 to the current index
                 } //else answered_v[i] = 0;
             }
@@ -1749,7 +1848,7 @@ void ofPage::showPage(int x, int y){
                 if(answered_v[i] == 1){
                     showGreenDot = true;
                     showRedDot = false;
-                    //cout << "SHOW GREEN DOT!" << endl;
+                    cout << "SHOW GREEN DOT!" << endl;
                 } else if(answered_v[i] == 0){
                     showRedDot = true;
                     showGreenDot = false;
@@ -1766,9 +1865,20 @@ void ofPage::showPage(int x, int y){
             if (answered_v[i] == 0) {
                 answered_all = ofToString(answered_v[i]) + ",";
                 cout << "answered_v index " << i << " = "<< answered_v[i] << " so not answered" << endl;
-            }
+            } else bFinished = true;//make sure the file saves!
             
         }
+        
+        //press bear head to return to trial 1!!!!
+        if (x > 780 && y < 290 && y > 0)
+        {
+            currentPage = 4;
+        }
+    }
+    
+    //permit any page changes
+    if(currentPage <= 1){
+        bPermitNextPage = true;
     }
 }
 

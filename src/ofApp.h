@@ -40,6 +40,12 @@ class ofApp : public ofxiOSApp{
         void loadFile();
         void timeStampData();
         void saveTime();
+        void userKeyboardInput();
+        ofxiOSKeyboard * keyboard;
+        ofTrueTypeFont keyboard_f;
+        bool bSelectUser;
+        bool bSelectAge; 
+    
     
         string save_time_s, save_date_s;
     
@@ -113,9 +119,8 @@ class ofApp : public ofxiOSApp{
         string seconds_s;
         string mins_s;
         string millis_s;
-        
-        ofxiOSKeyboard * keyboard;
-        ofFile dataFile;
+    
+        ofFile dataFile;//load a file? use this
         string timeStamp_s;
         ofBuffer buff;
     

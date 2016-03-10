@@ -54,8 +54,7 @@ public: // place public functions or variables declarations here
     bool showOptionsTab;
     bool showSettings;
     bool pressBackHome;
-    bool pageBack;
-    bool pageForward;
+    bool bFinished;
     
     
     //set up for animation
@@ -107,6 +106,7 @@ public: // place public functions or variables declarations here
     
     bool hasPressed;
     bool bPermitNextPage;
+    bool bPermitGreenDot; 
     
     //fonts
     ofTrueTypeFont franklinBook14;

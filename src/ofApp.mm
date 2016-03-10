@@ -33,6 +33,18 @@ void ofApp::setup(){
     //setup audio Stuff
     sampleRate 			= 44100;
     initialBufferSize	= 512;
+    
+    keyboard = new ofxiOSKeyboard(2,40,320,32);
+    keyboard->setVisible(true);
+    keyboard->setBgColor(255, 255, 255, 255);
+    keyboard->setFontColor(0,0,0, 255);
+    keyboard->setFontSize(26);
+    
+    //font setup
+
+    keyboard_f.loadFont("fonts/Georgia.ttf", 22);
+    keyboard_f.setLineHeight(18.0f);
+    keyboard_f.setLetterSpacing(1.037);
 
     ofSoundStreamSetup(2,0,this, sampleRate, initialBufferSize, 4);
     
@@ -974,7 +986,7 @@ void ofApp::update(){
     //cout << "my array is size: " << testMelodyNumber1.size() << endl;
     //cout << testMelodyNumber1[2] << endl;
     myPage.update();
-//    updateTimer();
+    //    updateTimer();
 //    myHomePage.update();
 //    myIntroduction.update();
     //mySounds.update();
@@ -1015,8 +1027,8 @@ void ofApp::draw(){
     //mySounds.draw();//to allow update of variables from parent class
     //myHomePage.draw();
     //myIntroduction.draw();
-    
     myPage.draw();//draw last to layer ontop of other images
+    userKeyboardInput();
     
     //display accelarometer stars
     float x;
@@ -1035,6 +1047,71 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 
+void ofApp::userKeyboardInput(){//run in update
+    
+    //setup to view the keyboard
+    if(myPage.currentPage >= -4  && myPage.currentPage < -1){
+        if(!keyboard->isKeyboardShowing()){
+            keyboard->openKeyboard();
+            keyboard->setVisible(true);
+            keyboard->updateOrientation();
+        }
+    } else if(myPage.currentPage >= -1){
+        keyboard->setVisible(false);
+    }
+    
+    ofPushMatrix();
+    ofTranslate(ofGetWidth()/2, ofGetHeight()/2);//move pivot to centre
+    ofRotate(90);
+    
+    if(myPage.currentPage == -4)
+    {
+        //cout << "PAGE = " << myPage.currentPage << endl;
+        //update userID
+        
+        ofSetColor(255, 0, 0, 255);
+        keyboard_f.drawString("DONE", 200, -450);
+        ofSetColor(255, 0, 0, 255);
+        ofSetColor(0, 0, 0, 255);
+        keyboard_f.drawString("Please type in the user ID.\n\nWhen you have entered the ID press DONE", -350, -100);
+        ofSetColor(0, 0, 255, 255);
+        keyboard_f.drawString("User ID = "+  keyboard->getLabelText() , -350, 100);
+        //assign userID to the input
+        userID_s = keyboard->getLabelText();
+      
+        
+    }
+    
+    if(myPage.currentPage == -3)
+    {
+
+        keyboard->getLabelText() = "";//does not work!
+        ofSetColor(0, 255, 0, 255);
+        keyboard_f.drawString("BACK", -300, -450);
+        ofSetColor(255, 0, 0, 255);
+        keyboard_f.drawString("DONE", 200, -450);
+        ofSetColor(0, 0, 0, 255);
+        keyboard_f.drawString("The User ID [" + userID_s + "] is stored.\n\nPress back if you need to change this.\n\n\n\nPlease delete the User ID text coloured BLUE \n\nbelow. Use the keyboard x btton on the right.\n\n\n\nNow type in the user Age in Months.Press the \n\nbottom left keyboard button to access numbers.\n\n\n\nWhen you have entered the Age press DONE", -350, -300);
+        ofSetColor(0, 0, 255, 255);
+        keyboard_f.drawString("User Age In Months = "+  keyboard->getLabelText() , -350, 100);
+        user_age_s = keyboard->getLabelText();
+    }
+    
+    if(myPage.currentPage == -2){
+        ofSetColor(0, 255, 0, 255);
+        keyboard_f.drawString("BACK", -300, -450);
+        ofSetColor(0, 0, 0, 255);
+        keyboard_f.drawString("CONTINUE", 200, -450);
+        ofSetColor(0, 0, 0, 255);
+        keyboard_f.drawString("The Age of [" + user_age_s + "] months is stored.\n\nPress back if you need to change this.\n\n\n\n\n\nUser ID = " + userID_s + "\n\nUser Age = " + user_age_s + "\n\n\n\nIf you are happy please press continue. \n\n\n\nPlease get ready to turn the iPad round to\n\nLandscape Mode.", -350, -300);
+    }
+
+   
+    ofPushMatrix();
+}
+
+//--------------------------------------------------------------
+
 void ofApp::updateTimer(){
     //Need to store 4 practice trials into an array then if Session A is true add 20 trials to A array
     //If Session B is true then the second array will be filled
@@ -1043,7 +1120,7 @@ void ofApp::updateTimer(){
     
     //cout << "\nUpdate the timer now!" << endl;
     if(myPage.hasPressed){
-        cout << "Time Stamp IN updateTIMER = " << myPage.trial_time_counter.elapsed() << endl;
+        //cout << "Time Stamp IN updateTIMER = " << myPage.trial_time_counter.elapsed() << endl;
     }
     
     //First set up to store the amount of time taken for the practice melodies
@@ -1052,12 +1129,12 @@ void ofApp::updateTimer(){
     {
         if(myPage.hasPressed == true)//user has given an answer
         {
-           cout << "Practice Time Stamp in ms = " << myPage.trial_time_counter.elapsed()/1000 << endl;
+           //cout << "Practice Time Stamp in ms = " << myPage.trial_time_counter.elapsed()/1000 << endl;
            //float temp_time_stamp = myPage.trial_time_counter.elapsed();//get macroseconds
            //print out the exact time of the trial_Time_Counter and add it to the array
             if (myPage.practice_count==0) {
                 practice_time_data_v[0] = myPage.trial_time_counter.elapsed()/1000;
-                cout << "Practice Stored Stamp in ms = " << practice_time_data_v[0] << endl;
+                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[0] << endl;
                 saveTime();
                 time_v[0] = save_time_s;//store current time
                 if(myPage.bGuessedWrong){
@@ -1069,7 +1146,7 @@ void ofApp::updateTimer(){
             } else if(myPage.practice_count==1)
             {
                 practice_time_data_v[1] = myPage.trial_time_counter.elapsed()/1000;
-                cout << "Practice Stored Stamp in ms = " << practice_time_data_v[1] << endl;
+                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[1] << endl;
                 saveTime();
                 time_v[1] = save_time_s;//store current time
                 if(myPage.bGuessedWrong){
@@ -1080,7 +1157,7 @@ void ofApp::updateTimer(){
             } else if(myPage.practice_count==2)
             {
                 practice_time_data_v[2] = myPage.trial_time_counter.elapsed()/1000;
-                cout << "Practice Stored Stamp in ms = " << practice_time_data_v[2] << endl;
+                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[2] << endl;
                 saveTime();
                 time_v[2] = save_time_s;//store current time
                 if(myPage.bGuessedWrong){
@@ -1091,7 +1168,7 @@ void ofApp::updateTimer(){
             } else if(myPage.practice_count==3)
             {
                 practice_time_data_v[3] = myPage.trial_time_counter.elapsed()/1000;
-                cout << "Practice Stored Stamp in ms = " << practice_time_data_v[3] << endl;
+                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[3] << endl;
                 saveTime();
                 time_v[3] = save_time_s;//store current time
                 if(myPage.bGuessedWrong){
@@ -1101,9 +1178,9 @@ void ofApp::updateTimer(){
                 }
             }
            //practice_time_data_v.push_back(myPage.trial_time_counter.elapsed());//store all draw
-           cout << "Current Practice = " << myPage.practice_count+1 <<  endl;
+           //cout << "Current Practice = " << myPage.practice_count+1 <<  endl;
         }
-    } else if(myPage.currentPage >= 4 && myPage.currentPage <=23 && myPage.hasPressed == true)
+    } else if(myPage.currentPage >= 4 && myPage.currentPage <=23 && myPage.hasPressed == true)//watch out for delay?? 
     {
     
         //must replace each index of array mulitple times if required.
@@ -1223,307 +1300,178 @@ void ofApp::saveTime(){
 //--------------------------------------------------------------
 void ofApp::saveFile(){
     
-    saveTime();
-    string newFileName = "USER_" + userID_s + "_DATE_" + save_date_s  + "_TIME_" + save_time_s + ".csv";
-    ofFile file2(ofxiPhoneGetDocumentsDirectory() +newFileName,ofFile::WriteOnly);
-    
-    //assign variables to strings
-    for (int i = 0; i < 44; i++) {
-        userID_v[i] = userID_s;
-        user_age_v[i] = user_age_s;
-        date_v[i] = save_date_s;
-        //time_v already filled during the user sessions
-        if(myPage.bPianoLeft){
-            piano_left_v[i] = "piano_left";
-        } else piano_left_v[i] = "piano_right";
+    if(myPage.bFinished){//make sure all answers have been given!
+        saveTime();
+        string newFileName = "USER_" + userID_s + "_DATE_" + save_date_s  + "_TIME_" + save_time_s + ".csv";
+        ofFile file2(ofxiPhoneGetDocumentsDirectory() +newFileName,ofFile::WriteOnly);
         
-        if(myPage.bGroupAB){
-            session_order_v[i] = "AB";
-        } else if(myPage.bGroupBA){
-            session_order_v[i] = "BA";
-        }
-        if(myPage.bSessionA1)
-        {
-          session_number_v[i] = "A1";
-        } else if(myPage.bSessionA2)
-        {
-          session_number_v[i] = "A2";
-        } else if(myPage.bSessionB1)
-        {
-          session_number_v[i] = "B2";
-        } else if(myPage.bSessionB1)
-        {
-            session_number_v[i] = "B2";
+        //assign variables to strings
+        for (int i = 0; i < 44; i++) {
+            userID_v[i] = userID_s;
+            user_age_v[i] = user_age_s;
+            date_v[i] = save_date_s;
+            //time_v already filled during the user sessions
+            if(myPage.bPianoLeft){
+                piano_left_v[i] = "piano_left";
+            } else piano_left_v[i] = "piano_right";
+            
+            if(myPage.bGroupAB){
+                session_order_v[i] = "AB";
+            } else if(myPage.bGroupBA){
+                session_order_v[i] = "BA";
+            }
+            if(myPage.bSessionA1)
+            {
+              session_number_v[i] = "A1";
+            } else if(myPage.bSessionA2)
+            {
+              session_number_v[i] = "A2";
+            } else if(myPage.bSessionB1)
+            {
+              session_number_v[i] = "B1";
+            } else if(myPage.bSessionB2)
+            {
+                session_number_v[i] = "B2";
+            }
+            
         }
         
-    }
-    
-    //Print out all time arrays to console to check them
-    for (int i = 0; i < practice_time_data_v.size(); i++) {
-       // practice_data_s = ofToString(practice_time_data_v[i]) + ",";
-        cout << "PRACTICE" << i+1 << " = " << practice_time_data_v[i] << "," << endl;
-    }
-    for (int i = 0; i < trial_time_data_A_v.size(); i++) {
-        //melody_data_A_s = ofToString(trial_time_data_A_v[i]) + ",";
-        cout << "MELODY A" << i+1 << " = " << trial_time_data_A_v[i] << "," << endl;
-    }
-    for (int i = 0; i < trial_time_data_B_v.size(); i++) {
-        //melody_data_B_s = ofToString(trial_time_data_A_v[i]) + ",";
-        cout << "MELODY B" << i+1 << " = " << trial_time_data_A_v[i] << "," << endl;
-    }
-    
-    //concatinate all strings ready to add to final data file - includes time_v and all timestamps
-    //vector1.insert( vector1.end(), vector2.begin(), vector2.end() );
-    //Reaction_Time_v
-    reaction_time_v.insert(reaction_time_v.begin(), trial_time_data_B_v.begin(), trial_time_data_B_v.end());
-    reaction_time_v.insert(reaction_time_v.begin(), trial_time_data_A_v.begin(), trial_time_data_A_v.end());
-    reaction_time_v.insert(reaction_time_v.begin(), practice_time_data_v.begin(), practice_time_data_v.end());
-    //Answer
-    answer_v.insert(answer_v.begin(), trial_answer_B_v.begin(), trial_answer_B_v.end());
-    answer_v.insert(answer_v.begin(), trial_answer_A_v.begin(), trial_answer_A_v.end());
-    answer_v.insert(answer_v.begin(), practice_answer_v.begin(), practice_answer_v.end());
-    //Number
-    number_v.insert(number_v.begin(), number_B_v.begin(), number_B_v.end());//reverse the order of arrays to add to begining of final!
-    number_v.insert(number_v.begin(), number_A_v.begin(), number_A_v.end());
-    number_v.insert(number_v.begin(), number_practice_v.begin(), number_practice_v.end());
-    //ID
-    ID_v.insert(ID_v.begin(), ID_B_v.begin(), ID_B_v.end());
-    ID_v.insert(ID_v.begin(), ID_A_v.begin(), ID_A_v.end());
-    ID_v.insert(ID_v.begin(), ID_practice_v.begin(), ID_practice_v.end());
-    //Session
-    session_v.insert(session_v.begin(), session_B_v.begin(), session_B_v.end());
-    session_v.insert(session_v.begin(), session_A_v.begin(), session_A_v.end());
-    session_v.insert(session_v.begin(), session_practice_v.begin(), session_practice_v.end());
-    //Practice
-    practice_v.insert(practice_v.begin(), practice_B_v.begin(), practice_B_v.end());
-    practice_v.insert(practice_v.begin(), practice_A_v.begin(), practice_A_v.end());
-    practice_v.insert(practice_v.begin(), practice_practice_v.begin(), practice_practice_v.end());
-    //Timbre
-    timbre_v.insert(timbre_v.begin(), timbre_B_v.begin(), timbre_B_v.end());
-    timbre_v.insert(timbre_v.begin(), timbre_A_v.begin(), timbre_A_v.end());
-    timbre_v.insert(timbre_v.begin(), timbre_practice_v.begin(), timbre_practice_v.end());
-    //Probability
-    probability_v.insert(probability_v.begin(), probability_B_v.begin(), probability_B_v.end());
-    probability_v.insert(probability_v.begin(), probability_A_v.begin(), probability_A_v.end());
-    probability_v.insert(probability_v.begin(), probability_practice_v.begin(), probability_practice_v.end());
-    //Basename
-    basename_v.insert(basename_v.begin(), basename_B_v.begin(), basename_B_v.end());
-    basename_v.insert(basename_v.begin(), basename_A_v.begin(), basename_A_v.end());
-    basename_v.insert(basename_v.begin(), basename_practice_v.begin(), basename_practice_v.end());
-    //Filename
-    filename_v.insert(filename_v.begin(), filename_B_v.begin(), filename_B_v.end());
-    filename_v.insert(filename_v.begin(), filename_A_v.begin(), filename_A_v.end());
-    filename_v.insert(filename_v.begin(), filename_practice_v.begin(), filename_practice_v.end());
-    //Pitch
-    pitch_v.insert(pitch_v.begin(), pitch_B_v.begin(), pitch_B_v.end());
-    pitch_v.insert(pitch_v.begin(), pitch_A_v.begin(), pitch_A_v.end());
-    pitch_v.insert(pitch_v.begin(), pitch_practice_v.begin(), pitch_practice_v.end());
-    //Pitch Interval
-    pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_B_v.begin(), pitch_interval_B_v.end());
-    pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_A_v.begin(), pitch_interval_A_v.end());
-    pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_practice_v.begin(), pitch_interval_practice_v.end());
-    //Interval size
-    interval_size_v.insert(interval_size_v.begin(), interval_size_B_v.begin(), interval_size_B_v.end());
-    interval_size_v.insert(interval_size_v.begin(), interval_size_A_v.begin(), interval_size_A_v.end());
-    interval_size_v.insert(interval_size_v.begin(), interval_size_practice_v.begin(), interval_size_practice_v.end());
-    //Interval Direction
-    interval_direction_v.insert(interval_direction_v.begin(), interval_direction_B_v.begin(), interval_direction_B_v.end());
-    interval_direction_v.insert(interval_direction_v.begin(), interval_direction_A_v.begin(), interval_direction_A_v.end());
-    interval_direction_v.insert(interval_direction_v.begin(), interval_direction_practice_v.begin(), interval_direction_practice_v.end());
-    //Information content
-    information_content_v.insert(information_content_v.begin(), information_content_B_v.begin(), information_content_B_v.end());
-    information_content_v.insert(information_content_v.begin(), information_content_A_v.begin(), information_content_A_v.end());
-    information_content_v.insert(information_content_v.begin(), information_content_practice_v.begin(), information_content_practice_v.end());
-    //Probe repetitions
-    probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_B_v.begin(), probe_repetitions_B_v.end());
-    probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_A_v.begin(), probe_repetitions_A_v.end());
-    probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_practice_v.begin(), probe_repetitions_practice_v.end());
-    //octave probe repetitions
-    probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_B_v.begin(), probe_octave_repetitions_B_v.end());
-    probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_A_v.begin(), probe_octave_repetitions_A_v.end());
-    probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_practice_v.begin(), probe_octave_repetitions_practice_v.end());
-    
-    
-    //print all concatinated strings to console to check
-    for (int i = 0; i < 44; i++) {
-        cout << "Reaction_Time " << i+1 << " = " << reaction_time_v[i] << "," << endl;
-        cout << "Number " << i+1 << " = " << number_v[i] << "," << endl;
-        cout << "ID " << i+1 << " = " << ID_v[i] << "," << endl;
-        cout << "Session " << i+1 << " = " << session_v[i] << "," << endl;
-        cout << "Practice " << i+1 << " = " << practice_v[i] << "," << endl;
-        cout << "Timbre " << i+1 << " = " << timbre_v[i] << "," << endl;
-        cout << "Probability " << i+1 << " = " << probability_v[i] << "," << endl;
-        cout << "Basename " << i+1 << " = " << basename_v[i] << "," << endl;
-        cout << "Filename " << i+1 << " = " << filename_v[i] << "," << endl;
-        cout << "Pitch " << i+1 << " = " << pitch_v[i] << "," << endl;
-        cout << "Pitch_interval " << i+1 << " = " << pitch_interval_v[i] << "," << endl;
-        cout << "interval_size " << i+1 << " = " << interval_size_v[i] << "," << endl;
-        cout << "interval_direction " << i+1 << " = " << interval_direction_v[i] << "," << endl;
-        cout << "infoprmation_content " << i+1 << " = " << information_content_v[i] << "," << endl;
-        cout << "probe_repetitions " << i+1 << " = " << probe_repetitions_v[i] << "," << endl;
-        cout << "probe_octave_repetitions " << i+1 << " = " << probe_octave_repetitions_v[i] << "," << endl;
-    }
-    
-    //PRINT ALL DATA TO FILE with 44 elelements
-    file2 << "User_ID,User_Age,Session_Number,Session_Order,Date,Time_Completed,Piano_Position,Reaction_Time_Millis,Answer,Number,ID,Session,Practice,Timbre,Probability,Basename,Filename,Pitch,Pitch_Interval,Interval_Size,Interval_Direction,Information_Content,Probe_Repetitions,Probe_Octave_Repetitions";
-    for (int i = 0; i < 44; i++) {
-        file2 << "\n" << userID_v[i] << ",";//add << endl to have obvious colums
-        file2 << user_age_v[i] << ",";
-        file2 << session_number_v[i] << ",";
-        file2 << session_order_v[i] << ",";
-        file2 << date_v[i] << ",";
-        file2 << time_v[i] << ",";
-        file2 << piano_left_v[i] << ",";
-        file2 << reaction_time_v[i] << ",";
-        file2 << answer_v[i] << ",";
-        file2 << number_v[i] << ",";
-        file2 << ID_v[i] << ",";
-        file2 << session_v[i] << ",";
-        file2 << practice_v[i] << ",";
-        file2 << timbre_v[i] << ",";
-        file2 << probability_v[i] << ",";
-        file2 << basename_v[i] << ",";
-        file2 << filename_v[i] << ",";
-        file2 << pitch_v[i] << ",";
-        file2 << pitch_interval_v[i] << ",";
-        file2 << interval_size_v[i] << ",";
-        file2 << interval_direction_v[i] << ",";
-        file2 << information_content_v[i] << ",";
-        file2 << probe_repetitions_v[i] << ",";
-        file2 << probe_octave_repetitions_v[i];
-    }
-    
-//    file2 << "User_Age\n";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << user_age_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Session_Number,";
-//    for (int i = 0; i < 44; i++) {
-//         file2 << session_number_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Session_Order,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << session_order_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Date,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << date_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Time,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << time_v[i] << ","<< endl;//try this
-//    }
-//    
-//    file2 << " Piano_Position,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << piano_left_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Reaction_Time,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << reaction_time_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Answer,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << answer_v[i] << ","<< endl;
-//    }
-//
-//    file2 << " Number,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << number_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " ID,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << ID_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Session,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << session_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Practice,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << practice_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Timbre,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << timbre_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Probability,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << probability_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Basename,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << basename_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << "\nFilename,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << filename_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Pitch,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << pitch_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Pitch_Interval,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << pitch_interval_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Interval_Size,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << interval_size_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Interval_Direction,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << interval_direction_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Information_Content,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << information_content_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Probe_Repetitions,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << probe_repetitions_v[i] << ","<< endl;
-//    }
-//    
-//    file2 << " Probe_Octave_Repetitions,";
-//    for (int i = 0; i < 44; i++) {
-//        file2 << probe_octave_repetitions_v[i] << ","<< endl;
-//    }
-//    
-    
-    
-//    file2 << "Practice_data\n";
-//    for (int i = 0; i < practice_time_data_v.size(); i++) {
-//        //practice_data_s = ofToString(practice_time_data_v[i]) + ",";
-//        file2 << practice_time_data_v[i] << ",";//add << endl to have obvious colums
-//    }
-//    file2 << "Trial_A_data\n";
-//    for (int i = 0; i < trial_time_data_A_v.size(); i++) {
-//        file2 << trial_time_data_A_v[i] << ",";
-//    }
-//    file2 << "Trial_B_data\n";
-//    for (int i = 0; i < trial_time_data_B_v.size(); i++) {
-//        file2 << trial_time_data_B_v[i] << ",";
-//    }
-    file2.close();
+        //Print out all time arrays to console to check them
+        for (int i = 0; i < practice_time_data_v.size(); i++) {
+           // practice_data_s = ofToString(practice_time_data_v[i]) + ",";
+            cout << "PRACTICE" << i+1 << " = " << practice_time_data_v[i] << "," << endl;
+        }
+        for (int i = 0; i < trial_time_data_A_v.size(); i++) {
+            //melody_data_A_s = ofToString(trial_time_data_A_v[i]) + ",";
+            cout << "MELODY A" << i+1 << " = " << trial_time_data_A_v[i] << "," << endl;
+        }
+        for (int i = 0; i < trial_time_data_B_v.size(); i++) {
+            //melody_data_B_s = ofToString(trial_time_data_A_v[i]) + ",";
+            cout << "MELODY B" << i+1 << " = " << trial_time_data_A_v[i] << "," << endl;
+        }
+        
+        //concatinate all strings ready to add to final data file - includes time_v and all timestamps
+        //vector1.insert( vector1.end(), vector2.begin(), vector2.end() );
+        //Reaction_Time_v
+        reaction_time_v.insert(reaction_time_v.begin(), trial_time_data_B_v.begin(), trial_time_data_B_v.end());
+        reaction_time_v.insert(reaction_time_v.begin(), trial_time_data_A_v.begin(), trial_time_data_A_v.end());
+        reaction_time_v.insert(reaction_time_v.begin(), practice_time_data_v.begin(), practice_time_data_v.end());
+        //Answer
+        answer_v.insert(answer_v.begin(), trial_answer_B_v.begin(), trial_answer_B_v.end());
+        answer_v.insert(answer_v.begin(), trial_answer_A_v.begin(), trial_answer_A_v.end());
+        answer_v.insert(answer_v.begin(), practice_answer_v.begin(), practice_answer_v.end());
+        //Number
+        number_v.insert(number_v.begin(), number_B_v.begin(), number_B_v.end());//reverse the order of arrays to add to begining of final!
+        number_v.insert(number_v.begin(), number_A_v.begin(), number_A_v.end());
+        number_v.insert(number_v.begin(), number_practice_v.begin(), number_practice_v.end());
+        //ID
+        ID_v.insert(ID_v.begin(), ID_B_v.begin(), ID_B_v.end());
+        ID_v.insert(ID_v.begin(), ID_A_v.begin(), ID_A_v.end());
+        ID_v.insert(ID_v.begin(), ID_practice_v.begin(), ID_practice_v.end());
+        //Session
+        session_v.insert(session_v.begin(), session_B_v.begin(), session_B_v.end());
+        session_v.insert(session_v.begin(), session_A_v.begin(), session_A_v.end());
+        session_v.insert(session_v.begin(), session_practice_v.begin(), session_practice_v.end());
+        //Practice
+        practice_v.insert(practice_v.begin(), practice_B_v.begin(), practice_B_v.end());
+        practice_v.insert(practice_v.begin(), practice_A_v.begin(), practice_A_v.end());
+        practice_v.insert(practice_v.begin(), practice_practice_v.begin(), practice_practice_v.end());
+        //Timbre
+        timbre_v.insert(timbre_v.begin(), timbre_B_v.begin(), timbre_B_v.end());
+        timbre_v.insert(timbre_v.begin(), timbre_A_v.begin(), timbre_A_v.end());
+        timbre_v.insert(timbre_v.begin(), timbre_practice_v.begin(), timbre_practice_v.end());
+        //Probability
+        probability_v.insert(probability_v.begin(), probability_B_v.begin(), probability_B_v.end());
+        probability_v.insert(probability_v.begin(), probability_A_v.begin(), probability_A_v.end());
+        probability_v.insert(probability_v.begin(), probability_practice_v.begin(), probability_practice_v.end());
+        //Basename
+        basename_v.insert(basename_v.begin(), basename_B_v.begin(), basename_B_v.end());
+        basename_v.insert(basename_v.begin(), basename_A_v.begin(), basename_A_v.end());
+        basename_v.insert(basename_v.begin(), basename_practice_v.begin(), basename_practice_v.end());
+        //Filename
+        filename_v.insert(filename_v.begin(), filename_B_v.begin(), filename_B_v.end());
+        filename_v.insert(filename_v.begin(), filename_A_v.begin(), filename_A_v.end());
+        filename_v.insert(filename_v.begin(), filename_practice_v.begin(), filename_practice_v.end());
+        //Pitch
+        pitch_v.insert(pitch_v.begin(), pitch_B_v.begin(), pitch_B_v.end());
+        pitch_v.insert(pitch_v.begin(), pitch_A_v.begin(), pitch_A_v.end());
+        pitch_v.insert(pitch_v.begin(), pitch_practice_v.begin(), pitch_practice_v.end());
+        //Pitch Interval
+        pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_B_v.begin(), pitch_interval_B_v.end());
+        pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_A_v.begin(), pitch_interval_A_v.end());
+        pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_practice_v.begin(), pitch_interval_practice_v.end());
+        //Interval size
+        interval_size_v.insert(interval_size_v.begin(), interval_size_B_v.begin(), interval_size_B_v.end());
+        interval_size_v.insert(interval_size_v.begin(), interval_size_A_v.begin(), interval_size_A_v.end());
+        interval_size_v.insert(interval_size_v.begin(), interval_size_practice_v.begin(), interval_size_practice_v.end());
+        //Interval Direction
+        interval_direction_v.insert(interval_direction_v.begin(), interval_direction_B_v.begin(), interval_direction_B_v.end());
+        interval_direction_v.insert(interval_direction_v.begin(), interval_direction_A_v.begin(), interval_direction_A_v.end());
+        interval_direction_v.insert(interval_direction_v.begin(), interval_direction_practice_v.begin(), interval_direction_practice_v.end());
+        //Information content
+        information_content_v.insert(information_content_v.begin(), information_content_B_v.begin(), information_content_B_v.end());
+        information_content_v.insert(information_content_v.begin(), information_content_A_v.begin(), information_content_A_v.end());
+        information_content_v.insert(information_content_v.begin(), information_content_practice_v.begin(), information_content_practice_v.end());
+        //Probe repetitions
+        probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_B_v.begin(), probe_repetitions_B_v.end());
+        probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_A_v.begin(), probe_repetitions_A_v.end());
+        probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_practice_v.begin(), probe_repetitions_practice_v.end());
+        //octave probe repetitions
+        probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_B_v.begin(), probe_octave_repetitions_B_v.end());
+        probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_A_v.begin(), probe_octave_repetitions_A_v.end());
+        probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_practice_v.begin(), probe_octave_repetitions_practice_v.end());
+        
+        
+        //print all concatinated strings to console to check
+        for (int i = 0; i < 44; i++) {
+            cout << "Reaction_Time " << i+1 << " = " << reaction_time_v[i] << "," << endl;
+            cout << "Number " << i+1 << " = " << number_v[i] << "," << endl;
+            cout << "ID " << i+1 << " = " << ID_v[i] << "," << endl;
+            cout << "Session " << i+1 << " = " << session_v[i] << "," << endl;
+            cout << "Practice " << i+1 << " = " << practice_v[i] << "," << endl;
+            cout << "Timbre " << i+1 << " = " << timbre_v[i] << "," << endl;
+            cout << "Probability " << i+1 << " = " << probability_v[i] << "," << endl;
+            cout << "Basename " << i+1 << " = " << basename_v[i] << "," << endl;
+            cout << "Filename " << i+1 << " = " << filename_v[i] << "," << endl;
+            cout << "Pitch " << i+1 << " = " << pitch_v[i] << "," << endl;
+            cout << "Pitch_interval " << i+1 << " = " << pitch_interval_v[i] << "," << endl;
+            cout << "interval_size " << i+1 << " = " << interval_size_v[i] << "," << endl;
+            cout << "interval_direction " << i+1 << " = " << interval_direction_v[i] << "," << endl;
+            cout << "infoprmation_content " << i+1 << " = " << information_content_v[i] << "," << endl;
+            cout << "probe_repetitions " << i+1 << " = " << probe_repetitions_v[i] << "," << endl;
+            cout << "probe_octave_repetitions " << i+1 << " = " << probe_octave_repetitions_v[i] << "," << endl;
+        }
+        
+        //PRINT ALL DATA TO FILE with 44 elelements
+        file2 << "User_ID,User_Age,Session_Number,Session_Order,Date,Time_Completed,Piano_Position,Reaction_Time_Millis,Answer,Number,ID,Session,Practice,Timbre,Probability,Basename,Filename,Pitch,Pitch_Interval,Interval_Size,Interval_Direction,Information_Content,Probe_Repetitions,Probe_Octave_Repetitions";
+        for (int i = 0; i < 44; i++) {
+            file2 << "\n" << userID_v[i] << ",";//add << endl to have obvious colums
+            file2 << user_age_v[i] << ",";
+            file2 << session_number_v[i] << ",";
+            file2 << session_order_v[i] << ",";
+            file2 << date_v[i] << ",";
+            file2 << time_v[i] << ",";
+            file2 << piano_left_v[i] << ",";
+            file2 << reaction_time_v[i] << ",";
+            file2 << answer_v[i] << ",";
+            file2 << number_v[i] << ",";
+            file2 << ID_v[i] << ",";
+            file2 << session_v[i] << ",";
+            file2 << practice_v[i] << ",";
+            file2 << timbre_v[i] << ",";
+            file2 << probability_v[i] << ",";
+            file2 << basename_v[i] << ",";
+            file2 << filename_v[i] << ",";
+            file2 << pitch_v[i] << ",";
+            file2 << pitch_interval_v[i] << ",";
+            file2 << interval_size_v[i] << ",";
+            file2 << interval_direction_v[i] << ",";
+            file2 << information_content_v[i] << ",";
+            file2 << probe_repetitions_v[i] << ",";
+            file2 << probe_octave_repetitions_v[i];
+        }
+        file2.close();
+    }//close bFinshed if statement
     
 }
 
@@ -1727,17 +1675,44 @@ void ofApp::exit(){
 void ofApp::touchDown(ofTouchEventArgs & touch){
     
     //print out touch data
-    //ofLog(OF_LOG_VERBOSE, "touch %d down at (%d,%d)", touch.id, touch.x, touch.y);
-    //cout << "Touch Position Is ... " << touch << endl;
-    
+//    ofLog(OF_LOG_VERBOSE, "touch %d down at (%d,%d)", touch.id, touch.x, touch.y);
+//    cout << "Touch Position Is ... " << touch << endl;
     balls[touch.id].moveTo(touch.x, touch.y);
     balls[touch.id].bDragged = true;
     myPage.showPage(touch.x, touch.y);
-    //mySounds.showPage(touch.x, touch.y);
     updateTimer();//update here to only run once each touch by the user.. not in the update loop!
+    
     if(myPage.currentPage==24){
         saveFile();//store all data to file
         cout << "save text file" << endl;
+    }
+    
+    if(touch.x>900 && touch.y>500 && myPage.currentPage == -4){
+        //move to page -2 of app
+        myPage.currentPage = -3;
+        bSelectUser = true;
+    } else if(touch.x>900 && touch.y>500 && myPage.currentPage == -3){
+        //move to page -1 of app?
+        myPage.currentPage = -2;
+        bSelectAge = true;
+    } else if(touch.x>900 && touch.y>500 && myPage.currentPage == -2){
+        //move to page -1 of app?
+        myPage.currentPage = -1;
+    }
+    
+    if(touch.x>900 && touch.y<200 && myPage.currentPage == -3){//Go Back One Page
+        //move to page -4 of app
+        myPage.currentPage = -4;
+    }
+    
+    if(touch.x>900 && touch.y<200 && myPage.currentPage == -2){//Go Back One Page
+        //move to page -3 of app
+        myPage.currentPage = -3;
+    }
+    
+    if(touch.x> 400 && touch.x < 600 && touch.y<100){
+        //move to page 24 of
+        myPage.currentPage = 24;//jump to end of the app!!
     }
     
     //myHomePage.showPage(touch.x, touch.y);
