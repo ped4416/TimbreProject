@@ -1,3 +1,29 @@
+// =============================================================================
+//
+// Copyright (c) 2016 Pedro Kirk <http://www.pedrokirk.co.uk>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+// =============================================================================
+
+
+
 #include "ofPage.h"
 //#include "maximilian.h"
 //#include <iostream>
@@ -5,16 +31,19 @@
 
 ofPage::ofPage(){
     
+    bDebug = false;//Change to true to permit jumping to the final page of the app quickly Press top middle of screen
+    
     //variables for all pages of Timbre App
     buttonSize = 180;
     practice_count = -1;//allow for 0 index
     trial_melody_count = -1;//allow for 0 index
     currentFrame = 0;
     fadeFrame = 0;
-    currentPage = -4;//TODO - set user input..
+    currentPage = -3;//TODO - set user input..
     secondTime = 30;//20
     fadeUpTime = 0.05;
     current_trial_time_counter = 0;
+    practice_permit_count = 0;
    
     
     //bools for page naviagation
@@ -26,7 +55,7 @@ ofPage::ofPage(){
     showSettings = false;
     homeButtonBack = false;
     pressBackHome = false;
-    bFinished = false; 
+    bFinished = false;
     
     showGreenDot = false;//start as false
     showRedDot = true;//start with warning that trial must be completed
@@ -146,18 +175,40 @@ void ofPage::setup(){
     dotsText.setLineHeight(18.0f);
     dotsText.setLetterSpacing(1.037);
     
+    //setup session 1 (A1 - B1 test melodies)
     //setup random test melodies
-    practice_melody_v.resize(4);
-    for(int i = 0; i < practice_melody_v.size(); i++){
-        practice_melody_v[i] = i;//0,1,2,3
-        cout << "Test Number Is Now: "  << practice_melody_v[i] <<endl;
+    practiceMelody_1_v.resize(2);// only need 2 vectors now!
+    for(int i = 0; i < practiceMelody_1_v.size(); i++){
+        practiceMelody_1_v[i] = i;//0,1,2,3
+        cout << "Session 1 Practice Test Number Is Now: "  << practiceMelody_1_v[i] <<endl;
+    }
+    
+    std::random_shuffle (practiceMelody_1_v.begin(), practiceMelody_1_v.end());
+    
+    for(int i = 0; i < practiceMelody_1_v.size(); i++){
+        cout << "Session 1 Practice Index Order: " << practiceMelody_1_v[i] << endl;
+    }
+    
+    
+    
+    //setup session 2 (A2 - B2 test melodies)
+    practiceMelody_2_v.resize(2);// only need 2 vectors now!
+    for(int i = 0; i < practiceMelody_2_v.size(); i++){
+        practiceMelody_2_v[i] = i;//0,1,2,3
+        cout << "Session 1 Practice Test Number Is Now: "  << practiceMelody_2_v[i] <<endl;
+    }
+    
+    std::random_shuffle (practiceMelody_2_v.begin(), practiceMelody_2_v.end());
+    
+    for(int i = 0; i < practiceMelody_2_v.size(); i++){
+        cout << "Session 2 Practice Index Order: " << practiceMelody_2_v[i] << endl;
     }
     
     //(practice_melody_v.begin(), practice_melody_v.end());
     
-    for(int i = 0; i < practice_melody_v.size(); i++){
-        cout << practice_melody_v[i] << endl;
-    }
+//    for(int i = 0; i < practice_melody_v.size(); i++){
+//        cout << practice_melody_v[i] << endl;
+//    }
     
     //setup session 1 (A1 - B1 test melodies)
     trialMelody_1_v.resize(20);
@@ -201,6 +252,10 @@ void ofPage::update(){
             }
         }
     }
+    
+    //cout << "PRACTICE COUNT = " << practice_count << endl;
+//    cout << "PPAGE = " << currentPage << endl;
+//    cout << "PERMIT PAGE? = " << bPermitNextPage << endl;
     
     //cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
     //update timers
@@ -268,14 +323,23 @@ void ofPage::update(){
     
 //    //counter is only activated when the user presses either piano or trumpet
     
+    //permit practice page to move on even if people press too soon?
+    if (currentPage == 3 && practice_count == 1 && (bPlayPracticeMelody == false)) {
+        bPermitNextPage = true;//only allow next page if 2 practice answers are given
+    }
+    
     if (greyStarCounter.elapsed() > 2000000)
     {
         //bMelodyFinished = false;//allow 2 seconds to answer the test?
         //printf("\nTIME UP\n");
         //melodyCounter.reset();
         //trial_time_counter.reset();
-        
-        bPermitNextPage = true;//remain true until the next page is reached..
+        bPermitNextPage = true; //TODO
+        if (currentPage == 3 && practice_count == 1) {
+            bPermitNextPage = true;//only allow next page if 2 practice answers are given
+        } else if(currentPage >= 4){
+            bPermitNextPage = true;//remain true until the next page is reached..
+        }
     }
     
     if(greyStarCounter.elapsed() > 100000)
@@ -459,7 +523,7 @@ void ofPage::draw(){
             
         } else {
             ofSetColor(0, 0, 0, 255);
-            franklinBook14.drawString("Well Done! \n\n\n\n\n\n20 Tunes are now completed!\n\n\n\n\n\nAll the data is stored. \n\nPlease exit the app now. ", 50, 130);
+            franklinBook14.drawString("Well Done! \n\n\n\n\n\n20 Tunes are now completed!\n\nAll the data is stored. \n\n\n\nPlease tell Nina you have finished.\n\n\n\nPlease press the square button on the iPad to exit the app now. ", 50, 130);
             bFinished = true;
             showGreenDot = true;
             showRedDot = false;
@@ -563,6 +627,9 @@ void ofPage::draw(){
         
         //show the dots and question mark
         if(showDots == true && bResetMelody == false){
+//            if(practice_count > 1){
+//                bResetMelody = true;
+//            }
             ofSetColor(0, 0, 0, 200);
             float dotTimer = ((ofGetElapsedTimeMillis() - startDotTime));
             // some information about the timer
@@ -641,7 +708,7 @@ void ofPage::draw(){
                 rightArrow.draw(938,710);
             }
             
-            if(currentPage >= -1){
+            if(currentPage >= -1 && currentPage <= 3){//only show back arrow up until the trials
                 leftArrow.draw(10,710);
             }
             
@@ -776,17 +843,22 @@ void ofPage::draw(){
         
     }
     
-    if(currentPage == 3 && practice_count >= 3){//edit to 2 for final APP TODO ?
-        if(bPlayPracticeMelody == false){
-            ofSetColor(0, 0, 0);
-            franklinBook14.drawString("Press on the right arrow to move \n\non to the trials.", 100, 200);
-        }
-    }
+//    if(currentPage == 3 && practice_count >= 1){//edit to 2 for final APP TODO ?
+//        if(bPlayPracticeMelody == false){
+//            ofSetColor(0, 0, 0);
+//            franklinBook14.drawString("Press on the right arrow to move \n\non to the trials.", 100, 200);
+//        }
+//    }
     
-    if(currentPage == 3 && practice_count >= 0 && practice_count < 3){
-        if(bPlayPracticeMelody == false){
+    if(currentPage == 3 && practice_count <= 2){
+        if(bPlayPracticeMelody == false &&  hasPressed == true && practice_count == 0){
             ofSetColor(0, 0, 0);
-            franklinBook14.drawString("Press Giles's ear to hear another\n\npractice melody!\n\n\n\nOr press on the right arrow to move \n\non to the trials.", 100, 170);
+            franklinBook14.drawString("Press Giles's ear to hear another\n\npractice melody!", 100, 170);
+        }
+        
+        if(bPlayPracticeMelody == false && hasPressed == true && practice_count == 1){
+            ofSetColor(0, 0, 0);
+            franklinBook14.drawString("Please press the right arrow to \n\nmove on.", 100, 300);
         }
         
         if(currentPage == 3 && practice_count == 0) {
@@ -799,15 +871,15 @@ void ofPage::draw(){
             trials.drawString("Practice 2", trialXpos, 50);//Trial no data kept
         }
         
-        if(currentPage == 3 && practice_count == 2) {
-            ofSetColor(0, 0, 0);
-            trials.drawString("Practice 3", trialXpos, 50);//Trial no data kept
-        }
-        
-        if(currentPage == 3 && practice_count >= 3) {
-            ofSetColor(0, 0, 0);
-            trials.drawString("Practice 4", trialXpos, 50);//Trial no data kept
-        }
+//        if(currentPage == 3 && practice_count == 2) {
+//            ofSetColor(0, 0, 0);
+//            trials.drawString("Practice 3", trialXpos, 50);//Trial no data kept
+//        }
+//        
+//        if(currentPage == 3 && practice_count >= 3) {
+//            ofSetColor(0, 0, 0);
+//            trials.drawString("Practice 4", trialXpos, 50);//Trial no data kept
+//        }
 
     }
     
@@ -818,9 +890,9 @@ void ofPage::draw(){
         franklinBook14.drawString("Are you ready to start?\n\n\n\nAs soon as you hear what the sound\n\nis, press the correct image with your \n\nfinger as fast as you can!\n\n\n\nPress Giles's ear to hear the tune!", 100, 70);
     }
     
-    if(currentPage >= 4 && currentPage < 23 && bShowTrialText == true){
+    if(currentPage >= 4 && currentPage < 24 && bShowTrialText == true){
         ofSetColor(0, 0, 0);
-        franklinBook14.drawString("Press Giles's ear to hear the trial \n\nmelody again!\n\n\n\nOr press the right arrow to move \n\non to the next melody.", 100, 170);
+        franklinBook14.drawString("Please press the right arrow to move \n\non to the next melody.", 100, 300);
     } else if(currentPage >= 5 && currentPage < 23 && bShowTrialText == false && showDots == false){
         ofSetColor(0, 0, 0);
         franklinBook14.drawString("Press the correct image with your \n\nfinger as fast as you can!\n\n\n\nPress Giles's ear to hear the tune!", 100, 170);
@@ -1062,47 +1134,52 @@ void ofPage::showPage(int x, int y){
             if (currentPage >= -3 && currentPage < 24 && x >= pageForwardX && y > pageForwardY && (bPermitNextPage || showGreenDot))
             {
                 
-                trumpetNote = false;
-                pianoNote = false;
-                showStars = false;
-                bGuessedWrong = false;
-                bGuessedPiano = false;
-                bGuessedTrumpet = false;
-                //hasPressed = false;
-                bPermitGreenDot = false;
+                //if(bPermitNextPage){//only stop sounds when the next page is permitted
+                    trumpetNote = false;
+                    pianoNote = false;
+                    showStars = false;
+                    bGuessedWrong = false;
+                    bGuessedPiano = false;
+                    bGuessedTrumpet = false;
+                    //hasPressed = false;
+                    bPermitGreenDot = false;
+                //}
                 
-                //permit user to navigate these pages at any time
-                if(currentPage < -1 || currentPage == 0 || currentPage == 1){
-                    currentPage ++;
-                    bPermitNextPage = true;
-                    cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
-                } else if((currentPage == -1) && (bGroupAB || bGroupBA) && (bSessionB2 || bSessionA2 || bSessionB1 || bSessionA1))
+                if((currentPage == -1) && (bGroupAB || bGroupBA) && (bSessionB2 || bSessionA2 || bSessionB1 || bSessionA1))
                 {
                     cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
                     currentPage ++;
                     bPermitNextPage = true;
                 }
                 
+                //permit user to navigate these pages at any time
+                if(currentPage < -1 || currentPage == 0 || currentPage == 1){
+                    currentPage ++;
+                    bPermitNextPage = true;
+                    cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
+                }
+                
                 //constrain pages to only move forward if the answer is given and feedback displayed
-                if (currentPage > 1 && currentPage < 3 && bPermitNextPage) {
+                else if (currentPage > 1 && currentPage < 3 && bPermitNextPage) {
                      currentPage ++;
-                     bPermitNextPage = false;
+                     bPermitNextPage = true;
+                     cout << "JUMP???????? " << endl;
                      cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
                     
                 //constrain the practice trials so 2 must be acheived!
-                } else if(currentPage == 3 && practice_count <= 1 && bPermitNextPage)
+                } else if(currentPage == 3 && practice_permit_count >= 2 && bPermitNextPage)
                 {
                      currentPage ++;
                      bPermitNextPage = false;
                      cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
                      cout << "PRACTICE COUNT " << practice_count << endl;
-
-                } else if(currentPage == 3 && practice_count >= 2)
-                {
-                        currentPage ++;
-                        bPermitNextPage = true;
-                        cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
-                        cout << "PRACTICE COUNT " << practice_count << endl;
+                    
+//                } else if(currentPage == 3 && practice_count >= 2)
+//                {
+//                        currentPage ++;
+//                        bPermitNextPage = true;
+//                        cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
+//                        cout << "PRACTICE COUNT " << practice_count << endl;
 
                 } else if (currentPage >= 4 && currentPage < 24 && (bPermitNextPage || showGreenDot)) {
                      currentPage ++;
@@ -1110,20 +1187,22 @@ void ofPage::showPage(int x, int y){
                      cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
                 }
                 
-                currentFrame = 0;
-                fadeFrame = 0;
-                greyStarCounter.reset();//reset timers
-                melodyCounter.reset();
-                trial_time_counter.reset();
-                greyCounter = 0;
-                greyCounter2 = 0;
-                bPlayGroupBMelody = false;
-                bPlayGroupAMelody = false;
-                showDots = false;
-                bShowTrialText = false;
-                bShowSingleNoteText = false;
+                //if(bPermitNextPage){//only stop sounds
+                    currentFrame = 0;
+                    fadeFrame = 0;
+                    greyStarCounter.reset();//reset timers
+                    melodyCounter.reset();
+                    trial_time_counter.reset();
+                    greyCounter = 0;
+                    greyCounter2 = 0;
+                    bPlayGroupBMelody = false;
+                    bPlayGroupAMelody = false;
+                    showDots = false;
+                    bShowTrialText = false;
+                    bShowSingleNoteText = false;
+                //}
 
-                printf("%d\n",currentPage);
+                printf("Page number is:  ""%d\n",currentPage);
                 //printf("%d\n",pageForward);
                 //printf("%d\n",pageBack);
                 //bPermitNextPage = false;
@@ -1141,19 +1220,21 @@ void ofPage::showPage(int x, int y){
                 bPermitGreenDot = false;
                 
                 //permit user to navigate these pages at any time
-                if(currentPage <= 1){
+                if(currentPage <= 2){
                     currentPage --;
                     bPermitNextPage = true;
                     cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
-                } else if (currentPage > 1 && currentPage <= 3 && bPermitNextPage) {
+                } else if (currentPage > 2 && currentPage <= 3 && bPermitNextPage) {
                     currentPage --;
                     bPermitNextPage = false;//set to false ready for timer to permit moving back
                     cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
-                } else if (currentPage >= 4 && currentPage < 24 && (bPermitNextPage || showGreenDot)) {
+                }
+                //only permit back page presses if the debug setting is on!
+                else if (currentPage >= 4 && bDebug == true && currentPage < 24 && (bPermitNextPage || showGreenDot)) {
                     currentPage --;
                     bPermitNextPage = false;//set to false ready for timer to permit moving back
                     cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
-                } else if(currentPage == 24){
+                } else if(currentPage == 24 && bDebug == true){
                     currentPage --;
                     cout << "PERMIT PAGE MOVE? " << bPermitNextPage << endl;
                     bPermitNextPage = true;
@@ -1321,6 +1402,7 @@ void ofPage::showPage(int x, int y){
     
     /******** SINGLE NOTE HEAR AND PRESS BEGIN HERE *******/
     if (currentPage == 2) {
+        practice_permit_count = 0;
         practice_count = -1;//reset counter for 0 index on page 3
 //        cout << "Piano note is now playing " << playPianoSingle << endl;
 //        cout << "Trumpet note is now playing " << playTrumpetSingle << endl;
@@ -1476,7 +1558,7 @@ void ofPage::showPage(int x, int y){
         }
     }
     
-    /******** PRACTICE TRIALS x 4 *******/
+    /******** PRACTICE TRIALS x 2 *******/
     
     if (currentPage == 3)
     {
@@ -1484,6 +1566,8 @@ void ofPage::showPage(int x, int y){
         playTrumpetSingle = false;
         playPianoSingle = false;
         trial_melody_count = -1;//0 index ready for trials
+                //practice_count = -1;//0 index
+        //practice_count = 0;//
         
 //        if (practice_count > 3)
 //        {
@@ -1496,42 +1580,100 @@ void ofPage::showPage(int x, int y){
 //            showDots = false, playPianoMelody = false, playTrumpetMelody = false;
 //        }
         
-        if (x > 780 && y < 290 && y > 0){//press bear to start melody
-            practice_count ++;
-            if (practice_count > 3)
-            {
-                cout << "PRACTICE COUNTER" << practice_count << endl;
-                showDots = false, bPlayPracticeMelody = false;
-                //practice_count = -1;
-            } else if(practice_count <= 3)
-            {
-                greyStarCounter.reset();//reset timers
-                melodyCounter.reset();
-                trial_time_counter.reset();
-                bMelodyStart = true;
-                showStars = false;
-                hasPressed = false;
-                bGuessedWrong = false;
-                showDots = true;
-                startDotTime = ofGetElapsedTimeMillis();  // get the start time
-                bPlayPracticeMelody = true;//start the test melody
-              
-                cout << "\nMelodyCounter = " << practice_count << endl;
-                //cout << testMelodyNumber[0] << endl;
-                int tempMel = practice_melody_v[practice_count];
+        if (x > 780 && y < 290 && y > 0 && bPlayPracticeMelody == false)//press bear to start melody
+        {
             
-                cout << "\nPractice Melody = " << tempMel << endl;
-                
-                if(tempMel == 0 || tempMel == 2 ){
-                    playPianoMelody = true;//play first piano melody
+            practice_permit_count ++;//up to 1 then 2
+            cout << "PERMIT PRACTICE COUNT" << practice_permit_count << endl;
+            practice_count ++;//up to 0 index first then 1
+            if(practice_count > 1){
+                //bResetMelody = true;
+                practice_count = 0;//reset to start at 0
+            }
+//            if (practice_count > 3)
+//            {
+//                cout << "PRACTICE COUNTER" << practice_count << endl;
+//                showDots = false, bPlayPracticeMelody = false;
+//                //practice_count = -1;
+//            } else if(practice_count <= 3)
+//            {
+            greyStarCounter.reset();//reset timers
+            melodyCounter.reset();
+            trial_time_counter.reset();
+            bMelodyStart = true;
+            showStars = false;
+            hasPressed = false;
+            bGuessedWrong = false;
+            showDots = true;
+            startDotTime = ofGetElapsedTimeMillis();  // get the start time
+            bPlayPracticeMelody = true;//start the test melody
+            bResetMelody = false;//must reset the melodies if child does not press
+            //bShowTrialText = false;//?
+        
+            //check what session
+            if(bSessionA1 == true || bSessionA2 == true)
+            {
+                bPlayGroupAMelody = true;
+                bPlayGroupBMelody = false;
+            } else if(bSessionB1 == true || bSessionB2 == true)
+            {
+                bPlayGroupBMelody = true;
+                bPlayGroupAMelody = false;
+            }
+        
+            //melodies 1 - 2 for group A1 - B1
+            if(bPlayGroupAMelody)
+            {
+                int tempTrialMel = practiceMelody_1_v[practice_count];
+                cout << "\nPractice Melody index = " << tempTrialMel << endl;
+                if(tempTrialMel == 0)
+                {
+                    playPianoMelody = true;
+                    playTrumpetMelody = false;
+                    printf("\nPianoMelody");
+                } else if(tempTrialMel == 1)
+                {
+                    playTrumpetMelody = true;
+                    playPianoMelody = false;
+                    printf("\nTrumpetMelody");
+                }
+            }
+            //melodies 23 & 24 for group A2 & B2
+            else if(bPlayGroupBMelody)
+            {
+                int tempTrialMel = practiceMelody_2_v[practice_count];
+                cout << "\nPractice Melody index = " << tempTrialMel << endl;
+                if(tempTrialMel == 0)
+                {
+                    playPianoMelody = true;
                     playTrumpetMelody = false;
                     printf("\nPianoMelody\n");
-                } else if(tempMel == 1 || tempMel == 3){
+                } else if(tempTrialMel == 1)
+                {
                     playTrumpetMelody = true;
                     playPianoMelody = false;
                     printf("\nTrumpetMelody\n");
                 }
             }
+            
+            
+            
+//                cout << "\nMelodyCounter = " << practice_count << endl;
+//                //cout << testMelodyNumber[0] << endl;
+//                int tempMel = practice_melody_v[practice_count];
+//            
+//                cout << "\nPractice Melody = " << tempMel << endl;
+//                
+//                if(tempMel == 0 || tempMel == 2 ){
+//                    playPianoMelody = true;//play first piano melody
+//                    playTrumpetMelody = false;
+//                    printf("\nPianoMelody\n");
+//                } else if(tempMel == 1 || tempMel == 3){
+//                    playTrumpetMelody = true;
+//                    playPianoMelody = false;
+//                    printf("\nTrumpetMelody\n");
+//                }
+            //}
         }
         
         if (bMelodyFinished && bMelodyStart == false)
@@ -1643,10 +1785,11 @@ void ofPage::showPage(int x, int y){
     
     /******** TRIALS BEGIN HERE *******/
     if (currentPage >= 4 && currentPage < 24) {//TODO trial 1 - 20
+        practice_permit_count = 0;
         bPlayPracticeMelody = false;
         practice_count = -1;//reset counter for 0 index
-        trial_melody_count = (currentPage - 4);
-        cout << "\nTrial Melody Counter = " << trial_melody_count + 1 << endl;
+        trial_melody_count = (currentPage - 4);//had set to 4 this was wrong - fixed bug to match up melodies and indexes.
+        cout << "\nCurrent Trial = " << trial_melody_count + 1 << endl;
         if (trial_melody_count > 20) {
             trial_melody_count = 20;
         }
@@ -1682,7 +1825,7 @@ void ofPage::showPage(int x, int y){
             
             
         
-            //melodies 1 - 20 for group A1 - A2
+            //melodies 1 - 20 for group A1 - B1
             if(bPlayGroupAMelody)
             {
                 int tempTrialMel = trialMelody_1_v[trial_melody_count];
@@ -1698,7 +1841,7 @@ void ofPage::showPage(int x, int y){
                     printf("\nTrumpetMelody");
                 }
             }
-            //melodies 1 - 20 for group B1 - B2
+            //melodies 1 - 20 for group A2 - B2
             else if(bPlayGroupBMelody)
             {
                 int tempTrialMel = trialMelody_2_v[trial_melody_count];

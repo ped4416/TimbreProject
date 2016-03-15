@@ -1,10 +1,6 @@
-//
-//  Ball.h
-//  TimbreApp
-//
-//  Created by Pedro Kirk on 31/03/2015.
-//
-//
+// =============================================================================
+
+//Code for the bouncing and accelermeeter taken from an openframworks iPhone tutorial example found here: http://www.memo.tv/simple-openframeworks-application-on-iphone-sample-1/ Thanks to Memo Akten!
 
 #ifndef TimbreApp_Ball_h
 #define TimbreApp_Ball_h

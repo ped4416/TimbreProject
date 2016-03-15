@@ -1,13 +1,35 @@
+// =============================================================================
+//
+// Copyright (c) 2016 Pedro Kirk <http://www.pedrokirk.co.uk>
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+//
+// =============================================================================
+
+
 #pragma once
 
 #include "ofMain.h"
 #include "ofxiOS.h"
 #include "ofxiOSExtras.h"
 #include "ofxMaxim.h"
-#include "ofSounds.h"
 #include "ofPage.h"
-//#include "HomePage.h"
-//#include "Introduction.h"
 #include "Ball.h"
 
 
@@ -53,11 +75,13 @@ class ofApp : public ofxiOSApp{
         //set up for the sounds
     
         //load in songs for playback
-        int testMelodysLength;
+        int testMelodys_A_Length;
+        int testMelodys_B_Length;
         int sessionA_MelodysLength;
         int sessionB_MelodysLength;
     
-        vector <maxiSample> testMelodys_v;
+        vector <maxiSample> testMelodys_A_v;
+        vector <maxiSample> testMelodys_B_v;
         //vectors to hold both A and B melodies. The index of playback is set
         //using the variable trialMelody_1_v & trialMelody_2_v these same random
         //index values are used to place all other data output lined up for analysis
@@ -131,39 +155,60 @@ class ofApp : public ofxiOSApp{
         string pianoLeft_s;//print out TRUE or FALSE
     
         //arrays to store floats of practice trial times in milliseconds
-        vector<float> practice_time_data_v;
+        vector<float> practice_time_data_A_v;//Number 1 and 2
+        vector<float> practice_time_data_B_v;//Number 23 and 24
         //arrays to store floats of all full trial times in milliseconds
         vector<float> trial_time_data_A_v;
         vector<float> trial_time_data_B_v;
     
         //store true or false for answers
-        vector<string> practice_answer_v;
+        vector<string> practice_answer_A_v;
+        vector<string> practice_answer_B_v;
         vector<string> trial_answer_A_v;
         vector<string> trial_answer_B_v;
 
     
         //vectors to store the answers to the random order of trials
-        vector<int> baseline_accuracy_v;//store as a true or false text!
+        vector<int> baseline_accuracy_A_v;//store as a true or false text!
+        vector<int> baseline_accuracy_B_v;
         vector<int> trial_accuracy_A_v;//store as true or false
         vector<int> trial_accuracy_B_v;//store as true or false
     
         //vectors to store all the variables Marco has made available
-        //Practice
-        vector<int> number_practice_v;
-        vector<string> ID_practice_v;
-        vector<string> session_practice_v;
-        vector<string> practice_practice_v;
-        vector<string> timbre_practice_v;
-        vector<string> probability_practice_v;
-        vector<string> basename_practice_v;
-        vector<string> filename_practice_v;
-        vector<int> pitch_practice_v;
-        vector<int> pitch_interval_practice_v;
-        vector<string> interval_size_practice_v;
-        vector<string> interval_direction_practice_v;
-        vector<float> information_content_practice_v;
-        vector<int> probe_repetitions_practice_v;
-        vector<int> probe_octave_repetitions_practice_v;
+        //Practice A
+        vector<int> number_practice_A_v;
+        vector<string> ID_practice_A_v;
+        vector<string> session_practice_A_v;
+        vector<string> practice_practice_A_v;
+        vector<string> timbre_practice_A_v;
+        vector<string> probability_practice_A_v;
+        vector<string> basename_practice_A_v;
+        vector<string> filename_practice_A_v;
+        vector<int> pitch_practice_A_v;
+        vector<int> pitch_interval_practice_A_v;
+        vector<string> interval_size_practice_A_v;
+        vector<string> interval_direction_practice_A_v;
+        vector<float> information_content_practice_A_v;
+        vector<int> probe_repetitions_practice_A_v;
+        vector<int> probe_octave_repetitions_practice_A_v;
+    
+        //Practice B
+        vector<int> number_practice_B_v;
+        vector<string> ID_practice_B_v;
+        vector<string> session_practice_B_v;
+        vector<string> practice_practice_B_v;
+        vector<string> timbre_practice_B_v;
+        vector<string> probability_practice_B_v;
+        vector<string> basename_practice_B_v;
+        vector<string> filename_practice_B_v;
+        vector<int> pitch_practice_B_v;
+        vector<int> pitch_interval_practice_B_v;
+        vector<string> interval_size_practice_B_v;
+        vector<string> interval_direction_practice_B_v;
+        vector<float> information_content_practice_B_v;
+        vector<int> probe_repetitions_practice_B_v;
+        vector<int> probe_octave_repetitions_practice_B_v;
+        
         //A SESSION
         vector<int> number_A_v;
         vector<string> ID_A_v;

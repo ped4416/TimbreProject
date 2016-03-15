@@ -1,5 +1,30 @@
 /*--------------------------------------------------------------
  This app is created for a music perception project looking at musical expectance in children aged 4
+ // =============================================================================
+ //
+ // Copyright (c) 2016 Pedro Kirk <http://www.pedrokirk.co.uk>
+ //
+ // Permission is hereby granted, free of charge, to any person obtaining a copy
+ // of this software and associated documentation files (the "Software"), to deal
+ // in the Software without restriction, including without limitation the rights
+ // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ // copies of the Software, and to permit persons to whom the Software is
+ // furnished to do so, subject to the following conditions:
+ //
+ // The above copyright notice and this permission notice shall be included in
+ // all copies or substantial portions of the Software.
+ //
+ // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ // THE SOFTWARE.
+ //
+ // =============================================================================
+ 
+
  
 */
 #include "ofApp.h"
@@ -58,18 +83,33 @@ void ofApp::setup(){
     badLuck.load(ofToDataPath("sounds/FX/NegativeFeedback.wav"));
     
     //load all practice melodies
-    testMelodysLength = 4;
+    testMelodys_A_Length = 2;
     ofDirectory dir;
-    int nFiles = dir.listDir("sounds/practice");
-    testMelodysLength = dir.numFiles();
+    int nFiles = dir.listDir("sounds/practiceA");
+    testMelodys_A_Length = dir.numFiles();
     if(nFiles)
     {
-        testMelodys_v.assign(testMelodysLength,maxiSample());
+        testMelodys_A_v.assign(testMelodys_A_Length,maxiSample());
         for (int i = 0; i < dir.numFiles(); i++)
         {
             // add the song to the vector songs
             string filePath = dir.getPath(i);
-            testMelodys_v[i].load(ofToDataPath(ofToString(filePath)));
+            testMelodys_A_v[i].load(ofToDataPath(ofToString(filePath)));
+        }
+    } else printf("Could not find folder Trials\n");
+    
+    testMelodys_B_Length = 2;
+    ofDirectory dir1;
+    int nFiles1 = dir1.listDir("sounds/practiceB");
+    testMelodys_B_Length = dir1.numFiles();
+    if(nFiles1)
+    {
+        testMelodys_B_v.assign(testMelodys_B_Length,maxiSample());
+        for (int i = 0; i < dir1.numFiles(); i++)
+        {
+            // add the song to the vector songs
+            string filePath1 = dir1.getPath(i);
+            testMelodys_B_v[i].load(ofToDataPath(ofToString(filePath1)));
         }
     } else printf("Could not find folder Trials\n");
     
@@ -115,24 +155,43 @@ void ofApp::setup(){
     session_A="A"; session_B="B"; practice_yes="Yes"; practice_no="No"; timbre_piano="piano"; timbre_trumpet="trumpet"; probability_high="high"; probability_low="low"; pitch_interval_small="small"; pitch_interval_large="large"; interval_direction_descending="descending"; interval_direction_ascending="ascending", correct = "correct", wrong = "wrong";
    
     //set the variable array sizes
-    //Practice Session
-    practice_time_data_v.resize(4);//store practice timestamps - only store 4 no replacment permitted now
-    number_practice_v.resize(4);
-    ID_practice_v.resize(4);
-    session_practice_v.resize(4);
-    practice_practice_v.resize(4);
-    timbre_practice_v.resize(4);
-    probability_practice_v.resize(4);
-    basename_practice_v.resize(4);
-    filename_practice_v.resize(4);
-    pitch_practice_v.resize(4);
-    pitch_interval_practice_v.resize(4);
-    interval_size_practice_v.resize(4);
-    interval_direction_practice_v.resize(4);
-    information_content_practice_v.resize(4);
-    probe_repetitions_practice_v.resize(4);
-    probe_octave_repetitions_practice_v.resize(4);
-    practice_answer_v.resize(4);
+    //Practice Session A
+    practice_time_data_A_v.resize(2);//store practice timestamps - only store 2 no replacment permitted now
+    number_practice_A_v.resize(2);
+    ID_practice_A_v.resize(2);
+    session_practice_A_v.resize(2);
+    practice_practice_A_v.resize(2);
+    timbre_practice_A_v.resize(2);
+    probability_practice_A_v.resize(2);
+    basename_practice_A_v.resize(2);
+    filename_practice_A_v.resize(2);
+    pitch_practice_A_v.resize(2);
+    pitch_interval_practice_A_v.resize(2);
+    interval_size_practice_A_v.resize(2);
+    interval_direction_practice_A_v.resize(2);
+    information_content_practice_A_v.resize(2);
+    probe_repetitions_practice_A_v.resize(2);
+    probe_octave_repetitions_practice_A_v.resize(2);
+    practice_answer_A_v.resize(2);
+    
+    //Practice session B
+    practice_time_data_B_v.resize(2);//store practice timestamps - only store 2 no replacment permitted now
+    number_practice_B_v.resize(2);
+    ID_practice_B_v.resize(2);
+    session_practice_B_v.resize(2);
+    practice_practice_B_v.resize(2);
+    timbre_practice_B_v.resize(2);
+    probability_practice_B_v.resize(2);
+    basename_practice_B_v.resize(2);
+    filename_practice_B_v.resize(2);
+    pitch_practice_B_v.resize(2);
+    pitch_interval_practice_B_v.resize(2);
+    interval_size_practice_B_v.resize(2);
+    interval_direction_practice_B_v.resize(2);
+    information_content_practice_B_v.resize(2);
+    probe_repetitions_practice_B_v.resize(2);
+    probe_octave_repetitions_practice_B_v.resize(2);
+    practice_answer_B_v.resize(2);
     
     //A SESSION
     trial_time_data_A_v.resize(20);//store timestamps from USER allow multiple tries of each index
@@ -199,99 +258,129 @@ void ofApp::setup(){
     answer_v.resize(44);
     
     
-    /*====================== PRACTICE SESSIONS =========================*/
-    //array if 4 practice melodies are active
-    for (int i = 0; i< myPage.practice_melody_v.size(); i++) {//ellement 0
-        if (myPage.practice_melody_v[i]==0) {
-            number_practice_v[i] = 1;
-            ID_practice_v[i] = ap1;
-            session_practice_v[i] = session_A;
-            practice_practice_v[i] = practice_yes;
-            timbre_practice_v[i] = timbre_piano;
-            probability_practice_v[i] = probability_high;
-            basename_practice_v[i] = base_1;
-            filename_practice_v[i] = filename_1;
-            pitch_practice_v[i] = 67;
-            pitch_interval_practice_v[i] = -2;
-            interval_size_practice_v[i] = pitch_interval_small;
-            interval_direction_practice_v[i] = interval_direction_descending;
-            information_content_practice_v[i] = 1.034;
-            probe_repetitions_practice_v[i] = 0;
-            probe_octave_repetitions_practice_v[i] = 0;
-        } else if(myPage.practice_melody_v[i]==1) {//ellement 1
-            number_practice_v[i] = 2;
-            ID_practice_v[i] = ap2;
-            session_practice_v[i] = session_A;
-            practice_practice_v[i] = practice_yes;
-            timbre_practice_v[i] = timbre_trumpet;
-            probability_practice_v[i] = probability_low;
-            basename_practice_v[i] = base_2;
-            filename_practice_v[i] = filename_2;
-            pitch_practice_v[i] = 64;
-            pitch_interval_practice_v[i] = -10;
-            interval_size_practice_v[i] = pitch_interval_large;
-            interval_direction_practice_v[i] = interval_direction_descending;
-            information_content_practice_v[i] = 12.633;
-            probe_repetitions_practice_v[i] = 0;
-            probe_octave_repetitions_practice_v[i] = 0;
-            
-        } else if(myPage.practice_melody_v[i]==2) {//ellement 2
-            number_practice_v[i] = 23;
-            ID_practice_v[i] = bp1;
-            session_practice_v[i] = session_B;
-            practice_practice_v[i] = practice_yes;
-            timbre_practice_v[i] = timbre_piano;
-            probability_practice_v[i] = probability_low;
-            basename_practice_v[i] = base_23;
-            filename_practice_v[i] = filename_23;
-            pitch_practice_v[i] = 81;
-            pitch_interval_practice_v[i] = 4;
-            interval_size_practice_v[i] = pitch_interval_small;
-            interval_direction_practice_v[i] = interval_direction_ascending;
-            information_content_practice_v[i] = 12.843;
-            probe_repetitions_practice_v[i] = 0;
-            probe_octave_repetitions_practice_v[i] = 0;
-            
-        } else if(myPage.practice_melody_v[i]==3) {//ellement 3
-            number_practice_v[i] = 24;
-            ID_practice_v[i] = bp2;
-            session_practice_v[i] = session_B;
-            practice_practice_v[i] = practice_yes;
-            timbre_practice_v[i] = timbre_trumpet;
-            probability_practice_v[i] = probability_high;
-            basename_practice_v[i] = base_24;
-            filename_practice_v[i] = filename_24;
-            pitch_practice_v[i] = 67;
-            pitch_interval_practice_v[i] = -2;
-            interval_size_practice_v[i] = pitch_interval_small;
-            interval_direction_practice_v[i] = interval_direction_descending;
-            information_content_practice_v[i] = 1.658;
-            probe_repetitions_practice_v[i] = 0;
-            probe_octave_repetitions_practice_v[i] = 0;
+    /*====================== A SESSION PRACTICE SESSIONS =========================*/
+    
+    for (int i = 0; i< myPage.practiceMelody_1_v.size(); i++)
+    {
+        if (myPage.practiceMelody_1_v[i]==0)//ellement 0
+        {
+            number_practice_A_v[i] = 1;
+            ID_practice_A_v[i] = ap1;
+            session_practice_A_v[i] = session_A;
+            practice_practice_A_v[i] = practice_yes;
+            timbre_practice_A_v[i] = timbre_piano;
+            probability_practice_A_v[i] = probability_high;
+            basename_practice_A_v[i] = base_1;
+            filename_practice_A_v[i] = filename_1;
+            pitch_practice_A_v[i] = 67;
+            pitch_interval_practice_A_v[i] = -2;
+            interval_size_practice_A_v[i] = pitch_interval_small;
+            interval_direction_practice_A_v[i] = interval_direction_descending;
+            information_content_practice_A_v[i] = 1.034;
+            probe_repetitions_practice_A_v[i] = 0;
+            probe_octave_repetitions_practice_A_v[i] = 0;
+        } else if(myPage.practiceMelody_1_v[i]==1)//ellement 1
+        {
+            number_practice_A_v[i] = 2;
+            ID_practice_A_v[i] = ap2;
+            session_practice_A_v[i] = session_A;
+            practice_practice_A_v[i] = practice_yes;
+            timbre_practice_A_v[i] = timbre_trumpet;
+            probability_practice_A_v[i] = probability_low;
+            basename_practice_A_v[i] = base_2;
+            filename_practice_A_v[i] = filename_2;
+            pitch_practice_A_v[i] = 64;
+            pitch_interval_practice_A_v[i] = -10;
+            interval_size_practice_A_v[i] = pitch_interval_large;
+            interval_direction_practice_A_v[i] = interval_direction_descending;
+            information_content_practice_A_v[i] = 12.633;
+            probe_repetitions_practice_A_v[i] = 0;
+            probe_octave_repetitions_practice_A_v[i] = 0;
         }
+        
 //        //print out array contents for practice trials
 //        for(int i = 0; i < number_practice_v.size(); i++){
-            cout << "Practice Number ID = " << number_practice_v[i] << endl;
-            cout << "Practice ID CHAR = " << ID_practice_v[i] << endl;
-            cout << "Practice Session = " << session_practice_v[i] << endl;
-            cout << "Practice Pracitce? " << practice_practice_v[i] << endl;
-            cout << "Practice TIMBRE = " << timbre_practice_v[i] << endl;
-            cout << "Practice Probabilitiy = " << probability_practice_v[i] << endl;
-            cout << "Practice basename = " << basename_practice_v[i] << endl;
-            cout << "Practice filename = " << filename_practice_v[i] << endl;
-            cout << "Practice pitch = " << pitch_practice_v[i] << endl;
-            cout << "Practice pitch interval = " << pitch_interval_practice_v[i] << endl;
-            cout << "Practice interval size = " << interval_size_practice_v[i] << endl;
-            cout << "Practice interval direction = " << interval_direction_practice_v[i] << endl;
-            cout << "Practice information content = " << information_content_practice_v[i] << endl;
-            cout << "Practice probe repetitions = " << probe_repetitions_practice_v[i] << endl;
-            cout << "Practice probe octave repetitions = " << probe_octave_repetitions_practice_v[i] << endl;
+            cout << "Practice Number ID = " << number_practice_A_v[i] << endl;
+            cout << "Practice ID CHAR = " << ID_practice_A_v[i] << endl;
+            cout << "Practice Session = " << session_practice_A_v[i] << endl;
+            cout << "Practice Pracitce? " << practice_practice_A_v[i] << endl;
+            cout << "Practice TIMBRE = " << timbre_practice_A_v[i] << endl;
+            cout << "Practice Probabilitiy = " << probability_practice_A_v[i] << endl;
+            cout << "Practice basename = " << basename_practice_A_v[i] << endl;
+            cout << "Practice filename = " << filename_practice_A_v[i] << endl;
+            cout << "Practice pitch = " << pitch_practice_A_v[i] << endl;
+            cout << "Practice pitch interval = " << pitch_interval_practice_A_v[i] << endl;
+            cout << "Practice interval size = " << interval_size_practice_A_v[i] << endl;
+            cout << "Practice interval direction = " << interval_direction_practice_A_v[i] << endl;
+            cout << "Practice information content = " << information_content_practice_A_v[i] << endl;
+            cout << "Practice probe repetitions = " << probe_repetitions_practice_A_v[i] << endl;
+            cout << "Practice probe octave repetitions = " << probe_octave_repetitions_practice_A_v[i] << endl;
+        //}
+
+    }
+        
+    /*====================== B SESSION PRACTICE SESSIONS =========================*/
+    for (int i = 0; i< myPage.practiceMelody_2_v.size(); i++)
+    {
+        if(myPage.practiceMelody_2_v[i]==0)//ellement 0
+        {
+            number_practice_B_v[i] = 23;
+            ID_practice_B_v[i] = bp1;
+            session_practice_B_v[i] = session_B;
+            practice_practice_B_v[i] = practice_yes;
+            timbre_practice_B_v[i] = timbre_piano;
+            probability_practice_B_v[i] = probability_low;
+            basename_practice_B_v[i] = base_23;
+            filename_practice_B_v[i] = filename_23;
+            pitch_practice_B_v[i] = 81;
+            pitch_interval_practice_B_v[i] = 4;
+            interval_size_practice_B_v[i] = pitch_interval_small;
+            interval_direction_practice_B_v[i] = interval_direction_ascending;
+            information_content_practice_B_v[i] = 12.843;
+            probe_repetitions_practice_B_v[i] = 0;
+            probe_octave_repetitions_practice_B_v[i] = 0;
+            
+        } else if(myPage.practiceMelody_2_v[i]==1)//ellement 1
+        {
+            number_practice_B_v[i] = 24;
+            ID_practice_B_v[i] = bp2;
+            session_practice_B_v[i] = session_B;
+            practice_practice_B_v[i] = practice_yes;
+            timbre_practice_B_v[i] = timbre_trumpet;
+            probability_practice_B_v[i] = probability_high;
+            basename_practice_B_v[i] = base_24;
+            filename_practice_B_v[i] = filename_24;
+            pitch_practice_B_v[i] = 67;
+            pitch_interval_practice_B_v[i] = -2;
+            interval_size_practice_B_v[i] = pitch_interval_small;
+            interval_direction_practice_B_v[i] = interval_direction_descending;
+            information_content_practice_B_v[i] = 1.658;
+            probe_repetitions_practice_B_v[i] = 0;
+            probe_octave_repetitions_practice_B_v[i] = 0;
+        }
+        //        //print out array contents for practice trials
+        //        for(int i = 0; i < number_practice_B_v.size(); i++){
+        cout << "Practice Number ID = " << number_practice_B_v[i] << endl;
+        cout << "Practice ID CHAR = " << ID_practice_B_v[i] << endl;
+        cout << "Practice Session = " << session_practice_B_v[i] << endl;
+        cout << "Practice Pracitce? " << practice_practice_B_v[i] << endl;
+        cout << "Practice TIMBRE = " << timbre_practice_B_v[i] << endl;
+        cout << "Practice Probabilitiy = " << probability_practice_B_v[i] << endl;
+        cout << "Practice basename = " << basename_practice_B_v[i] << endl;
+        cout << "Practice filename = " << filename_practice_B_v[i] << endl;
+        cout << "Practice pitch = " << pitch_practice_B_v[i] << endl;
+        cout << "Practice pitch interval = " << pitch_interval_practice_B_v[i] << endl;
+        cout << "Practice interval size = " << interval_size_practice_B_v[i] << endl;
+        cout << "Practice interval direction = " << interval_direction_practice_B_v[i] << endl;
+        cout << "Practice information content = " << information_content_practice_B_v[i] << endl;
+        cout << "Practice probe repetitions = " << probe_repetitions_practice_B_v[i] << endl;
+        cout << "Practice probe octave repetitions = " << probe_octave_repetitions_practice_B_v[i] << endl;
         //}
 
     }
 
     
-    /*====================== A MELODY =========================*/
+    /*====================== A MELODY TRIALS =========================*/
     //array if A melodies are playing
     for (int i = 0; i< myPage.trialMelody_1_v.size(); i++) {//ellement 0
         if (myPage.trialMelody_1_v[i]==0) {
@@ -634,7 +723,7 @@ void ofApp::setup(){
             cout << "Session A probe octave repetitions = " << probe_octave_repetitions_A_v[i] << endl;
        // }
     }
-    /*====================== B MELODY =========================*/
+    /*====================== B MELODY TRIALS =========================*/
     //array if B melodies are playing
     for (int i = 0; i< myPage.trialMelody_2_v.size(); i++) {//ellement 0
         if (myPage.trialMelody_2_v[i]==0) {
@@ -1019,6 +1108,17 @@ void ofApp::update(){
             balls[i].update();
         }
     }
+    
+//    if(myPage.bPlayGroupAMelody == true && myPage.bResetMelody == false){
+//        if(myPage.playPianoMelody == true){
+//            //trialMelodies_temp = sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].playOnce();
+//            cout << "PIANO INDEX ARRAY = " << myPage.trialMelody_1_v[myPage.trial_melody_count] << endl;
+//        } else if(myPage.playTrumpetMelody == true){
+//            //trialMelodies_temp = sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].playOnce();
+//            cout << "TRUMPET INDEX ARRAY = " << myPage.trialMelody_1_v[myPage.trial_melody_count] << endl;
+//        }
+//        
+//    }
 }
 
 //--------------------------------------------------------------
@@ -1064,47 +1164,46 @@ void ofApp::userKeyboardInput(){//run in update
     ofTranslate(ofGetWidth()/2, ofGetHeight()/2);//move pivot to centre
     ofRotate(90);
     
-    if(myPage.currentPage == -4)
+    if(myPage.currentPage == -3)
     {
         //cout << "PAGE = " << myPage.currentPage << endl;
         //update userID
         
         ofSetColor(255, 0, 0, 255);
-        keyboard_f.drawString("DONE", 200, -450);
+        keyboard_f.drawString("CONTINUE", 200, -450);
         ofSetColor(255, 0, 0, 255);
         ofSetColor(0, 0, 0, 255);
-        keyboard_f.drawString("Please type in the user ID.\n\nWhen you have entered the ID press DONE", -350, -100);
+        keyboard_f.drawString("Please type your first name followed by the first \n\nletter of your last name followed by your age. \n\nFor example if your name is Giles, your surname \n\nDickins and your age 13, you should enter “GilesD12”. \n\n\n\nWhen you have entered this information please \n\npress the CONTINUE button above to continue.", -350, -200);
         ofSetColor(0, 0, 255, 255);
-        keyboard_f.drawString("User ID = "+  keyboard->getLabelText() , -350, 100);
+        keyboard_f.drawString("Name and age = "+  keyboard->getLabelText() , -350, 100);
         //assign userID to the input
         userID_s = keyboard->getLabelText();
-      
         
     }
     
-    if(myPage.currentPage == -3)
+    if(myPage.currentPage == -2)
     {
 
         keyboard->getLabelText() = "";//does not work!
         ofSetColor(0, 255, 0, 255);
         keyboard_f.drawString("BACK", -300, -450);
         ofSetColor(255, 0, 0, 255);
-        keyboard_f.drawString("DONE", 200, -450);
-        ofSetColor(0, 0, 0, 255);
-        keyboard_f.drawString("The User ID [" + userID_s + "] is stored.\n\nPress back if you need to change this.\n\n\n\nPlease delete the User ID text coloured BLUE \n\nbelow. Use the keyboard x btton on the right.\n\n\n\nNow type in the user Age in Months.Press the \n\nbottom left keyboard button to access numbers.\n\n\n\nWhen you have entered the Age press DONE", -350, -300);
-        ofSetColor(0, 0, 255, 255);
-        keyboard_f.drawString("User Age In Months = "+  keyboard->getLabelText() , -350, 100);
-        user_age_s = keyboard->getLabelText();
-    }
-    
-    if(myPage.currentPage == -2){
-        ofSetColor(0, 255, 0, 255);
-        keyboard_f.drawString("BACK", -300, -450);
-        ofSetColor(0, 0, 0, 255);
         keyboard_f.drawString("CONTINUE", 200, -450);
         ofSetColor(0, 0, 0, 255);
-        keyboard_f.drawString("The Age of [" + user_age_s + "] months is stored.\n\nPress back if you need to change this.\n\n\n\n\n\nUser ID = " + userID_s + "\n\nUser Age = " + user_age_s + "\n\n\n\nIf you are happy please press continue. \n\n\n\nPlease get ready to turn the iPad round to\n\nLandscape Mode.", -350, -300);
+        keyboard_f.drawString("You have just entered [" + userID_s + "].\n\nPress back if you need to change this.\n\n\n\nIf this is correct please press CONTINUE.\n\n\n\nPlease get ready to turn the iPad round to\n\nLandscape Mode.", -350, -300);
+        ofSetColor(0, 0, 255, 255);
+        //keyboard_f.drawString("User Age In Months = "+  keyboard->getLabelText() , -350, 100);
+        //user_age_s = keyboard->getLabelText();
     }
+    
+//    if(myPage.currentPage == -2){
+//        ofSetColor(0, 255, 0, 255);
+//        keyboard_f.drawString("BACK", -300, -450);
+//        ofSetColor(0, 0, 0, 255);
+//        keyboard_f.drawString("CONTINUE", 200, -450);
+//        ofSetColor(0, 0, 0, 255);
+//        keyboard_f.drawString("The name and age [" + user_age_s + "] is now stored.\n\nPress back if you need to change this.\n\n\n\n\n\nUser ID = " + userID_s + "\n\nUser Age = " + user_age_s + "\n\n\n\nIf you are happy please press continue. \n\n\n\nPlease get ready to turn the iPad round to\n\nLandscape Mode.", -350, -300);
+//    }
 
    
     ofPushMatrix();
@@ -1125,62 +1224,250 @@ void ofApp::updateTimer(){
     
     //First set up to store the amount of time taken for the practice melodies
     //All these are on page 3
-    if(myPage.currentPage == 3)
+    if(myPage.currentPage == 3 && myPage.hasPressed == true)
     {
-        if(myPage.hasPressed == true)//user has given an answer
+        //must replace each index of array mulitple times if required.
+//        for(int i = 0; i < practice_time_data_B_v.size(); i ++)
+//        {
+//            if(myPage.currentPage == i+4)
+//            {
+            
+        //check what session
+        //Groups A1 and A2 will hear Melody A
+        if(myPage.bSessionA1 == true || myPage.bSessionA2 == true)
         {
-           //cout << "Practice Time Stamp in ms = " << myPage.trial_time_counter.elapsed()/1000 << endl;
-           //float temp_time_stamp = myPage.trial_time_counter.elapsed();//get macroseconds
-           //print out the exact time of the trial_Time_Counter and add it to the array
-            if (myPage.practice_count==0) {
-                practice_time_data_v[0] = myPage.trial_time_counter.elapsed()/1000;
-                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[0] << endl;
-                saveTime();
-                time_v[0] = save_time_s;//store current time
-                if(myPage.bGuessedWrong){
-                    practice_answer_v[0] = wrong;
-                } else if (!myPage.bGuessedWrong){
-                    practice_answer_v[0] = correct;
+            
+            cout << "Practice Time Stamp in SECONDS= " << myPage.trial_time_counter.elapsed()/1000000 <<  endl;
+            cout << "Practice Time Stamp in Milliseconds = " << myPage.trial_time_counter.elapsed()/1000 <<  endl;
+            cout << "Practice Time Stamp in SECONDS FOR REAL = " << myPage.trial_time_counter.elapsedSeconds() <<  endl;
+            
+            if(myPage.practice_count == 0){
+                int temp = myPage.practiceMelody_1_v[0];
+                cout << "TEMP [0] = " << temp << endl;
+                if(temp == 1){
+                    saveTime();
+                    time_v[1] = save_time_s;//store current time
+                    practice_time_data_A_v[1] = myPage.trial_time_counter.elapsed()/1000;
+                    cout << "Practice Array Index 1 Time Stamp = " << practice_time_data_A_v[1] << endl;
+                } else if(temp == 0){
+                    saveTime();
+                    time_v[0] = save_time_s;//store current time
+                    practice_time_data_A_v[0] = myPage.trial_time_counter.elapsed()/1000;
+                    cout << "Practice Array Index 0 Time Stamp = " << practice_time_data_A_v[0] << endl;
                 }
-                
-            } else if(myPage.practice_count==1)
-            {
-                practice_time_data_v[1] = myPage.trial_time_counter.elapsed()/1000;
-                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[1] << endl;
-                saveTime();
-                time_v[1] = save_time_s;//store current time
-                if(myPage.bGuessedWrong){
-                    practice_answer_v[1] = wrong;
-                } else if (!myPage.bGuessedWrong){
-                    practice_answer_v[1] = correct;
+                if (myPage.bGuessedWrong) {
+                    if(temp == 1){
+                        practice_answer_A_v[1] = wrong;
+                    } else if(temp == 0){
+                        practice_answer_A_v[0] = wrong;
+                    }
+                } else if(!myPage.bGuessedWrong){
+                    if(temp == 1){
+                        practice_answer_A_v[1] = correct;
+                    } else if(temp == 0){
+                        practice_answer_A_v[0] = correct;
+                    }
                 }
-            } else if(myPage.practice_count==2)
-            {
-                practice_time_data_v[2] = myPage.trial_time_counter.elapsed()/1000;
-                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[2] << endl;
-                saveTime();
-                time_v[2] = save_time_s;//store current time
-                if(myPage.bGuessedWrong){
-                    practice_answer_v[2] = wrong;
-                } else if (!myPage.bGuessedWrong){
-                    practice_answer_v[2] = correct;
+            } else if(myPage.practice_count == 1){
+                int temp = myPage.practiceMelody_1_v[1];
+                cout << "TEMP2 [1] = " << temp << endl;
+                if(temp == 1){
+                    saveTime();
+                    time_v[1] = save_time_s;//store current time
+                    practice_time_data_A_v[1] = myPage.trial_time_counter.elapsed()/1000;
+                    cout << "Practice Array Index 1 Time Stamp = " << practice_time_data_A_v[1] << endl;
+                } else if(temp == 0){
+                    saveTime();
+                    time_v[0] = save_time_s;//store current time
+                    practice_time_data_A_v[0] = myPage.trial_time_counter.elapsed()/1000;
+                    cout << "Practice Array Index 0 Time Stamp = " << practice_time_data_A_v[0] << endl;
                 }
-            } else if(myPage.practice_count==3)
-            {
-                practice_time_data_v[3] = myPage.trial_time_counter.elapsed()/1000;
-                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[3] << endl;
-                saveTime();
-                time_v[3] = save_time_s;//store current time
-                if(myPage.bGuessedWrong){
-                    practice_answer_v[3] = wrong;
-                } else if (!myPage.bGuessedWrong){
-                    practice_answer_v[3] = correct;
+                if (myPage.bGuessedWrong) {
+                    if(temp == 1){
+                        practice_answer_A_v[1] = wrong;
+                    } else if(temp == 0){
+                        practice_answer_A_v[0] = wrong;
+                    }
+                } else if(!myPage.bGuessedWrong)
+                {
+                    if(temp == 1)
+                    {
+                        practice_answer_A_v[1] = correct;
+                    } else if(temp == 0)
+                    {
+                        practice_answer_A_v[0] = correct;
+                    }
                 }
             }
-           //practice_time_data_v.push_back(myPage.trial_time_counter.elapsed());//store all draw
-           //cout << "Current Practice = " << myPage.practice_count+1 <<  endl;
+            //Groups B1 and B2 will here melody session B
+        } else if(myPage.bSessionB1 == true || myPage.bSessionB2 == true)
+        {
+            if(myPage.practice_count == 0){
+        
+                int temp = myPage.practiceMelody_2_v[0];
+                if(temp == 1){
+                    saveTime();
+                    time_v[3] = save_time_s;//store current time in index 3 of main 44 length vector
+                    practice_time_data_B_v[1] = myPage.trial_time_counter.elapsed()/1000;
+                    cout << "Practice Array Index 0 Time Stamp = " << practice_time_data_B_v[1] << endl;
+                } else if(temp == 0){
+                    saveTime();
+                    time_v[2] = save_time_s;//store current time in index 2 of main 44 length vector
+                    practice_time_data_B_v[0] = myPage.trial_time_counter.elapsed()/1000;
+                    cout << "Practice Array Index 0 Time Stamp = " << practice_time_data_B_v[0] << endl;
+                }
+                if (myPage.bGuessedWrong) {
+                    if(temp == 1){
+                        practice_answer_B_v[1] = wrong;
+                    } else if(temp == 0){
+                        practice_answer_B_v[0] = wrong;
+                    }
+                } else if(!myPage.bGuessedWrong){
+                    if(temp == 1){
+                        practice_answer_B_v[1] = correct;
+                    } else if(temp == 0){
+                        practice_answer_B_v[0] = correct;
+                    }
+                }
+             } else if(myPage.practice_count == 1){
+                
+                int temp = myPage.practiceMelody_2_v[1];
+                if(temp == 1){
+                    saveTime();
+                    time_v[3] = save_time_s;//store current time in index 3 of main 44 length vector
+                    practice_time_data_B_v[1] = myPage.trial_time_counter.elapsed()/1000;
+                    cout << "Practice Array Index 1 Time Stamp = " << practice_time_data_B_v[1] << endl;
+                } else if(temp == 0){
+                    saveTime();
+                    time_v[2] = save_time_s;//store current time
+                    practice_time_data_B_v[0] = myPage.trial_time_counter.elapsed()/1000;
+                    cout << "Practice Array Index 1 Time Stamp = " << practice_time_data_B_v[0] << endl;
+                }
+                 if (myPage.bGuessedWrong) {
+                     if(temp == 1){
+                         practice_answer_B_v[1] = wrong;
+                     } else if(temp == 0){
+                         practice_answer_B_v[0] = wrong;
+                     }
+                 } else if(!myPage.bGuessedWrong){
+                     if(temp == 1){
+                         practice_answer_B_v[1] = correct;
+                     } else if(temp == 0){
+                         practice_answer_B_v[0] = correct;
+                     }
+                 }
+             }
         }
-    } else if(myPage.currentPage >= 4 && myPage.currentPage <=23 && myPage.hasPressed == true)//watch out for delay?? 
+//
+        
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+          //      trial_time_data_B_v[i] = myPage.trial_time_counter.elapsed()/1000;//replace the element every time an answer is given?
+//                cout << "Practice Time Stamp = " << myPage.trial_time_counter.elapsed() <<  endl;//make sure the index has stored the timestamp
+//                cout << "Array Index Time Stamp = " << trial_time_data_B_v[i] << endl;
+//                if(myPage.bSessionA2 == true)
+//                {
+//                    saveTime();
+//                    int temp = myPage.practice_count;
+//                    if(temp == 1){
+//                        time_v[3] = save_time_s;//store current time
+//                    } else if(temp == 0){
+//                        time_v[2] = save_time_s;//store current time
+//                    }
+//                } else if(myPage.bSessionB2 == true)
+//                {
+//                    saveTime();
+//                    int temp = myPage.practice_count;
+//                    if(temp == 1){
+//                        time_v[3] = save_time_s;//store current time
+//                    } else if(temp == 0){
+//                        time_v[2] = save_time_s;//store current time
+//                    }
+//                }
+//                if (myPage.bGuessedWrong) {
+//                    int temp = myPage.practice_count;
+//                    if(temp == 1){
+//                        practice_answer_B_v[1] = wrong;
+//                    } else if(temp == 0){
+//                        practice_answer_B_v[0] = wrong;
+//                    }
+//                } else if(!myPage.bGuessedWrong){
+//                    int temp = myPage.practice_count;
+//                    if(temp == 1){
+//                        practice_answer_B_v[1] = correct;
+//                    } else if(temp == 0){
+//                        practice_answer_B_v[0] = correct;
+//                    }
+//                }
+            //}
+            //}
+      //  }
+        
+        
+//        if(myPage.hasPressed == true)//user has given an answer
+//        {
+//           //cout << "Practice Time Stamp in ms = " << myPage.trial_time_counter.elapsed()/1000 << endl;
+//           //float temp_time_stamp = myPage.trial_time_counter.elapsed();//get macroseconds
+//           //print out the exact time of the trial_Time_Counter and add it to the array
+//            if (myPage.practice_count==0) {
+//                practice_time_data_v[0] = myPage.trial_time_counter.elapsed()/1000;
+//                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[0] << endl;
+//                saveTime();
+//                time_v[0] = save_time_s;//store current time
+//                if(myPage.bGuessedWrong){
+//                    practice_answer_v[0] = wrong;
+//                } else if (!myPage.bGuessedWrong){
+//                    practice_answer_v[0] = correct;
+//                }
+//                
+//            } else if(myPage.practice_count==1)
+//            {
+//                practice_time_data_v[1] = myPage.trial_time_counter.elapsed()/1000;
+//                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[1] << endl;
+//                saveTime();
+//                time_v[1] = save_time_s;//store current time
+//                if(myPage.bGuessedWrong){
+//                    practice_answer_v[1] = wrong;
+//                } else if (!myPage.bGuessedWrong){
+//                    practice_answer_v[1] = correct;
+//                }
+//            } else if(myPage.practice_count==2)
+//            {
+//                practice_time_data_v[2] = myPage.trial_time_counter.elapsed()/1000;
+//                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[2] << endl;
+//                saveTime();
+//                time_v[2] = save_time_s;//store current time
+//                if(myPage.bGuessedWrong){
+//                    practice_answer_v[2] = wrong;
+//                } else if (!myPage.bGuessedWrong){
+//                    practice_answer_v[2] = correct;
+//                }
+//            } else if(myPage.practice_count==3)
+//            {
+//                practice_time_data_v[3] = myPage.trial_time_counter.elapsed()/1000;
+//                //cout << "Practice Stored Stamp in ms = " << practice_time_data_v[3] << endl;
+//                saveTime();
+//                time_v[3] = save_time_s;//store current time
+//                if(myPage.bGuessedWrong){
+//                    practice_answer_v[3] = wrong;
+//                } else if (!myPage.bGuessedWrong){
+//                    practice_answer_v[3] = correct;
+//                }
+//            }
+//           //practice_time_data_v.push_back(myPage.trial_time_counter.elapsed());//store all draw
+//           //cout << "Current Practice = " << myPage.practice_count+1 <<  endl;
+//        }
+    } else if(myPage.currentPage >= 4 && myPage.currentPage <=23 && myPage.hasPressed == true)//watch out for delay??
     {
     
         //must replace each index of array mulitple times if required.
@@ -1200,7 +1487,7 @@ void ofApp::updateTimer(){
                 }
                 
                 //check what session
-                if(myPage.bSessionA1 == true || myPage.bSessionB1 == true)
+                if(myPage.bSessionA1 == true || myPage.bSessionA2 == true) //SESSION A MELODIES
                 {
                     trial_time_data_A_v[i] = myPage.trial_time_counter.elapsed()/1000;//replace the element every time an answer is given?
                     cout << "Session AB page = " << myPage.currentPage <<  endl;
@@ -1211,35 +1498,35 @@ void ofApp::updateTimer(){
 //                    cout << "Melody Time Stamp in Milliseconds = " << myPage.trial_time_counter.elapsed()/10000 <<  endl;
 //                    cout << "Melody Time Stamp in microseconds = " << myPage.trial_time_counter.elapsed()/1000 <<  endl;
                     cout << "Array Index Time Stamp = " << trial_time_data_A_v[i] << endl;
-                    if(myPage.bSessionA1 == true){
+//                    if(myPage.bSessionA1 == true){
+//                       saveTime();
+//                       time_v[i+4] = save_time_s;//store current time
+//                    } else if(myPage.bSessionB1 == true)
+//                    {
                        saveTime();
-                       time_v[i+4] = save_time_s;//store current time
-                    } else if(myPage.bSessionB1 == true)
-                    {
-                       saveTime();
-                       time_v[i+24] = save_time_s;//store current time
-                    }
+                       time_v[i+4] = save_time_s;//store current time (i+4 as 0-3 is the practice trials)
+                    //}
                     if (myPage.bGuessedWrong) {
                         trial_answer_A_v[i] = wrong;
                     } else if(!myPage.bGuessedWrong){
                         trial_answer_A_v[i] = correct;
                     }
-                } else if(myPage.bSessionA2 == true || myPage.bSessionB2 == true)
+                } else if(myPage.bSessionB1 == true || myPage.bSessionB2 == true) //SESSION B MELODIES
                 {
                     trial_time_data_B_v[i] = myPage.trial_time_counter.elapsed()/1000;//replace the element every time an answer is given?
                     cout << "Session BA page = " << myPage.currentPage <<  endl;
                     cout << "Current Test = " << i+1 <<  endl;
                     cout << "Melody Time Stamp = " << myPage.trial_time_counter.elapsed() <<  endl;//make sure the index has stored the timestamp
                     cout << "Array Index Time Stamp = " << trial_time_data_B_v[i] << endl;
-                    if(myPage.bSessionA2 == true)
-                    {
+//                    if(myPage.bSessionA2 == true)
+//                    {
+//                        saveTime();
+//                        time_v[i+24] = save_time_s;//store current time
+//                    } else if(myPage.bSessionB2 == true)
+//                    {
                         saveTime();
-                        time_v[i+4] = save_time_s;//store current time
-                    } else if(myPage.bSessionB2 == true)
-                    {
-                        saveTime();
-                        time_v[i+24] = save_time_s;//store current time
-                    }
+                        time_v[i+24] = save_time_s;//store current time (i+44 as 0-3 is the practice trials 4-23 would be session A)
+                    //}
                     if (myPage.bGuessedWrong) {
                         trial_answer_B_v[i] = wrong;
                     } else if(!myPage.bGuessedWrong){
@@ -1300,7 +1587,19 @@ void ofApp::saveTime(){
 //--------------------------------------------------------------
 void ofApp::saveFile(){
     
-    if(myPage.bFinished){//make sure all answers have been given!
+    //if(myPage.bFinished){//make sure all answers have been given!
+        if (userID_s == "\0") {
+            printf("You entered nothing for ID!");
+            //Assign anonymous to it
+            userID_s = "Anonymous";
+        }
+        if (user_age_s == "\0") {
+            printf("You entered nothing for age!");
+            //Assign anonymous to it
+            user_age_s = "No Answer";
+        }
+        
+    
         saveTime();
         string newFileName = "USER_" + userID_s + "_DATE_" + save_date_s  + "_TIME_" + save_time_s + ".csv";
         ofFile file2(ofxiPhoneGetDocumentsDirectory() +newFileName,ofFile::WriteOnly);
@@ -1337,9 +1636,13 @@ void ofApp::saveFile(){
         }
         
         //Print out all time arrays to console to check them
-        for (int i = 0; i < practice_time_data_v.size(); i++) {
+        for (int i = 0; i < practice_time_data_A_v.size(); i++) {
            // practice_data_s = ofToString(practice_time_data_v[i]) + ",";
-            cout << "PRACTICE" << i+1 << " = " << practice_time_data_v[i] << "," << endl;
+            cout << "PRACTICE A" << i+1 << " = " << practice_time_data_A_v[i] << "," << endl;
+        }
+        for (int i = 0; i < practice_time_data_B_v.size(); i++) {
+            // practice_data_s = ofToString(practice_time_data_v[i]) + ",";
+            cout << "PRACTICE B" << i+1 << " = " << practice_time_data_B_v[i] << "," << endl;
         }
         for (int i = 0; i < trial_time_data_A_v.size(); i++) {
             //melody_data_A_s = ofToString(trial_time_data_A_v[i]) + ",";
@@ -1351,75 +1654,94 @@ void ofApp::saveFile(){
         }
         
         //concatinate all strings ready to add to final data file - includes time_v and all timestamps
+        
+        //======================= REVERSE THE ORDER TO KEEP CORRECT INDEX PLACEMENT ==================//
         //vector1.insert( vector1.end(), vector2.begin(), vector2.end() );
         //Reaction_Time_v
         reaction_time_v.insert(reaction_time_v.begin(), trial_time_data_B_v.begin(), trial_time_data_B_v.end());
         reaction_time_v.insert(reaction_time_v.begin(), trial_time_data_A_v.begin(), trial_time_data_A_v.end());
-        reaction_time_v.insert(reaction_time_v.begin(), practice_time_data_v.begin(), practice_time_data_v.end());
+        reaction_time_v.insert(reaction_time_v.begin(), practice_time_data_B_v.begin(), practice_time_data_B_v.end());
+        reaction_time_v.insert(reaction_time_v.begin(), practice_time_data_A_v.begin(), practice_time_data_A_v.end());
         //Answer
         answer_v.insert(answer_v.begin(), trial_answer_B_v.begin(), trial_answer_B_v.end());
         answer_v.insert(answer_v.begin(), trial_answer_A_v.begin(), trial_answer_A_v.end());
-        answer_v.insert(answer_v.begin(), practice_answer_v.begin(), practice_answer_v.end());
+        answer_v.insert(answer_v.begin(), practice_answer_B_v.begin(), practice_answer_B_v.end());
+        answer_v.insert(answer_v.begin(), practice_answer_A_v.begin(), practice_answer_A_v.end());
         //Number
         number_v.insert(number_v.begin(), number_B_v.begin(), number_B_v.end());//reverse the order of arrays to add to begining of final!
         number_v.insert(number_v.begin(), number_A_v.begin(), number_A_v.end());
-        number_v.insert(number_v.begin(), number_practice_v.begin(), number_practice_v.end());
+        number_v.insert(number_v.begin(), number_practice_B_v.begin(), number_practice_B_v.end());
+        number_v.insert(number_v.begin(), number_practice_A_v.begin(), number_practice_A_v.end());
         //ID
         ID_v.insert(ID_v.begin(), ID_B_v.begin(), ID_B_v.end());
         ID_v.insert(ID_v.begin(), ID_A_v.begin(), ID_A_v.end());
-        ID_v.insert(ID_v.begin(), ID_practice_v.begin(), ID_practice_v.end());
+        ID_v.insert(ID_v.begin(), ID_practice_B_v.begin(), ID_practice_B_v.end());
+        ID_v.insert(ID_v.begin(), ID_practice_A_v.begin(), ID_practice_A_v.end());
         //Session
         session_v.insert(session_v.begin(), session_B_v.begin(), session_B_v.end());
         session_v.insert(session_v.begin(), session_A_v.begin(), session_A_v.end());
-        session_v.insert(session_v.begin(), session_practice_v.begin(), session_practice_v.end());
+        session_v.insert(session_v.begin(), session_practice_B_v.begin(), session_practice_B_v.end());
+        session_v.insert(session_v.begin(), session_practice_A_v.begin(), session_practice_A_v.end());
         //Practice
         practice_v.insert(practice_v.begin(), practice_B_v.begin(), practice_B_v.end());
         practice_v.insert(practice_v.begin(), practice_A_v.begin(), practice_A_v.end());
-        practice_v.insert(practice_v.begin(), practice_practice_v.begin(), practice_practice_v.end());
+        practice_v.insert(practice_v.begin(), practice_practice_A_v.begin(), practice_practice_A_v.end());
+        practice_v.insert(practice_v.begin(), practice_practice_B_v.begin(), practice_practice_B_v.end());
         //Timbre
         timbre_v.insert(timbre_v.begin(), timbre_B_v.begin(), timbre_B_v.end());
         timbre_v.insert(timbre_v.begin(), timbre_A_v.begin(), timbre_A_v.end());
-        timbre_v.insert(timbre_v.begin(), timbre_practice_v.begin(), timbre_practice_v.end());
+        timbre_v.insert(timbre_v.begin(), timbre_practice_B_v.begin(), timbre_practice_B_v.end());
+        timbre_v.insert(timbre_v.begin(), timbre_practice_A_v.begin(), timbre_practice_A_v.end());
         //Probability
         probability_v.insert(probability_v.begin(), probability_B_v.begin(), probability_B_v.end());
         probability_v.insert(probability_v.begin(), probability_A_v.begin(), probability_A_v.end());
-        probability_v.insert(probability_v.begin(), probability_practice_v.begin(), probability_practice_v.end());
+        probability_v.insert(probability_v.begin(), probability_practice_B_v.begin(), probability_practice_B_v.end());
+        probability_v.insert(probability_v.begin(), probability_practice_A_v.begin(), probability_practice_A_v.end());
         //Basename
         basename_v.insert(basename_v.begin(), basename_B_v.begin(), basename_B_v.end());
         basename_v.insert(basename_v.begin(), basename_A_v.begin(), basename_A_v.end());
-        basename_v.insert(basename_v.begin(), basename_practice_v.begin(), basename_practice_v.end());
+        basename_v.insert(basename_v.begin(), basename_practice_B_v.begin(), basename_practice_B_v.end());
+        basename_v.insert(basename_v.begin(), basename_practice_A_v.begin(), basename_practice_A_v.end());
         //Filename
         filename_v.insert(filename_v.begin(), filename_B_v.begin(), filename_B_v.end());
         filename_v.insert(filename_v.begin(), filename_A_v.begin(), filename_A_v.end());
-        filename_v.insert(filename_v.begin(), filename_practice_v.begin(), filename_practice_v.end());
+        filename_v.insert(filename_v.begin(), filename_practice_B_v.begin(), filename_practice_B_v.end());
+        filename_v.insert(filename_v.begin(), filename_practice_A_v.begin(), filename_practice_A_v.end());
         //Pitch
         pitch_v.insert(pitch_v.begin(), pitch_B_v.begin(), pitch_B_v.end());
         pitch_v.insert(pitch_v.begin(), pitch_A_v.begin(), pitch_A_v.end());
-        pitch_v.insert(pitch_v.begin(), pitch_practice_v.begin(), pitch_practice_v.end());
+        pitch_v.insert(pitch_v.begin(), pitch_practice_B_v.begin(), pitch_practice_B_v.end());
+        pitch_v.insert(pitch_v.begin(), pitch_practice_A_v.begin(), pitch_practice_A_v.end());
         //Pitch Interval
         pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_B_v.begin(), pitch_interval_B_v.end());
         pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_A_v.begin(), pitch_interval_A_v.end());
-        pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_practice_v.begin(), pitch_interval_practice_v.end());
+        pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_practice_B_v.begin(), pitch_interval_practice_B_v.end());
+        pitch_interval_v.insert(pitch_interval_v.begin(), pitch_interval_practice_A_v.begin(), pitch_interval_practice_A_v.end());
         //Interval size
         interval_size_v.insert(interval_size_v.begin(), interval_size_B_v.begin(), interval_size_B_v.end());
         interval_size_v.insert(interval_size_v.begin(), interval_size_A_v.begin(), interval_size_A_v.end());
-        interval_size_v.insert(interval_size_v.begin(), interval_size_practice_v.begin(), interval_size_practice_v.end());
+        interval_size_v.insert(interval_size_v.begin(), interval_size_practice_B_v.begin(), interval_size_practice_B_v.end());
+        interval_size_v.insert(interval_size_v.begin(), interval_size_practice_A_v.begin(), interval_size_practice_A_v.end());
         //Interval Direction
         interval_direction_v.insert(interval_direction_v.begin(), interval_direction_B_v.begin(), interval_direction_B_v.end());
         interval_direction_v.insert(interval_direction_v.begin(), interval_direction_A_v.begin(), interval_direction_A_v.end());
-        interval_direction_v.insert(interval_direction_v.begin(), interval_direction_practice_v.begin(), interval_direction_practice_v.end());
+        interval_direction_v.insert(interval_direction_v.begin(), interval_direction_practice_B_v.begin(), interval_direction_practice_B_v.end());
+        interval_direction_v.insert(interval_direction_v.begin(), interval_direction_practice_A_v.begin(), interval_direction_practice_A_v.end());
         //Information content
         information_content_v.insert(information_content_v.begin(), information_content_B_v.begin(), information_content_B_v.end());
         information_content_v.insert(information_content_v.begin(), information_content_A_v.begin(), information_content_A_v.end());
-        information_content_v.insert(information_content_v.begin(), information_content_practice_v.begin(), information_content_practice_v.end());
+        information_content_v.insert(information_content_v.begin(), information_content_practice_B_v.begin(), information_content_practice_B_v.end());
+        information_content_v.insert(information_content_v.begin(), information_content_practice_A_v.begin(), information_content_practice_A_v.end());
         //Probe repetitions
         probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_B_v.begin(), probe_repetitions_B_v.end());
         probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_A_v.begin(), probe_repetitions_A_v.end());
-        probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_practice_v.begin(), probe_repetitions_practice_v.end());
+        probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_practice_B_v.begin(), probe_repetitions_practice_B_v.end());
+        probe_repetitions_v.insert(probe_repetitions_v.begin(), probe_repetitions_practice_A_v.begin(), probe_repetitions_practice_A_v.end());
         //octave probe repetitions
         probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_B_v.begin(), probe_octave_repetitions_B_v.end());
         probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_A_v.begin(), probe_octave_repetitions_A_v.end());
-        probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_practice_v.begin(), probe_octave_repetitions_practice_v.end());
+        probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_practice_B_v.begin(), probe_octave_repetitions_practice_B_v.end());
+        probe_octave_repetitions_v.insert(probe_octave_repetitions_v.begin(), probe_octave_repetitions_practice_A_v.begin(), probe_octave_repetitions_practice_A_v.end());
         
         
         //print all concatinated strings to console to check
@@ -1471,7 +1793,7 @@ void ofApp::saveFile(){
             file2 << probe_octave_repetitions_v[i];
         }
         file2.close();
-    }//close bFinshed if statement
+    //}//close bFinshed if statement Redo when app is fully working!
     
 }
 
@@ -1534,8 +1856,9 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
         //idividual tones
         else if (myPage.currentPage == 1 || myPage.currentPage == 2){
             
-            for (int i=0; i<4; i++) {
-                testMelodys_v[i].reset();
+            for (int i=0; i<2; i++) {
+                testMelodys_A_v[i].reset();
+                testMelodys_B_v[i].reset();
             }
             
             pianoMelody.reset();
@@ -1576,33 +1899,60 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
             pianoSingle.reset();
             trumpetSingle.reset();
             
-            if(myPage.bPlayPracticeMelody)
+            if(myPage.bPlayPracticeMelody)//stop app crashing!?? may need to constrain to practice_count < 2?
             {
-                practiceMelody_temp = testMelodys_v[myPage.practice_melody_v[myPage.practice_count]].playOnce();
                 
-//                //reset current practice melodies if all 4 have played
-//                for (int i=1; i<5; i++)
-//                {
-//                    testMelodys_v[i].getLength();
-//                    if (testMelodys_v[i].position == testMelodys_v[i].length-3000)
-//                    {
-//                        testMelodys_v[i].reset();
-//                    }
-//                }
+                if(myPage.bPlayGroupAMelody == true && myPage.bResetMelody == false){
+                    
+                    practiceMelody_temp = testMelodys_A_v[myPage.practiceMelody_1_v[myPage.practice_count]].playOnce();
+                    int temp = myPage.practiceMelody_1_v[myPage.practice_count];
+                    if(temp == 0){
+                        testMelodys_A_v[1].reset();
+                    } else if(temp == 1){
+                        testMelodys_A_v[0].reset();
+                    }
+                    
+                } //else testMelodys_A_v[myPage.practiceMelody_1_v[myPage.practice_count]].reset();
+                
+                else if(myPage.bPlayGroupBMelody == true && myPage.bResetMelody == false){
+                    
+                    practiceMelody_temp = testMelodys_B_v[myPage.practiceMelody_2_v[myPage.practice_count]].playOnce();
+                    int temp = myPage.practiceMelody_2_v[myPage.practice_count];
+                    if(temp == 0){
+                        testMelodys_B_v[1].reset();
+                    } else if(temp == 1){
+                        testMelodys_B_v[0].reset();
+                    }
+                } //else testMelodys_B_v[myPage.practiceMelody_2_v[myPage.practice_count]].reset();
+                
+            } else if(myPage.bPlayPracticeMelody == false)
+            {
+                for (int i=0; i<2; i++)
+                {
+                    testMelodys_A_v[i].getLength();
+                    if (testMelodys_A_v[i].position == testMelodys_A_v[i].length-3000)
+                    {
+                        myPage.bResetMelody = true;
+                        testMelodys_A_v[i].reset();
+                    }
+                    testMelodys_B_v[i].getLength();
+                    if (testMelodys_B_v[i].position == testMelodys_B_v[i].length-3000)
+                    {
+                        myPage.bResetMelody = true;
+                        testMelodys_B_v[i].reset();
+                    }
+                }
             }
-//            else if(myPage.bPlayGroupBMelody){
-//                for (int i=0; i<4; i++) {
-//                    testMelodys_v[i].reset();
-//                }
-//            }
+
             x = practiceMelody_temp + cheer_x + badLuck_x;
         }
         
         else if (myPage.currentPage >= 4)//&& myPage.currentPage <= 23){//trial 1 - 20
         {
             //reset practice trials
-            for (int i=0; i<4; i++) {
-                testMelodys_v[i].reset();
+            for (int i=0; i<2; i++) {
+                testMelodys_A_v[i].reset();
+                testMelodys_B_v[i].reset();
             }
             
         
@@ -1623,10 +1973,20 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
 //            }
     
             if(myPage.bPlayGroupAMelody == true && myPage.bResetMelody == false){
-                trialMelodies_temp = sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].playOnce();
+                if(myPage.playPianoMelody == true){
+                    trialMelodies_temp = sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].playOnce();
+                    //cout << "PIANO INDEX ARRAY = " << myPage.trialMelody_1_v[myPage.trial_melody_count] << endl;
+                } else if(myPage.playTrumpetMelody == true){
+                    trialMelodies_temp = sessionA_Melodys_v[myPage.trialMelody_1_v[myPage.trial_melody_count]].playOnce();
+                }
+                
             }
             else if(myPage.bPlayGroupBMelody == true && myPage.bResetMelody == false){
-                trialMelodies_temp = sessionB_Melodys_v[myPage.trialMelody_2_v[myPage.trial_melody_count]].playOnce();
+                if(myPage.playPianoMelody == true){
+                  trialMelodies_temp = sessionB_Melodys_v[myPage.trialMelody_2_v[myPage.trial_melody_count]].playOnce();
+                } else if(myPage.playTrumpetMelody == true){
+                    trialMelodies_temp = sessionB_Melodys_v[myPage.trialMelody_2_v[myPage.trial_melody_count]].playOnce();
+                }
             }
             
             //if(myPage.bPlayGroupAMelody == false){
@@ -1702,7 +2062,7 @@ void ofApp::touchDown(ofTouchEventArgs & touch){
     
     if(touch.x>900 && touch.y<200 && myPage.currentPage == -3){//Go Back One Page
         //move to page -4 of app
-        myPage.currentPage = -4;
+        myPage.currentPage = -3;
     }
     
     if(touch.x>900 && touch.y<200 && myPage.currentPage == -2){//Go Back One Page
@@ -1710,9 +2070,12 @@ void ofApp::touchDown(ofTouchEventArgs & touch){
         myPage.currentPage = -3;
     }
     
-    if(touch.x> 400 && touch.x < 600 && touch.y<100){
-        //move to page 24 of
-        myPage.currentPage = 24;//jump to end of the app!!
+    //debug!
+    if(myPage.bDebug){
+        if(touch.x> 400 && touch.x < 600 && touch.y<100){
+            //move to page 24 of the app!!
+            myPage.currentPage = 24;
+        }
     }
     
     //myHomePage.showPage(touch.x, touch.y);
