@@ -565,13 +565,12 @@ void ofPage::draw(){
             
         } else {
             ofSetColor(0, 0, 0, 255);
-            franklinBook14.drawString("Well Done! \n\n\n\n\n\n20 Tunes are now completed!\n\nAll the data is stored. \n\n\n\nPlease tell the researcher you have finished.\n\n\n\n\n\nPlease press the square button on the \n\niPad to exit the app now. ", 50, 130);
+            franklinBook14.drawString("Well Done! \n\n\n\n\n\n20 songs are now completed!\n\nAll the data is stored. \n\n\n\nPlease tell the researcher you have finished.\n\n\n\n\n\nPlease press the square button on the \n\niPad to exit the app now. ", 50, 130);
             bFinished = true;
             showGreenDot = true;
             showRedDot = false;
             bPermitNextPage = true;//allow user to navigate back 
         }
-        
         //printf("%d\n",currentFrame);//keep track of timer as each page is clicked.
     }
 
@@ -892,7 +891,7 @@ void ofPage::draw(){
     
     if(currentPage == 3 && bGuessedWrong == false && bGuessedPiano == false && bGuessedTrumpet == false && practice_count == -1){
         ofSetColor(0, 0, 0);
-        franklinBook14.drawString("Now we are going to hear a song. \n\n\n\nThe last sound will be either a \n\ntrumpet or a piano.\n\n\n\nAs soon as you hear what the sound\n\nis, press the correct image with \n\nyour finger as fast as you can!\n\n\n\nPress Giles's ear to hear the tune!", 100, 70);
+        franklinBook14.drawString("Now we are going to hear a song. \n\n\n\nThe last sound will be either a \n\ntrumpet or a piano.\n\n\n\nAs soon as you hear what the last \n\nsound is, press the correct image with \n\nyour finger as fast as you can!\n\n\n\nPress Giles's ear to hear the song!", 100, 70);
         
     }
     
@@ -951,15 +950,15 @@ void ofPage::draw(){
         //bPlayPracticeMelody = true;//
         bShowTrialText = false;//make sure the post trial text is not seen here
         ofSetColor(0, 0, 0);
-        franklinBook14.drawString("Are you ready to start?\n\n\n\nAs soon as you hear what the sound\n\nis, press the correct image with your \n\nfinger as fast as you can!\n\n\n\nPress Giles's ear to hear the tune!", 100, 170);
+        franklinBook14.drawString("Are you ready to start?\n\n\n\nAs soon as you hear what the last \n\nsound is, press the correct image with \n\nyour finger as fast as you can!\n\n\n\nPress Giles's ear to hear the song!", 100, 170);
     }
     
     if(currentPage >= 4 && currentPage < 24 && bShowTrialText == true){
         ofSetColor(0, 0, 0);
         //franklinBook14.drawString("Please press the right arrow to move \n\non to the next melody.", 100, 300);
-    } else if(currentPage >= 5 && currentPage < 23 && bShowTrialText == false && showDots == false){
+    } else if(currentPage >= 5 && currentPage < 24 && bShowTrialText == false && showDots == false){
         ofSetColor(0, 0, 0);
-        franklinBook14.drawString("Press the correct image with your \n\nfinger as fast as you can!\n\n\n\nPress Giles's ear to hear the tune!", 100, 170);
+        franklinBook14.drawString("Press the correct image with your \n\nfinger as fast as you can!\n\n\n\nPress Giles's ear to hear the song!", 100, 170);
     }
     
 //    if(currentPage == 23 && bShowTrialText == true){
@@ -2159,7 +2158,7 @@ void ofPage::showPage(int x, int y){
         }
         
         //press bear head to return to trial 1!!!!
-        if (x > 780 && y < 290 && y > 0)
+        if (x > 780 && y < 290 && y > 0 && bDebug == true)//only permit if debugging is true!
         {
             currentPage = 4;
         }
