@@ -49,6 +49,10 @@ void ofApp::setup(){
     save_time_s = "";
     save_date_s = "";
     
+    bPermitSaveFile = true;//set to true permitting a save of the file within the update method to run once and save the file.
+    bSelectUser = false;
+    bSelectAge = false;
+    
     balls.assign(2, Ball());
     // initialize all of the Ball particles
     for(int i=0; i<balls.size(); i++){
@@ -1119,6 +1123,15 @@ void ofApp::update(){
 //        }
 //        
 //    }
+    
+    //SAVE the file as soon as page 24 is reached - file is set to save first
+    if(myPage.currentPage==24 && bPermitSaveFile == true)
+    {
+        saveFile();//store all data to file
+        cout << "save text file" << endl;
+        bPermitSaveFile = false;//only save the file once - we dont want a loop!
+    }
+    
 }
 
 //--------------------------------------------------------------
@@ -1171,11 +1184,18 @@ void ofApp::userKeyboardInput(){//run in update
         
         ofSetColor(255, 0, 0, 255);
         keyboard_f.drawString("CONTINUE", 200, -450);
-        ofSetColor(255, 0, 0, 255);
         ofSetColor(0, 0, 0, 255);
-        keyboard_f.drawString("Please type your first name followed by the first \n\nletter of your last name followed by your age. \n\nFor example if your name is Giles, your surname \n\nDickins and your age 13, you should enter “GilesD12”. \n\n\n\nWhen you have entered this information please \n\npress the CONTINUE button above to continue.", -350, -200);
+        keyboard_f.drawString("Please type your first name followed by the first \n\nletter of your last name followed by your age. \n\n\n\nFor example if your name is Giles, your surname \n\nDickins and your age 13, you should enter: \n\n", -360, -300);
+        ofSetColor(255, 0, 0, 255);
+        keyboard_f.drawString("\n\n\n\n\n\n\n\n\n\n\n\n'GilesD12'", -360, -300);
+         ofSetColor(0, 0, 0, 255);
+        keyboard_f.drawString("\n\nWhen you have entered this information please \n\npress the", -360, -50);
+        ofSetColor(255, 0, 0, 255);
+        keyboard_f.drawString("\n\n\n\n        CONTINUE", -360, -50);
+        ofSetColor(0, 0, 0, 255);
+        keyboard_f.drawString("\n\n\n\n                  button above to continue.", -360, -50);
         ofSetColor(0, 0, 255, 255);
-        keyboard_f.drawString("Name and age = "+  keyboard->getLabelText() , -350, 100);
+        keyboard_f.drawString("Name and age = "+  keyboard->getLabelText() , -360, 140);
         //assign userID to the input
         userID_s = keyboard->getLabelText();
         
@@ -1186,7 +1206,7 @@ void ofApp::userKeyboardInput(){//run in update
 
         keyboard->getLabelText() = "";//does not work!
         ofSetColor(0, 255, 0, 255);
-        keyboard_f.drawString("BACK", -300, -450);
+        keyboard_f.drawString("BACK", -350, -450);
         ofSetColor(255, 0, 0, 255);
         keyboard_f.drawString("CONTINUE", 200, -450);
         ofSetColor(0, 0, 0, 255);
@@ -1224,8 +1244,10 @@ void ofApp::updateTimer(){
     
     //First set up to store the amount of time taken for the practice melodies
     //All these are on page 3
-    if(myPage.currentPage == 3 && myPage.hasPressed == true)
+    if(myPage.currentPage == 3 && myPage.bPermitArrayTimeStamp == true)
     {
+        
+        
         //must replace each index of array mulitple times if required.
 //        for(int i = 0; i < practice_time_data_B_v.size(); i ++)
 //        {
@@ -1357,21 +1379,11 @@ void ofApp::updateTimer(){
                      }
                  }
              }
-        }
-//
+         }
+         //myPage.hasPressed = false;//reset to false to stop array being filled if user presses the app again.
+         myPage.bPermitArrayTimeStamp = false;
+
         
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
           //      trial_time_data_B_v[i] = myPage.trial_time_counter.elapsed()/1000;//replace the element every time an answer is given?
 //                cout << "Practice Time Stamp = " << myPage.trial_time_counter.elapsed() <<  endl;//make sure the index has stored the timestamp
 //                cout << "Array Index Time Stamp = " << trial_time_data_B_v[i] << endl;
@@ -1467,7 +1479,8 @@ void ofApp::updateTimer(){
 //           //practice_time_data_v.push_back(myPage.trial_time_counter.elapsed());//store all draw
 //           //cout << "Current Practice = " << myPage.practice_count+1 <<  endl;
 //        }
-    } else if(myPage.currentPage >= 4 && myPage.currentPage <=23 && myPage.hasPressed == true)//watch out for delay??
+       
+    } else if(myPage.currentPage >= 4 && myPage.currentPage <=23 && myPage.bPermitArrayTimeStamp == true)//watch out for delay??
     {
     
         //must replace each index of array mulitple times if required.
@@ -1535,6 +1548,9 @@ void ofApp::updateTimer(){
                 }
             }
         }
+        
+        //myPage.hasPressed = false;//reset to false to stop array being filled if user presses the app again.
+        myPage.bPermitArrayTimeStamp = false;
     }
 }
 
@@ -2042,10 +2058,10 @@ void ofApp::touchDown(ofTouchEventArgs & touch){
     myPage.showPage(touch.x, touch.y);
     updateTimer();//update here to only run once each touch by the user.. not in the update loop!
     
-    if(myPage.currentPage==24){
-        saveFile();//store all data to file
-        cout << "save text file" << endl;
-    }
+//    if(myPage.currentPage==24){
+//        saveFile();//store all data to file
+//        cout << "save text file" << endl;
+//    }
     
     if(touch.x>900 && touch.y>500 && myPage.currentPage == -4){
         //move to page -2 of app

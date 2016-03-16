@@ -132,6 +132,7 @@ public: // place public functions or variables declarations here
     int trialYpos;
     
     bool hasPressed;
+    bool bPermitArrayTimeStamp;
     bool bPermitNextPage;
     bool bPermitGreenDot; 
     
@@ -168,6 +169,8 @@ public: // place public functions or variables declarations here
     Poco::Stopwatch melodyCounter;//only allow an answer after this timer
     Poco::Stopwatch practice_time_counter;//start at exactly 200000ms
     Poco::Stopwatch trial_time_counter;//start at exactly 200000ms
+    Poco::Stopwatch finish_page_counter;//start when bear is pressed - stop when hasPressed = 3 seconds.
+    Poco::Stopwatch text_counter;//start when bear is pressed - stop when hasPressed = 3 seconds.
     int greyCounter;
     int greyCounter2;
     

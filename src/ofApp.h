@@ -66,7 +66,8 @@ class ofApp : public ofxiOSApp{
         ofxiOSKeyboard * keyboard;
         ofTrueTypeFont keyboard_f;
         bool bSelectUser;
-        bool bSelectAge; 
+        bool bSelectAge;
+        bool bPermitSaveFile;     
     
     
         string save_time_s, save_date_s;
