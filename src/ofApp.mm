@@ -45,6 +45,7 @@ void ofApp::setup(){
     //myIntroduction.setup();
     userID_s = "Anonymous";
     user_age_s = "None";
+    vol = 0.8;
     
     save_time_s = "";
     save_date_s = "";
@@ -2030,9 +2031,14 @@ void ofApp::audioRequested(float * output, int bufferSize, int nChannels){
             
             x = trialMelodies_temp + cheer_x + badLuck_x;
         }
+        
+        if (myPage.greyStarCounter.elapsed() >= 2999000)//was 2000000 before for user navigated)
+        {
+            vol = 0;
+        } else vol = 0.8;
     
-        output[i*nChannels    ] = x;//left out
-        output[i*nChannels + 1] = x;//right out
+        output[i*nChannels    ] = x * vol;//left out
+        output[i*nChannels + 1] = x * vol;//right out
     }
     
 }

@@ -268,6 +268,7 @@ class ofApp : public ofxiOSApp{
         vector<float> information_content_v;
         vector<int> probe_repetitions_v;
         vector<int> probe_octave_repetitions_v;
+        float vol;
     
     
     
