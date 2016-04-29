@@ -75,6 +75,7 @@ ofPage::ofPage(){
     bGuessedWrong = false;
     bShowTrialText = false;
     bShowSingleNoteText = false;
+    bPermitSecondTrial = false;
 
     
     //user setup
@@ -326,15 +327,22 @@ void ofPage::update(){
 //    //counter is only activated when the user presses either piano or trumpet
     
     //permit practice page to move on even if people press too soon?
-    if (currentPage == 3 && practice_count == 1 && (bPlayPracticeMelody == false)) {
+    if (currentPage == 3 && practice_count == 1 && (bPlayPracticeMelody == false))
+    {
         bPermitNextPage = true;//only allow next page if 2 practice answers are given
     }
     
-    if (greyStarCounter.elapsed() >= 2000000)//was 2000000 before for user navigated)
+    //permit multiple trial takes only if 7 sconds have elaped
+    if (currentPage >= 4 && currentPage < 24 && trial_time_counter.elapsed() >= 7000000)
     {
-        //melodyCounter.reset();
-        //bMelodyFinished = false;
-    }
+        bPermitSecondTrial = true;//allow another press of giles ear
+        cout << "NEXT TRIAL IS : " << bPermitSecondTrial << endl;
+        franklinBook14.drawString("Please try again!", 100, 170);
+    } else bPermitSecondTrial = false;
+    
+//    if(hasPressed){
+//        bPermitSecondTrial = false;//reset
+//    }
     
     if (greyStarCounter.elapsed() >= 2999000)//was 2000000 before for user navigated)
     {
@@ -968,6 +976,12 @@ void ofPage::draw(){
     
     if(currentPage >= 4){
         
+        if (bPermitSecondTrial)
+        {
+            //cout << "NEXT TRIAL IS : " << bPermitSecondTrial << endl;
+            franklinBook14.drawString("Please try again!\n\n\n\nPress Giles's ear to hear the song!", 100, 170);
+        }
+        
         //cout<< showRedDot << endl;
         //ofSetColor(255, 255, 120);
         ofEnableSmoothing();
@@ -1525,7 +1539,9 @@ void ofPage::showPage(int x, int y){
         
         if (x > 780 && y < 290 && y > 0){//press bear to start single note
             
-            single_count ++;
+            //single_count ++;//change to randoimise
+            single_count = rand() % 4 + 1;//create a random number 1 - 4
+            
             bShowSingleNoteText = false;
             if(single_count > 4){
                 single_count = 1;//reset the counter
@@ -1929,9 +1945,9 @@ void ofPage::showPage(int x, int y){
         }
 
         //press bear head to sound.. or trial number to sound
-        if (x > 780 && y < 290 && y > 0 && finish_page_counter.elapsed() <= 1)
+        if (x > 780 && y < 290 && y > 0 && (finish_page_counter.elapsed() <= 1 || bPermitSecondTrial))
         {
-            cout << "PRESS PRESS PRESS PRESS = " << endl;
+            //cout << "PRESS PRESS PRESS PRESS = " << endl;
             text_counter.reset();
             greyStarCounter.reset();//reset timers
             melodyCounter.reset();
@@ -1948,6 +1964,7 @@ void ofPage::showPage(int x, int y){
             bPlayPracticeMelody = false;
             bResetMelody = false;//must reset the melodies if child does not press
             bShowTrialText = false;
+           
             
             //check what session
             if(bSessionA1 == true || bSessionB1 == true)
@@ -1995,6 +2012,8 @@ void ofPage::showPage(int x, int y){
                     printf("\nTrumpetMelody\n");
                 }
             }
+            
+            //bPermitSecondTrial = false;//reset
         }
         
         if (bMelodyFinished && bMelodyStart == false)

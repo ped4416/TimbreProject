@@ -134,7 +134,8 @@ public: // place public functions or variables declarations here
     bool hasPressed;
     bool bPermitArrayTimeStamp;
     bool bPermitNextPage;
-    bool bPermitGreenDot; 
+    bool bPermitGreenDot;
+    bool bPermitSecondTrial;
     
     //fonts
     ofTrueTypeFont franklinBook14;
